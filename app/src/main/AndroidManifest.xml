@@ -2,6 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.onelinediary">
 
+    <!-- 카메라 기능 요청-->
+    <uses-feature android:name="android.hardware.camera" android:required="true"/>
+
+    <!--
+        사용자가 기기 카메라로 찍은 사진은 기기의 공용 외부 저장소에 저장되므로 모든 앱에서 엑세스할 수 있다.
+        사진을 공유하기 위한 디렉터리를 제공하는데 이 디텍터리는 모든 앱에서 공유하기 때문에 이 디렉터리를 읽고 쓰려면
+        READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE 권한이 각각 필요하다.
+    -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,13 +21,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OnelineDiary">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".activity.NewDiaryActivity"
+            android:exported="true" />
+
+        <activity android:name=".activity.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="${applicationId}.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
     </application>
 
 </manifest>

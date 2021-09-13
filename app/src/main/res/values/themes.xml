@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.OnelineDiary" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.OnelineDiary" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -12,5 +12,15 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <!--
+            상태바를 투명하게 만들어 주고 화면의 위에 있는 것처럼 보이게 한다.
+            화면이 상태바의 아래에 있는 것처럼 보인다.
+            아래의 android:fitsSystemWindows = true를 같이 사용한다.
+         -->
+        <item name="android:windowTranslucentStatus">true</item>
+        <!--
+            상태바가 화면을 가리고 있을 때 가리지 않도록 상태바와 겹치지 않게 화면을 설정해준다.
+        -->
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 </resources>
