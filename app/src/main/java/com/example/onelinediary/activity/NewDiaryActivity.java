@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
-import android.graphics.Picture;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -16,7 +13,6 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.databinding.ActivityNewDiaryBinding;
@@ -50,6 +46,11 @@ public class NewDiaryActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * 이미지 뷰를 클릭했을 때, 카메라와 갤러리 선택 팝업이 띄워준다.
+     * TODO 이미지 뷰 더블 클릭을 막아야 함.
+     * @param view 클릭한 버튼
+     */
     @SuppressLint("QueryPermissionsNeeded")
     public void selectPhoto(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -119,13 +120,11 @@ public class NewDiaryActivity extends AppCompatActivity {
 //                    newDiaryBinding.photo.setImageBitmap(imageBitmap);
 //                }
 
-        if (requestCode == PICKER_IMAGE_REQUEST) {
-            if (data != null) { // 갤러리를 선택했을 경우
+        if (requestCode == PICKER_IMAGE_REQUEST) { // 카메라와 갤러리 선택 팝업을 선택한 경우
+            if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우
                 Uri selectedImageUri = data.getData();
-                if (selectedImageUri != null) { // 갤러리에서 사진을 선택한 경우
-                    // 갤러리에서 선택한 이미지의 uri가 넘어온다.
-                    newDiaryBinding.photo.setImageURI(selectedImageUri);
-                }
+                // 갤러리에서 선택한 이미지의 uri가 넘어온다.
+                newDiaryBinding.photo.setImageURI(selectedImageUri);
 
                 /*
                    TODO
@@ -150,13 +149,25 @@ public class NewDiaryActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    newDiaryBinding.photo.setImageBitmap(imageBitmap);
+
+                    if (imageBitmap != null) {
+                        newDiaryBinding.photo.setImageBitmap(imageBitmap);
+                    } else {
+                        newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
+                    }
+
                 }
             }
         }
     }
 
+    /**
+     * 새로운 이미지 파일을 생성해주는 메소드
+     * @return 외부 저장소의 경로로 연결된 이미지 파일(이름은 그 날의 날짜와 시간으로 구성)
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
+        // 외부 저장소의 pictures 폴더 아래의 image 폴더에 이미지를 저장
         File storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image");
         if (!storageDir.exists()) {
             // mkdir() : 한 번에 하나의 디렉토리 생성
@@ -175,6 +186,10 @@ public class NewDiaryActivity extends AppCompatActivity {
         return image;
     }
 
+    /**
+     * 새로 생성되는 이미지 파일의 이름을 그 날의 날짜와 시간으로 만들어 반환하는 메소드
+     * @return 현재 날짜와 시간으로 만들어진 이미지 파일의 이름
+     */
     private String newImageFileName() {
         @SuppressLint("SimpleDateFormat")
         String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss").format(new Date());
