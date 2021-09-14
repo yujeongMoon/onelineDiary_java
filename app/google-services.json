@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "387427323964",
+    "project_id": "onelinediary-eb877",
+    "storage_bucket": "onelinediary-eb877.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387427323964:android:96656e1a05d2d30bad7339",
+        "android_client_info": {
+          "package_name": "com.example.onelinediary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "387427323964-tvtopkps58i750889j7btkbj1rp13k12.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.onelinediary",
+            "certificate_hash": "76023db90d409929c48edc1e7c4a81525994947c"
+          }
+        },
+        {
+          "client_id": "387427323964-r3jsqeg5ab9thghiu0qal4pcu4amjsi2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAVw_93JdLgtp5h2YjhKDHzjOoImdOj3U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "387427323964-r3jsqeg5ab9thghiu0qal4pcu4amjsi2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
