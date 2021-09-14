@@ -120,6 +120,13 @@ public class NewDiaryActivity extends AppCompatActivity {
 //                    newDiaryBinding.photo.setImageBitmap(imageBitmap);
 //                }
 
+
+        // 선택 팝업이 뜨고 선택을 하거나 하지 않아도 무조건 거치는 메소드이기 때문에
+        // 팝업이 떴다고 가정하고 팝업이 내려갈 때 여기서 첫번째 클릭의 시간을 초기화 시켜준다.
+        // 초기화를 시키지 않으면 팝업이 내려가는 동시에 이미지뷰를 클릭을 했을 때 시간이 짧아서 팝업이 뜨지 않는다.
+        // 그렇기때문에 첫번째 클릭 시간을 초기화 시켜줘야한다.
+        newDiaryBinding.photo.initPreTime();
+
         if (requestCode == PICKER_IMAGE_REQUEST) { // 카메라와 갤러리 선택 팝업을 선택한 경우
             if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우
                 Uri selectedImageUri = data.getData();
@@ -155,7 +162,6 @@ public class NewDiaryActivity extends AppCompatActivity {
                     } else {
                         newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
                     }
-
                 }
             }
         }
