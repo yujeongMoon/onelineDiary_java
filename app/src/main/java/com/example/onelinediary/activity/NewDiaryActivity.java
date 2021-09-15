@@ -22,10 +22,21 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class NewDiaryActivity extends AppCompatActivity {
+public class NewDiaryActivity extends AppCompatActivity{
     private ActivityNewDiaryBinding newDiaryBinding;
 
+    // 기분 정의
+    enum Mood {
+        HAPPY(1), SMILE(2), BLANK(3), SAD(4), NERVOUS(5);
+
+        private final int value;
+        Mood(int value) { this.value = value; }
+        public int getValue() { return value; }
+    }
+
     private final int PICKER_IMAGE_REQUEST = 100;
+
+    private int currentMood = 0;
 
     String currentPhotoPath;
     Uri photoUri;
@@ -36,6 +47,72 @@ public class NewDiaryActivity extends AppCompatActivity {
 
         newDiaryBinding = ActivityNewDiaryBinding.inflate(getLayoutInflater());
         setContentView(newDiaryBinding.getRoot());
+
+        newDiaryBinding.emojiHappyLayout.setOnClickListener(onClickListener);
+        newDiaryBinding.emojiSmileLayout.setOnClickListener(onClickListener);
+        newDiaryBinding.emojiBlankLayout.setOnClickListener(onClickListener);
+        newDiaryBinding.emojiSadLayout.setOnClickListener(onClickListener);
+        newDiaryBinding.emojiNervousLayout.setOnClickListener(onClickListener);
+    }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.emoji_happy_layout) {
+                if (currentMood != Mood.HAPPY.value) {
+                    resetSelectedState();
+                }
+                currentMood = Mood.HAPPY.value;
+                if (newDiaryBinding.emojiHappyCheck.getVisibility() == View.INVISIBLE)
+                    newDiaryBinding.emojiHappyCheck.setVisibility(View.VISIBLE);
+                else
+                    newDiaryBinding.emojiHappyCheck.setVisibility(View.INVISIBLE);
+            } if (v.getId() == R.id.emoji_smile_layout) {
+                if (currentMood != Mood.SMILE.value) {
+                    resetSelectedState();
+                }
+                currentMood = Mood.SMILE.value;
+                if (newDiaryBinding.emojiSmileCheck.getVisibility() == View.INVISIBLE)
+                    newDiaryBinding.emojiSmileCheck.setVisibility(View.VISIBLE);
+                else
+                    newDiaryBinding.emojiSmileCheck.setVisibility(View.INVISIBLE);
+            } if (v.getId() == R.id.emoji_blank_layout) {
+                if (currentMood != Mood.BLANK.value) {
+                    resetSelectedState();
+                }
+                currentMood = Mood.BLANK.value;
+                if (newDiaryBinding.emojiBlankCheck.getVisibility() == View.INVISIBLE)
+                    newDiaryBinding.emojiBlankCheck.setVisibility(View.VISIBLE);
+                else
+                    newDiaryBinding.emojiBlankCheck.setVisibility(View.INVISIBLE);
+            } if (v.getId() == R.id.emoji_sad_layout) {
+                if (currentMood != Mood.SAD.value) {
+                    resetSelectedState();
+                }
+                currentMood = Mood.SAD.value;
+                if (newDiaryBinding.emojiSadCheck.getVisibility() == View.INVISIBLE)
+                    newDiaryBinding.emojiSadCheck.setVisibility(View.VISIBLE);
+                else
+                    newDiaryBinding.emojiSadCheck.setVisibility(View.INVISIBLE);
+            } if (v.getId() == R.id.emoji_nervous_layout) {
+                if (currentMood != Mood.NERVOUS.value) {
+                    resetSelectedState();
+                }
+                currentMood = Mood.NERVOUS.value;
+                if (newDiaryBinding.emojiNervousCheck.getVisibility() == View.INVISIBLE)
+                    newDiaryBinding.emojiNervousCheck.setVisibility(View.VISIBLE);
+                else
+                    newDiaryBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
+            }
+        }
+    };
+
+    private void resetSelectedState() {
+        newDiaryBinding.emojiHappyCheck.setVisibility(View.INVISIBLE);
+        newDiaryBinding.emojiSmileCheck.setVisibility(View.INVISIBLE);
+        newDiaryBinding.emojiBlankCheck.setVisibility(View.INVISIBLE);
+        newDiaryBinding.emojiSadCheck.setVisibility(View.INVISIBLE);
+        newDiaryBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
     }
 
     @Override
