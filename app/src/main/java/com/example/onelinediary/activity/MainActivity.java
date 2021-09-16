@@ -9,22 +9,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.onelinediary.fragment.MainDiaryFragment;
 import com.example.onelinediary.R;
 import com.example.onelinediary.databinding.ActivityMainBinding;
+import com.example.onelinediary.utiliy.DatabaseUtility;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends FragmentActivity {
     private ActivityMainBinding mainBinding;
-
-    private static final int NUM_PAGES = 5;
 
     private final String[] permissions = {
             Manifest.permission.CAMERA,
@@ -33,8 +27,6 @@ public class MainActivity extends FragmentActivity {
     };
 
     private final int PERMISSION_REQUEST = 100;
-
-    private FragmentStateAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,29 +39,26 @@ public class MainActivity extends FragmentActivity {
         // 카메라나 저장소 접근 등 관련 권한을 사용자에게 승인 받는다.
         checkPermission(permissions, PERMISSION_REQUEST);
 
-        pagerAdapter = new MainPagerAdapter(this);
-        mainBinding.pager.setAdapter(pagerAdapter);
+        DatabaseUtility.readYearDiaryList(this, "2021");
+
+        // TODO pageAdapter setting
 
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
     }
 
-    private static class MainPagerAdapter extends FragmentStateAdapter {
-
-        public MainPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
-            super(fragmentActivity);
-        }
-
-        @NonNull
-        @Override
-        public Fragment createFragment(int position) {
-            return new MainDiaryFragment();
-        }
-
-        @Override
-        public int getItemCount() {
-            return NUM_PAGES;
-        }
-    }
+//    @Override
+//    public void onComplete(boolean isSuccess, HashMap<String, ArrayList<Diary>> result) {
+//        if (isSuccess) {
+//            Iterator<String> iterator = result.keySet().iterator();
+//            while (iterator.hasNext()) {
+//                String key = iterator.next();
+//                Log.d(MainActivity.class.getSimpleName(),"month : " + key);
+//                for(Diary diary : result.get(key)) {
+//                    Log.d(MainActivity.class.getSimpleName(),"modd : " + diary.getMood());
+//                }
+//            }
+//        }
+//    }
 
     public void addNewDiary() {
         startActivity(new Intent(this, NewDiaryActivity.class));
@@ -77,7 +66,7 @@ public class MainActivity extends FragmentActivity {
         overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
     }
 
-    private boolean checkPermission(String[] permissions, int permissionRequest) {
+    private void checkPermission(String[] permissions, int permissionRequest) {
         ArrayList<String> permissionList = new ArrayList<>();
 
         for (String permission : permissions) {
@@ -88,10 +77,8 @@ public class MainActivity extends FragmentActivity {
         }
 
         if (!permissionList.isEmpty()) {
-            ActivityCompat.requestPermissions(this, permissionList.toArray(new String[0]), PERMISSION_REQUEST);
-            return false;
+            ActivityCompat.requestPermissions(this, permissionList.toArray(new String[0]), permissionRequest);
         }
-        return true;
     }
 
     @Override

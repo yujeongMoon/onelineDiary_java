@@ -16,6 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.databinding.ActivityNewDiaryBinding;
+import com.example.onelinediary.dialog.ConfirmDialog;
+import com.example.onelinediary.dto.Diary;
+import com.example.onelinediary.utiliy.DatabaseUtility;
+import com.example.onelinediary.utiliy.Utility;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +33,7 @@ public class NewDiaryActivity extends AppCompatActivity{
 
     // 기분 정의
     enum Mood {
-        HAPPY(1), SMILE(2), BLANK(3), SAD(4), NERVOUS(5);
+        NONE(0), HAPPY(1), SMILE(2), BLANK(3), SAD(4), NERVOUS(5);
 
         private final int value;
         Mood(int value) { this.value = value; }
@@ -36,10 +42,15 @@ public class NewDiaryActivity extends AppCompatActivity{
 
     private final int PICKER_IMAGE_REQUEST = 100;
 
-    private int currentMood = 0;
+    private int currentMood = Mood.NONE.value;
 
     String currentPhotoPath;
     Uri photoUri;
+
+    Diary diary = new Diary();
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference reference = database.getReference(); // default
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +58,8 @@ public class NewDiaryActivity extends AppCompatActivity{
 
         newDiaryBinding = ActivityNewDiaryBinding.inflate(getLayoutInflater());
         setContentView(newDiaryBinding.getRoot());
+
+        newDiaryBinding.todayDate.setText(Utility.getDate("yyyy년 MM월 dd일"));
 
         newDiaryBinding.emojiHappyLayout.setOnClickListener(onClickListener);
         newDiaryBinding.emojiSmileLayout.setOnClickListener(onClickListener);
@@ -62,48 +75,61 @@ public class NewDiaryActivity extends AppCompatActivity{
                 if (currentMood != Mood.HAPPY.value) {
                     resetSelectedState();
                 }
-                currentMood = Mood.HAPPY.value;
-                if (newDiaryBinding.emojiHappyCheck.getVisibility() == View.INVISIBLE)
+
+                if (newDiaryBinding.emojiHappyCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiHappyCheck.setVisibility(View.VISIBLE);
-                else
+                    currentMood = Mood.HAPPY.value;
+                } else {
                     newDiaryBinding.emojiHappyCheck.setVisibility(View.INVISIBLE);
+                    currentMood = Mood.NONE.value;
+                }
             } if (v.getId() == R.id.emoji_smile_layout) {
                 if (currentMood != Mood.SMILE.value) {
                     resetSelectedState();
                 }
-                currentMood = Mood.SMILE.value;
-                if (newDiaryBinding.emojiSmileCheck.getVisibility() == View.INVISIBLE)
+                if (newDiaryBinding.emojiSmileCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiSmileCheck.setVisibility(View.VISIBLE);
-                else
+                    currentMood = Mood.SMILE.value;
+                } else {
                     newDiaryBinding.emojiSmileCheck.setVisibility(View.INVISIBLE);
+                    currentMood = Mood.NONE.value;
+                }
             } if (v.getId() == R.id.emoji_blank_layout) {
                 if (currentMood != Mood.BLANK.value) {
                     resetSelectedState();
                 }
-                currentMood = Mood.BLANK.value;
-                if (newDiaryBinding.emojiBlankCheck.getVisibility() == View.INVISIBLE)
+                if (newDiaryBinding.emojiBlankCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiBlankCheck.setVisibility(View.VISIBLE);
-                else
+                    currentMood = Mood.BLANK.value;
+                } else {
                     newDiaryBinding.emojiBlankCheck.setVisibility(View.INVISIBLE);
+                    currentMood = Mood.NONE.value;
+                }
             } if (v.getId() == R.id.emoji_sad_layout) {
                 if (currentMood != Mood.SAD.value) {
                     resetSelectedState();
                 }
-                currentMood = Mood.SAD.value;
-                if (newDiaryBinding.emojiSadCheck.getVisibility() == View.INVISIBLE)
+                if (newDiaryBinding.emojiSadCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiSadCheck.setVisibility(View.VISIBLE);
-                else
+                    currentMood = Mood.SAD.value;
+                } else {
                     newDiaryBinding.emojiSadCheck.setVisibility(View.INVISIBLE);
+                    currentMood = Mood.NONE.value;
+                }
             } if (v.getId() == R.id.emoji_nervous_layout) {
                 if (currentMood != Mood.NERVOUS.value) {
                     resetSelectedState();
                 }
-                currentMood = Mood.NERVOUS.value;
-                if (newDiaryBinding.emojiNervousCheck.getVisibility() == View.INVISIBLE)
+                if (newDiaryBinding.emojiNervousCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiNervousCheck.setVisibility(View.VISIBLE);
-                else
+                    currentMood = Mood.NERVOUS.value;
+                } else {
                     newDiaryBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
+                    currentMood = Mood.NONE.value;
+                }
             }
+
+            diary.setMood(currentMood);
         }
     };
 
@@ -113,6 +139,9 @@ public class NewDiaryActivity extends AppCompatActivity{
         newDiaryBinding.emojiBlankCheck.setVisibility(View.INVISIBLE);
         newDiaryBinding.emojiSadCheck.setVisibility(View.INVISIBLE);
         newDiaryBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
+
+        currentMood = Mood.NONE.value;
+        diary.setMood(currentMood);
     }
 
     @Override
@@ -219,6 +248,8 @@ public class NewDiaryActivity extends AppCompatActivity{
                 if (photoUri != null) {
                     getContentResolver().delete(photoUri, null, null);
                 }
+
+                diary.setPhoto(selectedImageUri.toString());
             } else { // 카메라를 선택했을 경우
                 if (photoUri != null) {
                     // uri로부터 Bitmap 이미지를 생성
@@ -236,8 +267,11 @@ public class NewDiaryActivity extends AppCompatActivity{
 
                     if (imageBitmap != null) {
                         newDiaryBinding.photo.setImageBitmap(imageBitmap);
+                        diary.setPhoto(photoUri.toString());
                     } else {
                         newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
+                        //TODO 빈문자열이면 디폴트 이미지를 보여주거나 이미지 항목을 gone 처리함.
+                        diary.setPhoto("");
                     }
                 }
             }
@@ -275,8 +309,38 @@ public class NewDiaryActivity extends AppCompatActivity{
      */
     private String newImageFileName() {
         @SuppressLint("SimpleDateFormat")
-        String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
         return "JPEG_" + timeStamp + "_";
+    }
+
+    /**
+     * 사진 등록이나 일기를 작성하고 기분을 선택한 후 저장 버튼을 눌러 DB에 저장을 한다.
+     * 사진 등록이나 일기 작성은 선택 사항이지만 기분 선택은 필수로 정한다.
+     * 선택하지 않은 상태로 저장 버튼을 누르면 기본 기분 아이콘아 선택 되도록 설정?
+     *
+     * @param view 저장 버튼 레이아웃
+     */
+    @SuppressLint("SimpleDateFormat")
+    public void saveNewDiary(View view) {
+        // 일기 작성한 시간 저장
+        diary.setReportingDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+        // 작성한 일기 컨텐츠 저장
+        String contents = newDiaryBinding.diaryContents.getText().toString();
+        diary.setContents(contents);
+
+        // 오늘의 기분 선택
+        if (currentMood == Mood.NONE.value) {
+            new ConfirmDialog("오늘의 기분을 입력해주세요!", null).show(getSupportFragmentManager(), "mood");
+        } else {
+            DatabaseUtility.writeNewDiary(this, diary, (isSuccess, result) -> {
+                if (isSuccess) {
+                    new ConfirmDialog("일기가 저장되었습니다.", v -> finish()).show(getSupportFragmentManager(), "newDiarySuccess");
+                } else {
+                    new ConfirmDialog("일기를 저장하는데 문제가 발생하였습니다. 다시 시도해주세요!", null).show(getSupportFragmentManager(), "newDiaryFailure");
+                }
+            });
+        }
     }
 }
