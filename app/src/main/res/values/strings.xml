@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">OnelineDiary</string>
+    <string name="new_diary_contents_hint">한 줄 일기 작성</string>
+    <string name="save">저장</string>
 </resources>
