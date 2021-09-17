@@ -32,7 +32,7 @@ public class NewDiaryActivity extends AppCompatActivity{
     private ActivityNewDiaryBinding newDiaryBinding;
 
     // 기분 정의
-    enum Mood {
+    public enum Mood {
         NONE(0), HAPPY(1), SMILE(2), BLANK(3), SAD(4), NERVOUS(5);
 
         private final int value;
@@ -334,7 +334,7 @@ public class NewDiaryActivity extends AppCompatActivity{
         if (currentMood == Mood.NONE.value) {
             new ConfirmDialog("오늘의 기분을 입력해주세요!", null).show(getSupportFragmentManager(), "mood");
         } else {
-            DatabaseUtility.writeNewDiary(this, diary, (isSuccess, result) -> {
+            DatabaseUtility.writeNewDiary(this, diary, isSuccess -> {
                 if (isSuccess) {
                     new ConfirmDialog("일기가 저장되었습니다.", v -> finish()).show(getSupportFragmentManager(), "newDiarySuccess");
                 } else {

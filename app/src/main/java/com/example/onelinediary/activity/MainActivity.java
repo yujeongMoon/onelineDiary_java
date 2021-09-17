@@ -1,24 +1,33 @@
 package com.example.onelinediary.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onelinediary.R;
+import com.example.onelinediary.adapter.MainPagerAdapter;
+import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityMainBinding;
 import com.example.onelinediary.utiliy.DatabaseUtility;
+import com.example.onelinediary.utiliy.Utility;
 
 import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity {
     private ActivityMainBinding mainBinding;
+
+    boolean loading = false;
 
     private final String[] permissions = {
             Manifest.permission.CAMERA,
@@ -27,6 +36,9 @@ public class MainActivity extends FragmentActivity {
     };
 
     private final int PERMISSION_REQUEST = 100;
+
+    private MainPagerAdapter pagerAdapter;
+    private ProgressDialog progressDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +51,39 @@ public class MainActivity extends FragmentActivity {
         // 카메라나 저장소 접근 등 관련 권한을 사용자에게 승인 받는다.
         checkPermission(permissions, PERMISSION_REQUEST);
 
-        DatabaseUtility.readYearDiaryList(this, "2021");
+        if (Const.diaryList == null || Const.diaryList.size() == 0)
+            loading = true;
 
-        // TODO pageAdapter setting
+        if (loading) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("잠시만 기다려주세요!");
+            progressDialog.show();
+        }
+
+        DatabaseUtility.readYearDiaryList(this, Utility.getYear(), isSuccess -> {
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
+
+            // TODO pageAdapter setting
+            pagerAdapter = new MainPagerAdapter();
+            mainBinding.pager.setAdapter(pagerAdapter);
+
+            loading = false;
+        });
 
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
     }
 
-//    @Override
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//        pagerAdapter.notifyDataSetChanged();
+    }
+
+    //    @Override
 //    public void onComplete(boolean isSuccess, HashMap<String, ArrayList<Diary>> result) {
 //        if (isSuccess) {
 //            Iterator<String> iterator = result.keySet().iterator();

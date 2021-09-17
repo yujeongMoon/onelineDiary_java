@@ -26,8 +26,11 @@ public class DatabaseUtility {
     private static HashMap<String, ArrayList<Diary>> yearDiaryList = new HashMap<>(); // 해당 연도의 일기를 담을 해시맵
     private static Queue<String> keyListQueue;
 
+    public onCompleteCallback callback;
+
     public interface onCompleteCallback {
-        void onComplete(boolean isSuccess, HashMap<String, ArrayList<Diary>> result);
+//        void onComplete(boolean isSuccess, HashMap<String, ArrayList<Diary>> result);
+        void onComplete(boolean isSuccess);
     }
 //    데이터 베이스의 인스턴스를 검색하고 쓰려고 하는 위치를 참조
 //    FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -46,8 +49,8 @@ public class DatabaseUtility {
                 .child(Utility.getMonth())
                 .child(Utility.getDay())
                 .setValue(newDiary)
-                .addOnSuccessListener(unused -> onComplete.onComplete(true, null))
-                .addOnFailureListener(e -> onComplete.onComplete(false, null));
+                .addOnSuccessListener(unused -> onComplete.onComplete(true))
+                .addOnFailureListener(e -> onComplete.onComplete(false));
     }
 
     /**
@@ -63,8 +66,9 @@ public class DatabaseUtility {
      * @param context 컨택스트
      * @param year 원하는 연도
      */
-    public static void readYearDiaryList(Context context, String year) {
+    public static void readYearDiaryList(Context context, String year, onCompleteCallback callback) {
         keyListQueue = new LinkedList<>(); // 넣은 순서 그대로 사용하기 위해서 LinkedList를 사용한다.
+        Const.monthKeyList = new ArrayList<>();
         Query query = getReference().child(Utility.getAndroidId(context)).child("diary").child(year);
 
         query.addValueEventListener(new ValueEventListener() {
@@ -72,8 +76,13 @@ public class DatabaseUtility {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     keyListQueue.offer(dataSnapshot.getKey()); // 큐에 key(월)을 넣어 저장한다.
+                    Const.monthKeyList.add(dataSnapshot.getKey());
+
+                    readMonthDiaryList(context, year, dataSnapshot.getKey());
                 }
-                requestMonthList(context, year); // 큐에 저정한 키값을 사용하여 해당 연도 일기가 저장된 해시맵을 완성한다.
+//                requestMonthList(context, year, callback); // 큐에 저정한 키값을 사용하여 해당 연도 일기가 저장된 해시맵을 완성한다.
+                Const.diaryList = yearDiaryList;
+                callback.onComplete(true);
             }
 
             @Override
@@ -83,14 +92,15 @@ public class DatabaseUtility {
         });
     }
 
-    private static void requestMonthList(final Context context, final String year) {
-        if(keyListQueue.isEmpty()) { // 큐가 비었다면(해시맵이 완성되었다면)
-            Const.diaryList = yearDiaryList;
-            return;
-        }
-
-        readMonthDiaryList(context, year, keyListQueue.poll()); // 큐에서 키값 하나씩 빼서 사용한다.
-    }
+//    private static void requestMonthList(final Context context, final String year, onCompleteCallback callback) {
+//        if(keyListQueue.isEmpty()) { // 큐가 비었다면(해시맵이 완성되었다면)
+//            Const.diaryList = yearDiaryList;
+//            callback.onComplete(true);
+//            return;
+//        }
+//
+//        readMonthDiaryList(context, year, keyListQueue.poll()); // 큐에서 키값 하나씩 빼서 사용한다.
+//    }
 
     public static void readMonthDiaryList(Context context, String year, String month) {
         Query query = getReference().child(Utility.getAndroidId(context)).child("diary").child(year).child(month);
@@ -101,10 +111,11 @@ public class DatabaseUtility {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Diary diary = dataSnapshot.getValue(Diary.class); // 하루 일기를 객체로 생성한다.
+                    diary.setDay(dataSnapshot.getKey());
                     dList.add(diary);
                 }
                 yearDiaryList.put(month, dList); // 해당 월을 key로, 일기 리스트를 value로 저장한다.
-                requestMonthList(context, year); // 다음 월의 일기를 저장하기 위해 호출한다.
+//                requestMonthList(context, year); // 다음 월의 일기를 저장하기 위해 호출한다.
             }
 
             @Override

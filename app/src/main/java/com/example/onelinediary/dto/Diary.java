@@ -11,6 +11,7 @@ public class Diary {
     private String photo = ""; // String -> uri => setImageUri
     private String contents = "";
     private int mood;
+    private String day;
 
     public Diary() { }
 
@@ -51,5 +52,13 @@ public class Diary {
 
     public void setMood(int mood) {
         this.mood = mood;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
     }
 }
