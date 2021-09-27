@@ -33,6 +33,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnelineDiary">
         <activity
+            android:name=".activity.DiaryDetailActivity"
+            android:exported="true" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
