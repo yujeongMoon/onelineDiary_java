@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -109,6 +110,10 @@ public class DatabaseUtility {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // 수정하거나 추가할때마다 읽어오는데 리스트에 쌓여서 배로 개수가 늘어난다.
+                // 그래서 리스트 초기화가 필요하다.
+                dList.clear();
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Diary diary = dataSnapshot.getValue(Diary.class); // 하루 일기를 객체로 생성한다.
                     diary.setDay(dataSnapshot.getKey());
@@ -123,5 +128,14 @@ public class DatabaseUtility {
 
             }
         });
+    }
+
+    public static void updateDiary(Context context, String year, String month, String day, Diary diary, onCompleteCallback onComplete) {
+        Map<String, Object> diaryUpdate = new HashMap<>();
+        diaryUpdate.put("/" + Utility.getAndroidId(context) + "/diary/" + year + "/" + month + "/" + day, diary.toMap());
+
+        getReference().updateChildren(diaryUpdate)
+                .addOnSuccessListener(unused -> onComplete.onComplete(true))
+                .addOnFailureListener(e -> onComplete.onComplete(false));
     }
 }
