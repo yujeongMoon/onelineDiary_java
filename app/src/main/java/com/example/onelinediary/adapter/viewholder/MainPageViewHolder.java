@@ -25,8 +25,8 @@ public class MainPageViewHolder extends RecyclerView.ViewHolder {
         binding.year.setText(Const.currentYear);
         binding.month.setText(month + "월");
 
-        MoodAdapter adapter = new MoodAdapter();
-        adapter.addDiaryList(diaryList);
+        MoodAdapter adapter = new MoodAdapter(binding.getRoot().getContext());
+        adapter.addDiaryList(month, diaryList);
         binding.moodLayout.setAdapter(adapter);
     }
 }

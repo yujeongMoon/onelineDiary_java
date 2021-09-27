@@ -6,16 +6,14 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.widget.ProgressBar;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.MainPagerAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityMainBinding;
@@ -65,22 +63,40 @@ public class MainActivity extends FragmentActivity {
                 progressDialog.dismiss();
             }
 
-            // TODO pageAdapter setting
-            pagerAdapter = new MainPagerAdapter();
-            mainBinding.pager.setAdapter(pagerAdapter);
+            if (pagerAdapter == null) {
+                pagerAdapter = new MainPagerAdapter();
+                mainBinding.pager.setAdapter(pagerAdapter);
+                // 현재 달의 페이지를 보여준다.
+                // 데이터가 순서대로 들어가기 때문에 diaryList의 마지막이 현재 달!
+                if (!Const.monthKeyList.isEmpty()) {
+                    // onResume() 다음에 setCurrentItem()이 동작하지 않는다는 오류가 있다.
+                    // 그걸 해결하기 위해 post()를 사용해서 현재 아이템의 위치를 설정해준다.
+                    // smoothScroll = false : 애니메이션 없음
+                    mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
+                }
+            }
 
             loading = false;
         });
 
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
+        mainBinding.btnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "서비스 준비중입니다.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onResume() {
         super.onResume();
-
-//        pagerAdapter.notifyDataSetChanged();
+        if (pagerAdapter != null) {
+            pagerAdapter.notifyDataSetChanged();
+            // 시간차를 주면서 페이저의 포지션 바꾸기
+            mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
+        }
     }
 
     //    @Override
@@ -98,9 +114,11 @@ public class MainActivity extends FragmentActivity {
 //    }
 
     public void addNewDiary() {
-        startActivity(new Intent(this, NewDiaryActivity.class));
+        Intent newDiaryIntent = new Intent(this, NewDiaryActivity.class);
+        newDiaryIntent.putExtra("type", "new");
+        startActivity(newDiaryIntent);
 
-        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+//        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
     }
 
     private void checkPermission(String[] permissions, int permissionRequest) {

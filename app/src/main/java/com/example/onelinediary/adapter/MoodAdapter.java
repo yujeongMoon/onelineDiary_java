@@ -1,25 +1,34 @@
 package com.example.onelinediary.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.textclassifier.ConversationAction;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.onelinediary.R;
+import com.example.onelinediary.activity.DiaryDetailActivity;
 import com.example.onelinediary.dto.Diary;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class MoodAdapter extends BaseAdapter {
+    private Context context;
+    String month;
     ArrayList<Diary> diaryList = new ArrayList<>();
 
-    public void addDiaryList(ArrayList<Diary> diaryList) {
+    public MoodAdapter() {}
+
+    public MoodAdapter(Context context) {
+        this.context = context;
+    }
+
+    public void addDiaryList(String month, ArrayList<Diary> diaryList) {
+        this.month = month;
         this.diaryList = diaryList;
     }
 
@@ -38,6 +47,7 @@ public class MoodAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int mood = diaryList.get(position).getMood();
@@ -73,11 +83,13 @@ public class MoodAdapter extends BaseAdapter {
             view = (View) convertView;
         }
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
+        convertView.setOnClickListener(v -> {
+            Intent detailIntent = new Intent(context, DiaryDetailActivity.class);
+//            detailIntent.putExtra("type", "detail");
+            detailIntent.putExtra("month", month);
+            detailIntent.putExtra("day", diaryList.get(position).getDay());
+            detailIntent.putExtra("diary", diaryList.get(position));
+            context.startActivity(detailIntent);
         });
 
         return convertView;

@@ -15,13 +15,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.onelinediary.R;
+import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityNewDiaryBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,26 +30,14 @@ import java.util.Date;
 public class NewDiaryActivity extends AppCompatActivity{
     private ActivityNewDiaryBinding newDiaryBinding;
 
-    // 기분 정의
-    public enum Mood {
-        NONE(0), HAPPY(1), SMILE(2), BLANK(3), SAD(4), NERVOUS(5);
-
-        private final int value;
-        Mood(int value) { this.value = value; }
-        public int getValue() { return value; }
-    }
-
     private final int PICKER_IMAGE_REQUEST = 100;
 
-    private int currentMood = Mood.NONE.value;
+    private int currentMood = Const.Mood.NONE.value;
 
     String currentPhotoPath;
     Uri photoUri;
 
     Diary diary = new Diary();
-
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference reference = database.getReference(); // default
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,60 +59,60 @@ public class NewDiaryActivity extends AppCompatActivity{
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.emoji_happy_layout) {
-                if (currentMood != Mood.HAPPY.value) {
+                if (currentMood != Const.Mood.HAPPY.value) {
                     resetSelectedState();
                 }
 
                 if (newDiaryBinding.emojiHappyCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiHappyCheck.setVisibility(View.VISIBLE);
-                    currentMood = Mood.HAPPY.value;
+                    currentMood = Const.Mood.HAPPY.value;
                 } else {
                     newDiaryBinding.emojiHappyCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Mood.NONE.value;
+                    currentMood = Const.Mood.NONE.value;
                 }
             } if (v.getId() == R.id.emoji_smile_layout) {
-                if (currentMood != Mood.SMILE.value) {
+                if (currentMood != Const.Mood.SMILE.value) {
                     resetSelectedState();
                 }
                 if (newDiaryBinding.emojiSmileCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiSmileCheck.setVisibility(View.VISIBLE);
-                    currentMood = Mood.SMILE.value;
+                    currentMood = Const.Mood.SMILE.value;
                 } else {
                     newDiaryBinding.emojiSmileCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Mood.NONE.value;
+                    currentMood = Const.Mood.NONE.value;
                 }
             } if (v.getId() == R.id.emoji_blank_layout) {
-                if (currentMood != Mood.BLANK.value) {
+                if (currentMood != Const.Mood.BLANK.value) {
                     resetSelectedState();
                 }
                 if (newDiaryBinding.emojiBlankCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiBlankCheck.setVisibility(View.VISIBLE);
-                    currentMood = Mood.BLANK.value;
+                    currentMood = Const.Mood.BLANK.value;
                 } else {
                     newDiaryBinding.emojiBlankCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Mood.NONE.value;
+                    currentMood = Const.Mood.NONE.value;
                 }
             } if (v.getId() == R.id.emoji_sad_layout) {
-                if (currentMood != Mood.SAD.value) {
+                if (currentMood != Const.Mood.SAD.value) {
                     resetSelectedState();
                 }
                 if (newDiaryBinding.emojiSadCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiSadCheck.setVisibility(View.VISIBLE);
-                    currentMood = Mood.SAD.value;
+                    currentMood = Const.Mood.SAD.value;
                 } else {
                     newDiaryBinding.emojiSadCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Mood.NONE.value;
+                    currentMood = Const.Mood.NONE.value;
                 }
             } if (v.getId() == R.id.emoji_nervous_layout) {
-                if (currentMood != Mood.NERVOUS.value) {
+                if (currentMood != Const.Mood.NERVOUS.value) {
                     resetSelectedState();
                 }
                 if (newDiaryBinding.emojiNervousCheck.getVisibility() == View.INVISIBLE) {
                     newDiaryBinding.emojiNervousCheck.setVisibility(View.VISIBLE);
-                    currentMood = Mood.NERVOUS.value;
+                    currentMood = Const.Mood.NERVOUS.value;
                 } else {
                     newDiaryBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Mood.NONE.value;
+                    currentMood = Const.Mood.NONE.value;
                 }
             }
 
@@ -140,7 +127,7 @@ public class NewDiaryActivity extends AppCompatActivity{
         newDiaryBinding.emojiSadCheck.setVisibility(View.INVISIBLE);
         newDiaryBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
 
-        currentMood = Mood.NONE.value;
+        currentMood = Const.Mood.NONE.value;
         diary.setMood(currentMood);
     }
 
@@ -148,7 +135,7 @@ public class NewDiaryActivity extends AppCompatActivity{
     public void onBackPressed() {
         super.onBackPressed();
 
-        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
+//        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
         finish();
     }
 
@@ -324,14 +311,14 @@ public class NewDiaryActivity extends AppCompatActivity{
     @SuppressLint("SimpleDateFormat")
     public void saveNewDiary(View view) {
         // 일기 작성한 시간 저장
-        diary.setReportingDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        diary.setReportingDate(new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date()));
 
         // 작성한 일기 컨텐츠 저장
         String contents = newDiaryBinding.diaryContents.getText().toString();
         diary.setContents(contents);
 
         // 오늘의 기분 선택
-        if (currentMood == Mood.NONE.value) {
+        if (currentMood == Const.Mood.NONE.value) {
             new ConfirmDialog("오늘의 기분을 입력해주세요!", null).show(getSupportFragmentManager(), "mood");
         } else {
             DatabaseUtility.writeNewDiary(this, diary, isSuccess -> {

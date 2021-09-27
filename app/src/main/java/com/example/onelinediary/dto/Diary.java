@@ -1,12 +1,16 @@
 package com.example.onelinediary.dto;
 
-import java.util.Date;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Firebase database에 저장될 필드들
  * <중요>데이터 베이스에 Uri를 저장하려고 하면 에러가 난다.</중요>
  */
-public class Diary {
+public class Diary implements Parcelable {
     private String reportingDate;
     private String photo = ""; // String -> uri => setImageUri
     private String contents = "";
@@ -21,6 +25,40 @@ public class Diary {
         this.contents = contents;
         this.mood = mood;
     }
+
+    protected Diary(Parcel in) {
+        reportingDate = in.readString();
+        photo = in.readString();
+        contents = in.readString();
+        mood = in.readInt();
+        day = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(reportingDate);
+        dest.writeString(photo);
+        dest.writeString(contents);
+        dest.writeInt(mood);
+        dest.writeString(day);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Diary> CREATOR = new Creator<Diary>() {
+        @Override
+        public Diary createFromParcel(Parcel in) {
+            return new Diary(in);
+        }
+
+        @Override
+        public Diary[] newArray(int size) {
+            return new Diary[size];
+        }
+    };
 
     public String getReportingDate() {
         return reportingDate;
@@ -61,4 +99,15 @@ public class Diary {
     public void setDay(String day) {
         this.day = day;
     }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("contents", contents);
+        result.put("photo", photo);
+        result.put("mood", mood);
+        result.put("reportingDate", reportingDate);
+
+        return result;
+    }
+
 }

@@ -88,6 +88,10 @@ public class DoubleCancelImageView extends ImageView {
         preTime = 0;
     }
 
+    public void isClickEnabled(boolean isEnabled) {
+        this.setClickable(isEnabled);
+    }
+
     // gestureDetecter를 사용하여 더블 탭을 막는 기능을 추가하였는데 연속으로 다른 부분을 클릭할 경우 효과가 없다.
     // 클릭간의 간격을 기준으로 변경하여 팝업을 띄운다.
     /*class SimpleGesture extends GestureDetector.SimpleOnGestureListener {
