@@ -2,9 +2,12 @@ package com.example.onelinediary.utiliy;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -12,7 +15,9 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -171,5 +176,20 @@ public class Utility {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
         return "JPEG_" + timeStamp + "_";
+    }
+
+    /**
+     * uri를 bitmap image로 바꿔준다.
+     * @param cr ContentResolver // TODO 정리 필요
+     * @param uri 사진의 경로
+     * @return 비트맵 이미지
+     * @throws FileNotFoundException => openInputStream()
+     * @throws IOException => close()
+     */
+    public static Bitmap getBitmap(ContentResolver cr, Uri uri) throws FileNotFoundException, IOException {
+        InputStream input = cr.openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(input);
+        input.close();
+        return bitmap;
     }
 }

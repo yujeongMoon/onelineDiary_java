@@ -184,6 +184,8 @@ public class NewDiaryActivity extends AppCompatActivity{
                          사용자에게 회전을 할 수 있는 기능을 주거나 회전 방향이 일정한 경우, 개발자가 수정해줌.
                      */
                     try {
+                        // 주어진 uri를 bitmap image로 만들어준다
+                        // api 29에서 deprecated될 예정
                         imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -194,7 +196,6 @@ public class NewDiaryActivity extends AppCompatActivity{
                         diary.setPhoto(photoUri.toString());
                     } else {
                         newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
-                        //TODO 빈문자열이면 디폴트 이미지를 보여주거나 이미지 항목을 gone 처리함.
                         diary.setPhoto("");
                     }
                 }

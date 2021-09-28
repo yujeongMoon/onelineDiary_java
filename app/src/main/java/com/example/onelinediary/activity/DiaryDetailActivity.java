@@ -1,10 +1,12 @@
 package com.example.onelinediary.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.onelinediary.R;
@@ -15,8 +17,12 @@ import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
 
+import java.io.IOException;
+
 public class DiaryDetailActivity extends AppCompatActivity {
     private ActivityDiaryDetailBinding detailBinding;
+
+    private final int UPDATE_PICKER_IMAGE_REQUEST = 200;
 
     String month;
     String day;
@@ -25,6 +31,8 @@ public class DiaryDetailActivity extends AppCompatActivity {
     boolean isEnabled = false;
     
     int currentMood = Const.Mood.NONE.value;
+
+    Uri photoUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +75,15 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 detailBinding.detailButtonLayout.setVisibility(View.VISIBLE);
 
                 detailBinding.detailPhoto.isClickEnabled(true);
+
+                detailBinding.emojiHappyLayout.setOnClickListener(onClickListener);
+                detailBinding.emojiSmileLayout.setOnClickListener(onClickListener);
+                detailBinding.emojiBlankLayout.setOnClickListener(onClickListener);
+                detailBinding.emojiSadLayout.setOnClickListener(onClickListener);
+                detailBinding.emojiNervousLayout.setOnClickListener(onClickListener);
+
+                // TODO 사진 변경하는 기능 추가하기
+                detailBinding.detailPhoto.setOnClickListener(v -> photoUri = Utility.selectPhoto(DiaryDetailActivity.this, UPDATE_PICKER_IMAGE_REQUEST));
             } else {
                 setCurrentMood(diary.getMood());
                 detailBinding.detailEmoji.setVisibility(View.VISIBLE);
@@ -81,17 +98,46 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 detailBinding.detailPhoto.isClickEnabled(false);
             }
         });
+    }
 
-        detailBinding.emojiHappyLayout.setOnClickListener(onClickListener);
-        detailBinding.emojiSmileLayout.setOnClickListener(onClickListener);
-        detailBinding.emojiBlankLayout.setOnClickListener(onClickListener);
-        detailBinding.emojiSadLayout.setOnClickListener(onClickListener);
-        detailBinding.emojiNervousLayout.setOnClickListener(onClickListener);
+    // newDiaryActivity와 같은 기능
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        // TODO 사진 변경하는 기능 추가하기
-        detailBinding.detailPhoto.setOnClickListener(v -> {
+        detailBinding.detailPhoto.initPreTime();
 
-        });
+        if (requestCode == UPDATE_PICKER_IMAGE_REQUEST) {
+            if (data != null && data.getData() != null) { // 갤러리를 선택한 경우
+                Uri selectedImageUri = data.getData();
+
+                detailBinding.detailPhoto.setImageURI(selectedImageUri);
+
+                if (photoUri != null) {
+                    getContentResolver().delete(photoUri, null, null);
+                }
+
+                diary.setPhoto(selectedImageUri.toString());
+            } else { // 카메라를 선택한 경우
+                if (photoUri != null) {
+                    Bitmap imageBitmap = null;
+
+                    try {
+                        imageBitmap = Utility.getBitmap(this.getContentResolver(), photoUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (imageBitmap != null) {
+                        detailBinding.detailPhoto.setImageBitmap(imageBitmap);
+                        diary.setPhoto(photoUri.toString());
+                    } else {
+                        detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+                        diary.setPhoto("");
+                    }
+                }
+            }
+        }
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
