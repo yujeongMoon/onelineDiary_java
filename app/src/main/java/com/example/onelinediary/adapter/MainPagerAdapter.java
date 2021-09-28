@@ -29,17 +29,18 @@ public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
         return new MainPageViewHolder(binding);
     }
 
-    // TODO 포지션은 int 값으로 반환, 필요한 값은 String key 값
     // 달마다 해당하는 arrayList를 넘겨줘야함.
     @Override
     public void onBindViewHolder(@NonNull MainPageViewHolder holder, int position) {
         String month = Const.monthKeyList.get(position);
         ArrayList<Diary> diaryListByMonth = Const.diaryList.get(month);
-        holder.onBind(month, diaryListByMonth);
+        if (diaryListByMonth != null && !diaryListByMonth.isEmpty()) {
+            holder.onBind(month, diaryListByMonth);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return Const.diaryList.size();
+        return Const.monthKeyList.size();
     }
 }

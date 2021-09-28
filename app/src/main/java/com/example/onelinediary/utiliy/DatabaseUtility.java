@@ -64,6 +64,8 @@ public class DatabaseUtility {
      * 달마다 일기를 가져와야하는데 다 가져와서 저장하기 전에 초기화 되는 것을 막기위헤 강제적으로 동기화를 시켜준다(큐 사용)
      * 키를 저장해둔 큐를 사용하여 해당 달의 일기를 불러온다.(requestMonthList 호출)
      *
+     * 실패할 경우, 에러처리 필요
+     *
      * @param context 컨택스트
      * @param year 원하는 연도
      */
@@ -75,6 +77,9 @@ public class DatabaseUtility {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // 데이터가 누적되기 때문에 초기화 시켜준다.
+                Const.monthKeyList.clear();
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     keyListQueue.offer(dataSnapshot.getKey()); // 큐에 key(월)을 넣어 저장한다.
                     Const.monthKeyList.add(dataSnapshot.getKey());
@@ -103,6 +108,16 @@ public class DatabaseUtility {
 //        readMonthDiaryList(context, year, keyListQueue.poll()); // 큐에서 키값 하나씩 빼서 사용한다.
 //    }
 
+    /**
+     * readYearDiaryList() 안에서 반복적으로 호출되어 달마다 일기를 저장해주는 메소드
+     * 연도와 달이 키 값으로 넘어오면 그 달에 있는 일기들을 불러와서 리스트에 저장해준다.
+     *
+     * 실패할 경우, 에러처리 필요
+     *
+     * @param context 컨텍스트
+     * @param year 연도
+     * @param month 월
+     */
     public static void readMonthDiaryList(Context context, String year, String month) {
         Query query = getReference().child(Utility.getAndroidId(context)).child("diary").child(year).child(month);
 
@@ -130,11 +145,36 @@ public class DatabaseUtility {
         });
     }
 
+    /**
+     * 이미 작성한 일기를 수정할 때 호출되는 메소드
+     * 연도, 월, 일을 넘겨주면 해당 날짜의 일기를 변경해준다.
+     * updateChildren()은 firebase에서 제공하는 메소드로 일기를 한번에 수정할 때 유용하다.
+     * setValue를 통해서도 수정이 가능하다. (같은 키값으로 새로운 값을 넣으면 덮어쓰기가 된다.)
+     *
+     * @param context 컨텍스트
+     * @param year 연도
+     * @param month 월
+     * @param day 일
+     * @param diary 수정된 일기 내용
+     * @param onComplete 콜백 메소드
+     */
     public static void updateDiary(Context context, String year, String month, String day, Diary diary, onCompleteCallback onComplete) {
         Map<String, Object> diaryUpdate = new HashMap<>();
         diaryUpdate.put("/" + Utility.getAndroidId(context) + "/diary/" + year + "/" + month + "/" + day, diary.toMap());
 
         getReference().updateChildren(diaryUpdate)
+                .addOnSuccessListener(unused -> onComplete.onComplete(true))
+                .addOnFailureListener(e -> onComplete.onComplete(false));
+    }
+
+    public static void deleteDiary(Context context, String year, String month, String day, onCompleteCallback onComplete) {
+        getReference()
+                .child(Utility.getAndroidId(context))
+                .child("diary")
+                .child(year)
+                .child(month)
+                .child(day)
+                .removeValue()
                 .addOnSuccessListener(unused -> onComplete.onComplete(true))
                 .addOnFailureListener(e -> onComplete.onComplete(false));
     }

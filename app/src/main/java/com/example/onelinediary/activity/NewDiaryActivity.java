@@ -225,7 +225,11 @@ public class NewDiaryActivity extends AppCompatActivity{
         } else {
             DatabaseUtility.writeNewDiary(this, diary, isSuccess -> {
                 if (isSuccess) {
-                    new ConfirmDialog("일기가 저장되었습니다.", v -> finish()).show(getSupportFragmentManager(), "newDiarySuccess");
+                    new ConfirmDialog("일기가 저장되었습니다.",
+                            v -> {
+                                Const.addNewDiary = true;
+                                NewDiaryActivity.this.finish();
+                            }).show(getSupportFragmentManager(), "newDiarySuccess");
                 } else {
                     new ConfirmDialog("일기를 저장하는데 문제가 발생하였습니다. 다시 시도해주세요!", null).show(getSupportFragmentManager(), "newDiaryFailure");
                 }

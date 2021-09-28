@@ -23,4 +23,6 @@ public class Const {
     public static HashMap<String, ArrayList<Diary>> diaryList;
 
     public static String currentYear = Utility.getYear();
+
+    public static boolean addNewDiary = false;
 }

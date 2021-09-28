@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -80,22 +79,28 @@ public class MainActivity extends FragmentActivity {
         });
 
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
-        mainBinding.btnSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "서비스 준비중입니다.", Toast.LENGTH_LONG).show();
-            }
-        });
+        mainBinding.btnSetting.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "서비스 준비중입니다.", Toast.LENGTH_LONG).show());
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onResume() {
         super.onResume();
+
+        // 일기가 삭제되었거나 화면 이동 후 어뎁터에게 알린다.
+        notifyToPager();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void notifyToPager() {
         if (pagerAdapter != null) {
             pagerAdapter.notifyDataSetChanged();
-            // 시간차를 주면서 페이저의 포지션 바꾸기
-            mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
+
+            // 새로 일기를 쓴 경우에는 어느 페이지에 있어도 현재 날짜가 포함된 제일 마지막 페이지로 이동하게 한다.
+            if (Const.addNewDiary) {
+                Const.addNewDiary = false;
+                // 시간차를 주면서 페이저의 포지션 바꾸기
+                mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
+            }
         }
     }
 

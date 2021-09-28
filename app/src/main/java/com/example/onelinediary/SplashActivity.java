@@ -8,15 +8,18 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.example.onelinediary.activity.MainActivity;
+import com.example.onelinediary.databinding.ActivitySplashBinding;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
 
 public class SplashActivity extends AppCompatActivity {
+    private ActivitySplashBinding splashBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+        splashBinding = ActivitySplashBinding.inflate(getLayoutInflater());
+        setContentView(splashBinding.getRoot());
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             Intent mainIntent = new Intent(this, MainActivity.class);
