@@ -1,13 +1,10 @@
 package com.example.onelinediary.activity;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.View;
 
@@ -22,7 +19,6 @@ import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,6 +49,8 @@ public class NewDiaryActivity extends AppCompatActivity{
         newDiaryBinding.emojiBlankLayout.setOnClickListener(onClickListener);
         newDiaryBinding.emojiSadLayout.setOnClickListener(onClickListener);
         newDiaryBinding.emojiNervousLayout.setOnClickListener(onClickListener);
+
+        newDiaryBinding.photo.setOnClickListener(v -> photoUri = Utility.selectPhoto(NewDiaryActivity.this, PICKER_IMAGE_REQUEST));
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -139,67 +137,6 @@ public class NewDiaryActivity extends AppCompatActivity{
         finish();
     }
 
-    /**
-     * 이미지 뷰를 클릭했을 때, 카메라와 갤러리 선택 팝업이 띄워준다.
-     * TODO 이미지 뷰 더블 클릭을 막아야 함.
-     * @param view 클릭한 버튼
-     */
-    @SuppressLint("QueryPermissionsNeeded")
-    public void selectPhoto(View view) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        // 외부 저장소에 이미지 저장하는 방법
-        // takePictureIntent.resolveActivity(getPackageManager()) != null
-        // 위의 조건문은 기기에 카메라 앱이 존재하는지 확인한다.
-        // 앱이 존재하지 않는 상태에서 startActivityForResult()를 호출하면 프로그램이 종료되기 때문에
-        // 이를 방지하기위해 체크한다.
-//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-//            File photoFile = null;
-//            try {
-//                photoFile = createImageFile();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            String packageName = getApplicationContext().getPackageName();
-//            if (photoFile != null) {
-//                photoUri = FileProvider.getUriForFile(
-//                        this,
-//                        packageName + ".fileprovider",
-//                        photoFile
-//                );
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-//            }
-//        }
-
-        // 공유 저장소(SDCard)에 이미지 저장하는 방법
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.MediaColumns.DISPLAY_NAME, newImageFileName());
-        values.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            values.put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/onelineDiary");
-//        }
-
-        photoUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-
-        Intent pickIntent = new Intent(Intent.ACTION_PICK);
-        pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media.CONTENT_TYPE);
-
-        String pickTitle = "사진 가져올 방법을 선택하세요.";
-        Intent chooseIntent = Intent.createChooser(pickIntent, pickTitle);
-        chooseIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[]{takePictureIntent});
-
-        // TODO startActivityForResult() deprecated 대체 메소드로 수정 필요.
-        startActivityForResult(chooseIntent, PICKER_IMAGE_REQUEST);
-//        registerForActivityResult(ActivityResultContract, new ActivityResultCallback<Object>() {
-//            @Override
-//            public void onActivityResult(Object result) {
-//
-//            }
-//        });
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -263,42 +200,6 @@ public class NewDiaryActivity extends AppCompatActivity{
                 }
             }
         }
-    }
-
-    /**
-     * 새로운 이미지 파일을 생성해주는 메소드
-     * @return 외부 저장소의 경로로 연결된 이미지 파일(이름은 그 날의 날짜와 시간으로 구성)
-     * @throws IOException
-     */
-    private File createImageFile() throws IOException {
-        // 외부 저장소의 pictures 폴더 아래의 image 폴더에 이미지를 저장
-        File storageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "image");
-        if (!storageDir.exists()) {
-            // mkdir() : 한 번에 하나의 디렉토리 생성
-            // mkdirs() : 한 번에 여러 디렉토리 생성
-            storageDir.mkdir();
-        }
-
-        File image = File.createTempFile(
-                newImageFileName(), // prefix
-                ".jpg", // suffix
-                storageDir // directory
-        );
-
-        // 파일 저장
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
-    /**
-     * 새로 생성되는 이미지 파일의 이름을 그 날의 날짜와 시간으로 만들어 반환하는 메소드
-     * @return 현재 날짜와 시간으로 만들어진 이미지 파일의 이름
-     */
-    private String newImageFileName() {
-        @SuppressLint("SimpleDateFormat")
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        return "JPEG_" + timeStamp + "_";
     }
 
     /**

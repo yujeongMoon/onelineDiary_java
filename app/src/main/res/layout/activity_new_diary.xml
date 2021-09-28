@@ -53,8 +53,7 @@
                 android:layout_marginEnd="20dp"
                 android:src="@drawable/default_placeholder_image"
                 android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:onClick="selectPhoto"/>
+                android:adjustViewBounds="true"/>
 <!--                app:layout_constraintDimensionRatio="H, 16:9"-->
 
             <EditText
