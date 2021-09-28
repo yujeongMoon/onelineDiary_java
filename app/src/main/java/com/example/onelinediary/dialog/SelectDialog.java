@@ -15,13 +15,13 @@ import androidx.fragment.app.DialogFragment;
 import com.example.onelinediary.R;
 import com.example.onelinediary.utiliy.Utility;
 
-public class ConfirmDialog extends DialogFragment {
+public class SelectDialog extends DialogFragment {
     String message;
-    View.OnClickListener listener = null;
+    View.OnClickListener listener;
 
-    public ConfirmDialog() {}
+    public SelectDialog() {}
 
-    public ConfirmDialog(String message, View.OnClickListener listener) {
+    public SelectDialog(String message, View.OnClickListener listener) {
         this.message = message;
         this.listener = listener;
     }
@@ -50,19 +50,21 @@ public class ConfirmDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_confirm, null);
+        View view = inflater.inflate(R.layout.dialog_select, null);
 
         TextView message = view.findViewById(R.id.confirm_message);
         message.setText(this.message);
 
-        View ok = view.findViewById(R.id.ok_layout);
+        View ok = view.findViewById(R.id.ok);
+        View cancel = view.findViewById(R.id.cancel);
 
         ok.setOnClickListener(v -> {
-            if (listener != null) {
+            if (listener != null)
                 listener.onClick(ok);
-            }
             dismiss();
         });
+
+        cancel.setOnClickListener(v -> dismiss());
 
         builder.setView(view);
 
