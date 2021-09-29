@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.MainPagerAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityMainBinding;
@@ -26,10 +27,12 @@ public class MainActivity extends FragmentActivity {
 
     boolean loading = false;
 
+    @SuppressLint("InlinedApi")
     private final String[] permissions = {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_MEDIA_LOCATION
     };
 
     private final int PERMISSION_REQUEST = 100;
@@ -53,7 +56,7 @@ public class MainActivity extends FragmentActivity {
 
         if (loading) {
             progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("잠시만 기다려주세요!");
+            progressDialog.setMessage(getString(R.string.message_progress_dialog));
             progressDialog.show();
         }
 
@@ -120,7 +123,6 @@ public class MainActivity extends FragmentActivity {
 
     public void addNewDiary() {
         Intent newDiaryIntent = new Intent(this, NewDiaryActivity.class);
-        newDiaryIntent.putExtra("type", "new");
         startActivity(newDiaryIntent);
 
 //        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
@@ -147,7 +149,7 @@ public class MainActivity extends FragmentActivity {
 
         for (int result : grantResults) {
             if (result != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getApplicationContext(), "권한 승인 부탁드립니다.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.message_permission_check), Toast.LENGTH_LONG).show();
                 finish();
             }
         }

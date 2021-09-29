@@ -23,34 +23,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="2021년 9월 10일"
-                android:textSize="15sp"
+                android:textSize="@dimen/diary_date_text"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="20dp"/>
+                android:layout_marginTop="@dimen/diary_margin_top"
+                android:layout_marginStart="@dimen/diary_margin_start"/>
 
             <TextView
                 android:id="@+id/current_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="강남대로 327"
+                android:layout_width="60dp"
+                android:layout_height="15dp"
+                android:layout_marginTop="@dimen/diary_margin_top"
+                android:layout_marginEnd="@dimen/diary_margin_end"
+                android:ellipsize="end"
                 android:textSize="15sp"
-                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="20dp"
-                android:visibility="invisible"/>
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="강남대로 327" />
 
             <com.example.onelinediary.custom.DoubleCancelImageView
                 android:id="@+id/photo"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="@dimen/diary_photo_height"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/today_date"
                 android:layout_marginTop="30dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginStart="@dimen/diary_margin_start"
+                android:layout_marginEnd="@dimen/diary_margin_end"
                 android:src="@drawable/default_placeholder_image"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"/>
@@ -64,10 +65,10 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginTop="30dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginStart="@dimen/diary_margin_start"
+                android:layout_marginEnd="@dimen/diary_margin_end"
                 android:inputType="text|textMultiLine"
-                android:textSize="15sp"
+                android:textSize="@dimen/diary_contents_text"
                 android:hint="@string/new_diary_contents_hint"
                 android:importantForAutofill="no" />
 
@@ -80,8 +81,8 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/diary_contents"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginStart="@dimen/diary_margin_start"
+                android:layout_marginEnd="@dimen/diary_margin_end"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="30dp">
 
@@ -96,16 +97,16 @@
 
                     <ImageView
                         android:id="@+id/emoji_happy_check"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_width="@dimen/diary_select_check_width"
+                        android:layout_height="@dimen/diary_select_check_height"
+                        android:layout_marginBottom="@dimen/diary_select_interval"
                         android:src="@drawable/check_icon"
                         android:visibility="invisible"/>
 
                     <ImageView
                         android:id="@+id/emoji_happy"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/diary_select_emoji_width"
+                        android:layout_height="@dimen/diary_select_emoji_height"
                         android:src="@drawable/emoji_happy_icon"/>
 
                 </LinearLayout>
@@ -121,16 +122,16 @@
 
                     <ImageView
                         android:id="@+id/emoji_smile_check"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_width="@dimen/diary_select_check_width"
+                        android:layout_height="@dimen/diary_select_check_height"
+                        android:layout_marginBottom="@dimen/diary_select_interval"
                         android:src="@drawable/check_icon"
                         android:visibility="invisible"/>
 
                     <ImageView
                         android:id="@+id/emoji_smile"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/diary_select_emoji_width"
+                        android:layout_height="@dimen/diary_select_emoji_height"
                         android:src="@drawable/emoji_blushing_icon"/>
 
                 </LinearLayout>
@@ -146,16 +147,16 @@
 
                     <ImageView
                         android:id="@+id/emoji_blank_check"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_width="@dimen/diary_select_check_width"
+                        android:layout_height="@dimen/diary_select_check_height"
+                        android:layout_marginBottom="@dimen/diary_select_interval"
                         android:src="@drawable/check_icon"
                         android:visibility="invisible"/>
 
                     <ImageView
                         android:id="@+id/emoji_blank"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/diary_select_emoji_width"
+                        android:layout_height="@dimen/diary_select_emoji_height"
                         android:src="@drawable/emoji_blank_icon"/>
 
                 </LinearLayout>
@@ -171,16 +172,16 @@
 
                     <ImageView
                         android:id="@+id/emoji_sad_check"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_width="@dimen/diary_select_check_width"
+                        android:layout_height="@dimen/diary_select_check_height"
+                        android:layout_marginBottom="@dimen/diary_select_interval"
                         android:src="@drawable/check_icon"
                         android:visibility="invisible"/>
 
                     <ImageView
                         android:id="@+id/emoji_sad"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/diary_select_emoji_width"
+                        android:layout_height="@dimen/diary_select_emoji_height"
                         android:src="@drawable/emoji_consoling_icon"/>
 
                 </LinearLayout>
@@ -196,16 +197,16 @@
 
                     <ImageView
                         android:id="@+id/emoji_nervous_check"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_width="@dimen/diary_select_check_width"
+                        android:layout_height="@dimen/diary_select_check_height"
+                        android:layout_marginBottom="@dimen/diary_select_interval"
                         android:src="@drawable/check_icon"
                         android:visibility="invisible"/>
 
                     <ImageView
                         android:id="@+id/emoji_nervous"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/diary_select_emoji_width"
+                        android:layout_height="@dimen/diary_select_emoji_height"
                         android:src="@drawable/emoji_nervous_icon"/>
 
                 </LinearLayout>
@@ -230,11 +231,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/save"
-            android:textSize="15sp"
+            android:textSize="@dimen/button_text"
             android:textStyle="bold"
             android:gravity="center"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
+            android:paddingTop="@dimen/button_padding"
+            android:paddingBottom="@dimen/button_padding"
             android:background="@color/purple_200"/>
 
     </LinearLayout>

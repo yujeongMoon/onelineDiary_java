@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -19,7 +18,6 @@ import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -42,7 +40,7 @@ public class NewDiaryActivity extends AppCompatActivity{
         newDiaryBinding = ActivityNewDiaryBinding.inflate(getLayoutInflater());
         setContentView(newDiaryBinding.getRoot());
 
-        newDiaryBinding.todayDate.setText(Utility.getDate("yyyy년 MM월 dd일"));
+        newDiaryBinding.todayDate.setText(Utility.getDate(Const.REPORTING_DATE_FORMAT));
 
         newDiaryBinding.emojiHappyLayout.setOnClickListener(onClickListener);
         newDiaryBinding.emojiSmileLayout.setOnClickListener(onClickListener);
@@ -173,27 +171,19 @@ public class NewDiaryActivity extends AppCompatActivity{
                     getContentResolver().delete(photoUri, null, null);
                 }
 
-                diary.setPhoto(selectedImageUri.toString());
+                String path = Utility.getRealPathFromURI(this, selectedImageUri);
+                diary.setPhoto(path);
             } else { // 카메라를 선택했을 경우
                 if (photoUri != null) {
                     // uri로부터 Bitmap 이미지를 생성
                     Bitmap imageBitmap = null;
-                    /*
-                        TODO
-                         사진을 찍고 돌아왔을 때 이미지가 회전되어있는 이슈 수정 필요
-                         사용자에게 회전을 할 수 있는 기능을 주거나 회전 방향이 일정한 경우, 개발자가 수정해줌.
-                     */
-                    try {
-                        // 주어진 uri를 bitmap image로 만들어준다
-                        // api 29에서 deprecated될 예정
-                        imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
+                    String path = Utility.getRealPathFromURI(this, photoUri);
+                    imageBitmap = Utility.getRotatedBitmap(path);
 
                     if (imageBitmap != null) {
                         newDiaryBinding.photo.setImageBitmap(imageBitmap);
-                        diary.setPhoto(photoUri.toString());
+                        diary.setPhoto(path);
                     } else {
                         newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
                         diary.setPhoto("");
@@ -213,7 +203,7 @@ public class NewDiaryActivity extends AppCompatActivity{
     @SuppressLint("SimpleDateFormat")
     public void saveNewDiary(View view) {
         // 일기 작성한 시간 저장
-        diary.setReportingDate(new SimpleDateFormat("yyyy년 MM월 dd일").format(new Date()));
+        diary.setReportingDate(new SimpleDateFormat(Const.REPORTING_DATE_FORMAT).format(new Date()));
 
         // 작성한 일기 컨텐츠 저장
         String contents = newDiaryBinding.diaryContents.getText().toString();
@@ -221,17 +211,17 @@ public class NewDiaryActivity extends AppCompatActivity{
 
         // 오늘의 기분 선택
         if (currentMood == Const.Mood.NONE.value) {
-            new ConfirmDialog("오늘의 기분을 입력해주세요!", null).show(getSupportFragmentManager(), "mood");
+            new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(getSupportFragmentManager(), "mood");
         } else {
             DatabaseUtility.writeNewDiary(this, diary, isSuccess -> {
                 if (isSuccess) {
-                    new ConfirmDialog("일기가 저장되었습니다.",
+                    new ConfirmDialog(getString(R.string.message_save_diary),
                             v -> {
                                 Const.addNewDiary = true;
                                 NewDiaryActivity.this.finish();
                             }).show(getSupportFragmentManager(), "newDiarySuccess");
                 } else {
-                    new ConfirmDialog("일기를 저장하는데 문제가 발생하였습니다. 다시 시도해주세요!", null).show(getSupportFragmentManager(), "newDiaryFailure");
+                    new ConfirmDialog(getString(R.string.error_message_save_diary), null).show(getSupportFragmentManager(), "newDiaryFailure");
                 }
             });
         }

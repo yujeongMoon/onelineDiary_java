@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +17,6 @@ import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
-
-import java.io.IOException;
 
 public class DiaryDetailActivity extends AppCompatActivity {
     private ActivityDiaryDetailBinding detailBinding;
@@ -41,9 +40,9 @@ public class DiaryDetailActivity extends AppCompatActivity {
         setContentView(detailBinding.getRoot());
 
         Intent items = getIntent();
-        month = items.getStringExtra("month");
-        day = items.getStringExtra("day");
-        diary = items.getParcelableExtra("diary");
+        diary = items.getParcelableExtra(Const.INTENT_KEY_DIARY);
+        month = items.getStringExtra(Const.INTENT_KEY_MONTH);
+        day = diary.getDay();
 
         // 일기를 작성한 날짜
         detailBinding.detailTodayDate.setText(diary.getReportingDate());
@@ -58,8 +57,28 @@ public class DiaryDetailActivity extends AppCompatActivity {
         if (diary.getPhoto().equals("")) {
             detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
         } else {
-            Uri imageUri = Uri.parse(diary.getPhoto());
-            detailBinding.detailPhoto.setImageURI(imageUri);
+            /*
+                구글 포토에 있는 사진을 사용한 경우, uri에 "com.google.android.apps.photos.contentprovider"이 포함되어있다.
+                구글 포토에서 사진을 선택하여 onActivityResult()에서 uri를 사용하는 경우에는 authority가 "com.google.android.apps.photos.contentprovider"로 지정되어 있기 때문에
+                permission Denial이 발생하지 않는다.
+                DB에 저장했다가 불러온 uri는 authority는 null이기 때문에 구글 포토에 있는 사진에 접근할 수가 없다.
+                새로운 이미지 파일을 생성해서 선택한 이미지를 저장한 다음에 그 파일 경로를 통해 사진을 불러오는 등의 방법을 사용해야한다.(일단은)
+
+                갤러리를 통해서 저장된 uri도 DB에서 불러올 때는 authority가 null이다.
+                결론적으로 authority가 원인은 아닐 수 있다.
+
+                새로운 파일을 생성해서 저장하는 방법은 비효율적이기 때문에 DB에 uri가 아닌 절대 경로를 저장하도록 바꿔서 진행했다.
+                getContentResolver().query()로 cursor를 생성하고 입력한 uri에서 절대 경로를 알아낸다.
+                절대 경로를 이용하면 구글 포토 권한이 필요 없기 때문에 잘 진행된다.
+             */
+            Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
+
+            if (photo != null) {
+                detailBinding.detailPhoto.setImageBitmap(photo);
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.error_message_get_photo), Toast.LENGTH_LONG).show();
+                detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+            }
         }
 
         detailBinding.switchEditMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -82,7 +101,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 detailBinding.emojiSadLayout.setOnClickListener(onClickListener);
                 detailBinding.emojiNervousLayout.setOnClickListener(onClickListener);
 
-                // TODO 사진 변경하는 기능 추가하기
                 detailBinding.detailPhoto.setOnClickListener(v -> photoUri = Utility.selectPhoto(DiaryDetailActivity.this, UPDATE_PICKER_IMAGE_REQUEST));
             } else {
                 setCurrentMood(diary.getMood());
@@ -117,20 +135,18 @@ public class DiaryDetailActivity extends AppCompatActivity {
                     getContentResolver().delete(photoUri, null, null);
                 }
 
-                diary.setPhoto(selectedImageUri.toString());
+                String path = Utility.getRealPathFromURI(this, selectedImageUri);
+                diary.setPhoto(path);
             } else { // 카메라를 선택한 경우
                 if (photoUri != null) {
                     Bitmap imageBitmap = null;
 
-                    try {
-                        imageBitmap = Utility.getBitmap(this.getContentResolver(), photoUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    String path = Utility.getRealPathFromURI(this, photoUri);
+                    imageBitmap = Utility.getRotatedBitmap(path);
 
                     if (imageBitmap != null) {
                         detailBinding.detailPhoto.setImageBitmap(imageBitmap);
-                        diary.setPhoto(photoUri.toString());
+                        diary.setPhoto(path);
                     } else {
                         detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
                         diary.setPhoto("");
@@ -243,14 +259,14 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
         // 오늘의 기분 선택
         if (currentMood == Const.Mood.NONE.value) {
-            new ConfirmDialog("오늘의 기분을 입력해주세요!", null).show(getSupportFragmentManager(), "mood");
+            new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(getSupportFragmentManager(), "mood");
         } else {
             DatabaseUtility.updateDiary(this, Utility.getYear(), month, day, diary, isSuccess -> {
                 if (isSuccess) {
-                    new ConfirmDialog("일기가 수정되었습니다.", null).show(getSupportFragmentManager(), "updateDiarySuccess");
+                    Toast.makeText(getApplicationContext(), getString(R.string.message_update_diary), Toast.LENGTH_LONG).show();
                     detailBinding.switchEditMode.setChecked(false);
                 } else {
-                    new ConfirmDialog("일기를 수정하는데 문제가 발생하였습니다. 다시 시도해주세요!", null).show(getSupportFragmentManager(), "updateDiaryFailure");
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_message_update_diary), Toast.LENGTH_LONG).show();
                 }
             });
         }

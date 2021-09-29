@@ -25,13 +25,19 @@
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <!--
+        앱이 사진 위치 정보에 엑세스해야 하는 경우에 필요한 권한이다.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
+
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/minion"
+        android:icon="@mipmap/ic_favorite"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/minion"
+        android:roundIcon="@mipmap/ic_favorite"
         android:supportsRtl="true"
-        android:theme="@style/Theme.OnelineDiary">
+        android:theme="@style/Theme.OnelineDiary"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".activity.DiaryDetailActivity"
             android:exported="true" />

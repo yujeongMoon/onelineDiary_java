@@ -25,7 +25,7 @@ import java.util.Queue;
 public class DatabaseUtility {
 
     private static HashMap<String, ArrayList<Diary>> yearDiaryList = new HashMap<>(); // 해당 연도의 일기를 담을 해시맵
-    private static Queue<String> keyListQueue;
+//    private static Queue<String> keyListQueue;
 
     public onCompleteCallback callback;
 
@@ -45,7 +45,7 @@ public class DatabaseUtility {
     public static void writeNewDiary(Context context, Diary newDiary, onCompleteCallback onComplete) {
         getReference() // 데이터 베이스 참조(default)
                 .child(Utility.getAndroidId(context))
-                .child("diary")
+                .child(Const.DATABASE_CHILD_DIARY)
                 .child(Utility.getYear())
                 .child(Utility.getMonth())
                 .child(Utility.getDay())
@@ -70,9 +70,9 @@ public class DatabaseUtility {
      * @param year 원하는 연도
      */
     public static void readYearDiaryList(Context context, String year, onCompleteCallback callback) {
-        keyListQueue = new LinkedList<>(); // 넣은 순서 그대로 사용하기 위해서 LinkedList를 사용한다.
+//        keyListQueue = new LinkedList<>(); // 넣은 순서 그대로 사용하기 위해서 LinkedList를 사용한다.
         Const.monthKeyList = new ArrayList<>();
-        Query query = getReference().child(Utility.getAndroidId(context)).child("diary").child(year);
+        Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_DIARY).child(year);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -81,7 +81,7 @@ public class DatabaseUtility {
                 Const.monthKeyList.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    keyListQueue.offer(dataSnapshot.getKey()); // 큐에 key(월)을 넣어 저장한다.
+//                    keyListQueue.offer(dataSnapshot.getKey()); // 큐에 key(월)을 넣어 저장한다.
                     Const.monthKeyList.add(dataSnapshot.getKey());
 
                     readMonthDiaryList(context, year, dataSnapshot.getKey());
@@ -119,7 +119,7 @@ public class DatabaseUtility {
      * @param month 월
      */
     public static void readMonthDiaryList(Context context, String year, String month) {
-        Query query = getReference().child(Utility.getAndroidId(context)).child("diary").child(year).child(month);
+        Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_DIARY).child(year).child(month);
 
         ArrayList<Diary> dList = new ArrayList<>(); // 월 별 일기를 담을 리스트
         query.addValueEventListener(new ValueEventListener() {
@@ -167,10 +167,20 @@ public class DatabaseUtility {
                 .addOnFailureListener(e -> onComplete.onComplete(false));
     }
 
+    /**
+     * 선택한 일기를 삭제하는 메소드
+     * 연도, 월, 일을 입력받아 일기의 위치를 찾아 삭제한다.
+     *
+     * @param context 컨텍스트
+     * @param year 연도
+     * @param month 월
+     * @param day 일
+     * @param onComplete 콜백 메소드
+     */
     public static void deleteDiary(Context context, String year, String month, String day, onCompleteCallback onComplete) {
         getReference()
                 .child(Utility.getAndroidId(context))
-                .child("diary")
+                .child(Const.DATABASE_CHILD_DIARY)
                 .child(year)
                 .child(month)
                 .child(day)

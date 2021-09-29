@@ -7,8 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Const {
+    public static String DATABASE_CHILD_DIARY = "diary";
+
+    public static String INTENT_KEY_MONTH = "month";
+    public static String INTENT_KEY_DIARY = "diary";
+
+    public static String REPORTING_DATE_FORMAT = "yyyy년 MM월 dd일";
+
     // 기분 정의
-    public static enum Mood {
+    public enum Mood {
         NONE(0), HAPPY(1), SMILE(2), BLANK(3), SAD(4), NERVOUS(5);
 
         public final int value;

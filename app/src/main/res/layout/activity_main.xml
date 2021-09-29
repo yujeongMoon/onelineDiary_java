@@ -22,7 +22,7 @@
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
+        android:layout_height="@dimen/divider"
         android:background="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/pager"
         app:layout_constraintBottom_toTopOf="@+id/main_bottom_layout"/>
@@ -35,8 +35,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp">
+        android:paddingTop="@dimen/main_bottom_layout_padding"
+        android:paddingBottom="@dimen/main_bottom_layout_padding">
 
         <ImageButton
             android:id="@+id/btn_add_new_diary"
@@ -51,8 +51,8 @@
 
         <ImageButton
             android:id="@+id/btn_setting"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/main_setting_width"
+            android:layout_height="@dimen/main_setting_height"
             android:background="@android:color/transparent"
             android:src="@drawable/settings_black"
             app:layout_constraintRight_toRightOf="@+id/main_bottom_layout"

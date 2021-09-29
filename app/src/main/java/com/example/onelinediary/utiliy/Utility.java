@@ -6,16 +6,22 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 
+import com.example.onelinediary.R;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -124,8 +130,7 @@ public class Utility {
         Intent pickIntent = new Intent(Intent.ACTION_PICK);
         pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media.CONTENT_TYPE);
 
-        String pickTitle = "사진 가져올 방법을 선택하세요.";
-        Intent chooseIntent = Intent.createChooser(pickIntent, pickTitle);
+        Intent chooseIntent = Intent.createChooser(pickIntent, context.getString(R.string.message_picker));
         chooseIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[]{takePictureIntent});
 
         // TODO startActivityForResult() deprecated 대체 메소드로 수정 필요.
@@ -142,10 +147,9 @@ public class Utility {
 
     /**
      * 새로운 이미지 파일을 생성해주는 메소드
-     * @return 외부 저장소의 경로로 연결된 이미지 파일(이름은 그 날의 날짜와 시간으로 구성)
-     * @throws IOException
+     * @throws IOException 에러
      *
-     * @return 특정 경로로 연결된 이미지 파일
+     * @return 외부 저장소의 경로로 연결된 이미지 파일(이름은 그 날의 날짜와 시간으로 구성)
      */
     public static File createImageFile(Context context) throws IOException {
         // 외부 저장소의 pictures 폴더 아래의 image 폴더에 이미지를 저장
@@ -185,11 +189,151 @@ public class Utility {
      * @return 비트맵 이미지
      * @throws FileNotFoundException => openInputStream()
      * @throws IOException => close()
+     *
+     * 구글 포토를 사용한 경우는 제외
+     * uri.toString().contains("com.google.android.apps.photos.contentprovider")
      */
     public static Bitmap getBitmap(ContentResolver cr, Uri uri) throws FileNotFoundException, IOException {
+        Bitmap bitmap;
+
         InputStream input = cr.openInputStream(uri);
-        Bitmap bitmap = BitmapFactory.decodeStream(input);
+        bitmap = BitmapFactory.decodeStream(input);
         input.close();
+
         return bitmap;
+    }
+
+    // 1024 바이트 버퍼를 두고 파일에 쓰는 메소드
+    public static void copyInputStreamToFile(InputStream input, File file) {
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            int read;
+            byte[] bytes = new byte[1024];
+
+            while ((read = input.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 입력된 uri의 절대 경로 명을 찾아주는 메소드
+     *
+     * @param context 컨텍스트
+     * @param photoUri 이미지의 uri
+     * @return 이미지의 절대 경로
+     */
+    public static String getRealPathFromURI(Context context, Uri photoUri) {
+        int index = 0;
+        String[] projections = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(photoUri, projections, null, null, null);
+
+        if (cursor == null) {
+            return "";
+        }
+
+        if (cursor.moveToFirst()) {
+            index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        }
+
+        String realPath = cursor.getString(index);
+        cursor.close();
+
+        return realPath;
+    }
+
+    /**
+     * 입력된 경로에 있는 사진이 회전이 된 상태인지 파악하는 메소드
+     * ExifInterface.TAG_ORIENTATION => 회전된 각도
+     * 0이나 null이 반환된다면 회전이 되지 않은 상태를 의미한다.
+     * @param path 사진의 절대 경로
+     * @return 사진의 회전 상태
+     */
+    public static int getOrientation(String path) {
+        ExifInterface exif = null;
+
+        try {
+            exif = new ExifInterface(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (exif != null) {
+            return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+        } else {
+            return -1; // 경로에 접근하지 못하였거나 오류가 발생하면 -1을 반환한다.
+        }
+    }
+
+    /**
+     * 입력된 비트맵 이미지를 회전 상태에 따라 맞게 원래대로 돌려주는 메소드
+     * 회전되지 않은 상태라면 그대로 입력받은 비트맵 이미지를 반환하고
+     * 회전이 필요한 상태라면 회전 한 후의 비트맵 이미지를 반환한다.
+     *
+     * 카메라로 사진을 찍거나 구글 포토에서 절대 경로로 사진을 불러와 이미지 뷰에 띄울 때
+     * 이미지가 회전되어 보이는 현상을 해결하기 위해 추가되었다.
+     *
+     * @param bitmap 비트맵 이미지
+     * @param orientation 이미지의 회전 상태
+     * @return 원래 상태의 비트맵 이미지
+     */
+    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return bmRotated;
+        }
+        catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 사진의 절대 경로를 입력하면 파일을 비트맵 이미지를 생성하고 원래 회전 상태로 만들어주는 메소드
+     *
+     * 반복적으로 사용되는 코드여서 한번에 메소드로 만들었다.
+     *
+     * @param path 사진의 절대 경로
+     * @return 일기 작성화면이나 상세화면에서 보여질 비트맵 이미지
+     */
+    public static Bitmap getRotatedBitmap(String path) {
+        Bitmap photo = BitmapFactory.decodeFile(path); // 실제 경로를 통해 파일을 비트맵 이미지로 변경
+        int orientation = Utility.getOrientation(path); // 이미지가 회전되어 있는 지 확인
+
+        return Utility.rotateBitmap(photo, orientation); // 이미지가 회전되어 있을 경우, 원래대로 회전 시킨 후 비트맵 이미지를 반환
     }
 }

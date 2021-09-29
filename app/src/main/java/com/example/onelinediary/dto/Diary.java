@@ -11,19 +11,20 @@ import java.util.Map;
  * <중요>데이터 베이스에 Uri를 저장하려고 하면 에러가 난다.</중요>
  */
 public class Diary implements Parcelable {
-    private String reportingDate;
-    private String photo = ""; // String -> uri => setImageUri
-    private String contents = "";
-    private int mood;
-    private String day;
+    private String reportingDate; // 일기를 작성한 날짜
+    private String photo = ""; // 사진의 절대 경로
+    private String contents = ""; // 일기 내용
+    private int mood; // 오늘의 기분
+    private String day; // 일기를 작성한 날짜(일)
 
     public Diary() { }
 
-    public Diary(String reportingDate, String photo, String contents, int mood) {
+    public Diary(String reportingDate, String photo, String contents, int mood, String day) {
         this.reportingDate = reportingDate;
         this.photo = photo;
         this.contents = contents;
         this.mood = mood;
+        this.day = day;
     }
 
     protected Diary(Parcel in) {
@@ -106,6 +107,7 @@ public class Diary implements Parcelable {
         result.put("photo", photo);
         result.put("mood", mood);
         result.put("reportingDate", reportingDate);
+        result.put("day", day);
 
         return result;
     }

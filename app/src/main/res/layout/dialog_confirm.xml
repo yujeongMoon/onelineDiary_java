@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/ok_layout"
@@ -11,8 +11,8 @@
         android:layout_alignParentBottom="true"
         android:background="#ececec"
         android:gravity="center"
-        android:text="확인"
-        android:textSize="15sp" />
+        android:text="@string/ok"
+        android:textSize="@dimen/dialog_button_text" />
 
     <TextView
         android:id="@+id/confirm_message"
@@ -20,7 +20,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/ok_layout"
         android:gravity="center"
-        android:text="다시 입력해주세요!"
-        android:padding="30dp"
-        android:textSize="18sp" />
+        tools:text="다시 입력해주세요!"
+        android:padding="@dimen/dialog_message_padding"
+        android:textSize="@dimen/dialog_message_text" />
 </RelativeLayout>
