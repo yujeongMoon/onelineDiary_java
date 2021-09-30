@@ -239,7 +239,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 }
             }
 
-            diary.setMood(currentMood);
+//            diary.setMood(currentMood);
         }
     };
 
@@ -298,6 +298,8 @@ public class DiaryDetailActivity extends AppCompatActivity {
         // 작성한 일기 컨텐츠 저장
         String contents = detailBinding.editDetailDiaryContents.getText().toString();
         diary.setContents(contents);
+
+        diary.setMood(currentMood);
 
         // 오늘의 기분 선택
         if (currentMood == Const.Mood.NONE.value) {
