@@ -1,16 +1,13 @@
-package com.example.onelinediary;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.onelinediary.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.example.onelinediary.activity.MainActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.onelinediary.databinding.ActivitySplashBinding;
-import com.example.onelinediary.utiliy.DatabaseUtility;
-import com.example.onelinediary.utiliy.Utility;
 
 public class SplashActivity extends AppCompatActivity {
     private ActivitySplashBinding splashBinding;
