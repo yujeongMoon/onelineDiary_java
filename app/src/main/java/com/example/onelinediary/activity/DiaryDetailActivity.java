@@ -28,6 +28,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
     Diary diary;
 
     boolean isEnabled = false;
+    boolean isUpdate = false;
     
     int currentMood = Const.Mood.NONE.value;
 
@@ -51,7 +52,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
         setCurrentMood(diary.getMood());
 
         // 일기 내용
-        detailBinding.detailDiaryContents.setText(diary.getContents());
+        detailBinding.textDetailDiaryContents.setText(diary.getContents());
 
         // 일기와 같이 선택한 사진
         if (diary.getPhoto().equals("")) {
@@ -89,11 +90,18 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
                 detailBinding.detailEmojiLayout.setVisibility(View.VISIBLE);
 
-                detailBinding.detailDiaryContents.setEnabled(true);
+                detailBinding.textDetailDiaryContentsLayout.setVisibility(View.GONE);
+                detailBinding.editDetailDiaryContents.setVisibility(View.VISIBLE);
+
+                detailBinding.editDetailDiaryContents.setText(diary.getContents());
 
                 detailBinding.detailButtonLayout.setVisibility(View.VISIBLE);
 
                 detailBinding.detailPhoto.isClickEnabled(true);
+
+                // 기존에 선택한 기분을 확인해서 표시해준다.
+                currentMood = diary.getMood();
+                initMood();
 
                 detailBinding.emojiHappyLayout.setOnClickListener(onClickListener);
                 detailBinding.emojiSmileLayout.setOnClickListener(onClickListener);
@@ -103,13 +111,21 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
                 detailBinding.detailPhoto.setOnClickListener(v -> photoUri = Utility.selectPhoto(DiaryDetailActivity.this, UPDATE_PICKER_IMAGE_REQUEST));
             } else {
-                setCurrentMood(diary.getMood());
+                if (isUpdate) {
+                    isUpdate = false;
+                    setCurrentMood(diary.getMood());
+                }
+
                 detailBinding.detailEmoji.setVisibility(View.VISIBLE);
 
+                // editmode를 해제하면 선택된 기분을 초기화해준다.
+                resetSelectedState();
                 detailBinding.detailEmojiLayout.setVisibility(View.GONE);
 
-                detailBinding.detailDiaryContents.setText(diary.getContents());
-                detailBinding.detailDiaryContents.setEnabled(false);
+                detailBinding.textDetailDiaryContentsLayout.setVisibility(View.VISIBLE);
+                detailBinding.editDetailDiaryContents.setVisibility(View.GONE);
+
+                detailBinding.textDetailDiaryContents.setText(diary.getContents());
 
                 detailBinding.detailButtonLayout.setVisibility(View.GONE);
 
@@ -131,10 +147,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
                 detailBinding.detailPhoto.setImageURI(selectedImageUri);
 
-                if (photoUri != null) {
-                    getContentResolver().delete(photoUri, null, null);
-                }
-
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 diary.setPhoto(path);
             } else { // 카메라를 선택한 경우
@@ -148,10 +160,20 @@ public class DiaryDetailActivity extends AppCompatActivity {
                         detailBinding.detailPhoto.setImageBitmap(imageBitmap);
                         diary.setPhoto(path);
                     } else {
-                        detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
-                        diary.setPhoto("");
+                        // 피커 중에 아무것도 선택하지 않은 경우도 있기 때문에 아무것도 선택하지 않은 경우에는 기존의 사진을 보여줘야한다.
+                        // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
+                        if (diary.getPhoto().equals("")) {
+                            detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+                        } else {
+                            Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
+                            detailBinding.detailPhoto.setImageBitmap(photo);
+                        }
                     }
                 }
+            }
+
+            if (photoUri != null) {
+                getContentResolver().delete(photoUri, null, null);
             }
         }
     }
@@ -229,7 +251,27 @@ public class DiaryDetailActivity extends AppCompatActivity {
         detailBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
 
         currentMood = Const.Mood.NONE.value;
-        diary.setMood(currentMood);
+//        diary.setMood(currentMood);
+    }
+
+    private void initMood() {
+        switch (currentMood) {
+            case 1:
+                detailBinding.emojiHappyCheck.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                detailBinding.emojiSmileCheck.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                detailBinding.emojiBlankCheck.setVisibility(View.VISIBLE);
+                break;
+            case 4:
+                detailBinding.emojiSadCheck.setVisibility(View.VISIBLE);
+                break;
+            case 5:
+                detailBinding.emojiNervousCheck.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     private void setCurrentMood(int mood) {
@@ -254,7 +296,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
     public void editDiary(View view) {
         // 작성한 일기 컨텐츠 저장
-        String contents = detailBinding.detailDiaryContents.getText().toString();
+        String contents = detailBinding.editDetailDiaryContents.getText().toString();
         diary.setContents(contents);
 
         // 오늘의 기분 선택
@@ -263,6 +305,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
         } else {
             DatabaseUtility.updateDiary(this, Utility.getYear(), month, day, diary, isSuccess -> {
                 if (isSuccess) {
+                    isUpdate = true;
                     Toast.makeText(getApplicationContext(), getString(R.string.message_update_diary), Toast.LENGTH_LONG).show();
                     detailBinding.switchEditMode.setChecked(false);
                 } else {

@@ -90,6 +90,7 @@ public class Utility {
     }
 
     public static Uri selectPhoto(Context context, int requestCode) {
+        // 카메라를 사용하여 사진을 찍게 해주는 인텐트
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         // 외부 저장소에 이미지 저장하는 방법
@@ -116,6 +117,14 @@ public class Utility {
 //            }
 //        }
 
+        /*
+            contentProvider에 데이터를 삽입하기 위해서 contentValues 객체를 생성한다.
+            각각의 컬럼과 값을 저장하고 contentResolver 객체에 insert 한다.
+            그리고 반환되는 uri가 카메라로 찍은 사진의 경로가 된다.
+
+            contentResolver 객체의 query() 메소드 통해 커서 안에서 절대 경로를 알아낸다.
+         */
+
         // 공유 저장소(SDCard)에 이미지 저장하는 방법
         ContentValues values = new ContentValues();
         values.put(MediaStore.MediaColumns.DISPLAY_NAME, newImageFileName());
@@ -125,13 +134,16 @@ public class Utility {
 //        }
 
         Uri photoUri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri); // 카메라 관련 인텐트
 
+        // 사용자에게 선택 사항을 제공해주는 인텐트
         Intent pickIntent = new Intent(Intent.ACTION_PICK);
+        // 이미지 타입 관련 앱 보여주기
+        // 아래의 설정이 없으면 갤러리나 구글 포토 등의 이미지 관련 앱이 보이지 않는다.
         pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media.CONTENT_TYPE);
 
         Intent chooseIntent = Intent.createChooser(pickIntent, context.getString(R.string.message_picker));
-        chooseIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[]{takePictureIntent});
+        chooseIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[]{takePictureIntent}); // 위의 피커에 카메라도 추가
 
         // TODO startActivityForResult() deprecated 대체 메소드로 수정 필요.
         ((Activity)context).startActivityForResult(chooseIntent, requestCode);
@@ -191,7 +203,8 @@ public class Utility {
      * @throws IOException => close()
      *
      * 구글 포토를 사용한 경우는 제외
-     * uri.toString().contains("com.google.android.apps.photos.contentprovider")
+     * permission denial, openInputStream()에서 오류가 남.
+     * google photo authority => "com.google.android.apps.photos.contentprovider"
      */
     public static Bitmap getBitmap(ContentResolver cr, Uri uri) throws FileNotFoundException, IOException {
         Bitmap bitmap;

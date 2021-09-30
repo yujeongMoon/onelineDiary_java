@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".activity.DiaryDetailActivity">
 
     <ScrollView
@@ -103,17 +105,42 @@
                     android:layout_width="@dimen/detail_emoji_width"
                     android:layout_height="@dimen/detail_emoji_height"
                     android:layout_marginEnd="10dp"
-                    android:src="@drawable/emoji_blank_icon"/>
+                    android:src="@drawable/emoji_blank_icon"
+                    android:visibility="visible"/>
 
                 <EditText
-                    android:id="@+id/detail_diary_contents"
+                    android:id="@+id/edit_detail_diary_contents"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text|textMultiLine"
                     android:textSize="@dimen/diary_contents_text"
                     android:hint="@string/new_diary_contents_hint"
                     android:importantForAutofill="no"
-                    android:enabled="false"/>
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/text_detail_diary_contents_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/text_detail_diary_contents"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/diary_contents_text"
+                        tools:text="상세 화면"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.8dp"
+                        android:background="@color/black"
+                        android:layout_marginTop="3dp"/>
+
+                </LinearLayout>
+
 
             </LinearLayout>
 

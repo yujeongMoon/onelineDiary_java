@@ -161,15 +161,7 @@ public class NewDiaryActivity extends AppCompatActivity{
                 // 갤러리에서 선택한 이미지의 uri가 넘어온다.
                 newDiaryBinding.photo.setImageURI(selectedImageUri);
 
-                /*
-                   TODO
-                    위에서 이미지 선택 팝업 설정을 하는 과정에서 getContentResolver().insert()가 무조건 실행되면서
-                    더미 이미지가 추가된다. 이미지를 선택해서 다음 단계로 넘어가면 더미 이미자가 사라진다.
-                    나중에 수정 필요.
-                */
-                if (photoUri != null) {
-                    getContentResolver().delete(photoUri, null, null);
-                }
+
 
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 diary.setPhoto(path);
@@ -185,10 +177,23 @@ public class NewDiaryActivity extends AppCompatActivity{
                         newDiaryBinding.photo.setImageBitmap(imageBitmap);
                         diary.setPhoto(path);
                     } else {
-                        newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
-                        diary.setPhoto("");
+                        // 피커 중에 아무것도 선택하지 않은 경우도 있기 때문에 아무것도 선택하지 않은 경우에는 기존의 사진을 보여줘야한다.
+                        // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
+                        // diray의 photo 필드는 디폴트 값으로 ""로 설정되어있다.
+                        if (diary.getPhoto().equals("")) {
+                            newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
+                        } else {
+                            Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
+                            newDiaryBinding.photo.setImageBitmap(photo);
+                        }
                     }
                 }
+            }
+
+            // photoUri는 무조건 생성되기 때문에 피커 중 아무것도 선택하지 않았거나 갤러리를 통해 이미지를 선택한 경우
+            // 더미 이미지가 생기기 때문에 photoUri 경로로 연결된 이미지를 지워주기 제공자에 있는 이미지르 삭제해야한다.
+            if (photoUri != null) {
+                getContentResolver().delete(photoUri, null, null);
             }
         }
     }
