@@ -145,8 +145,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
             if (data != null && data.getData() != null) { // 갤러리를 선택한 경우
                 Uri selectedImageUri = data.getData();
 
-                detailBinding.detailPhoto.setImageURI(selectedImageUri);
-
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 diary.setPhoto(path);
             } else { // 카메라를 선택한 경우
@@ -157,19 +155,18 @@ public class DiaryDetailActivity extends AppCompatActivity {
                     imageBitmap = Utility.getRotatedBitmap(path);
 
                     if (imageBitmap != null) {
-                        detailBinding.detailPhoto.setImageBitmap(imageBitmap);
                         diary.setPhoto(path);
-                    } else {
-                        // 피커 중에 아무것도 선택하지 않은 경우도 있기 때문에 아무것도 선택하지 않은 경우에는 기존의 사진을 보여줘야한다.
-                        // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
-                        if (diary.getPhoto().equals("")) {
-                            detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
-                        } else {
-                            Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
-                            detailBinding.detailPhoto.setImageBitmap(photo);
-                        }
                     }
                 }
+            }
+
+            // 피커 중에 아무것도 선택하지 않은 경우도 있기 때문에 아무것도 선택하지 않은 경우에는 기존의 사진을 보여줘야한다.
+            // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
+            if (diary.getPhoto().equals("")) {
+                detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+            } else {
+                Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
+                detailBinding.detailPhoto.setImageBitmap(photo);
             }
 
             if (photoUri != null) {

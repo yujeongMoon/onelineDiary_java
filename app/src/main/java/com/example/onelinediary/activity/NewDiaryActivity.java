@@ -158,10 +158,6 @@ public class NewDiaryActivity extends AppCompatActivity{
         if (requestCode == PICKER_IMAGE_REQUEST) { // 카메라와 갤러리 선택 팝업을 선택한 경우
             if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우
                 Uri selectedImageUri = data.getData();
-                // 갤러리에서 선택한 이미지의 uri가 넘어온다.
-                newDiaryBinding.photo.setImageURI(selectedImageUri);
-
-
 
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 diary.setPhoto(path);
@@ -173,21 +169,21 @@ public class NewDiaryActivity extends AppCompatActivity{
                     String path = Utility.getRealPathFromURI(this, photoUri);
                     imageBitmap = Utility.getRotatedBitmap(path);
 
+                    // photoUri는 무조건 생겨서 넘어오기 때문에 비트맵 이미지가 생성되는지 따로 체크한다.
                     if (imageBitmap != null) {
-                        newDiaryBinding.photo.setImageBitmap(imageBitmap);
                         diary.setPhoto(path);
-                    } else {
-                        // 피커 중에 아무것도 선택하지 않은 경우도 있기 때문에 아무것도 선택하지 않은 경우에는 기존의 사진을 보여줘야한다.
-                        // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
-                        // diray의 photo 필드는 디폴트 값으로 ""로 설정되어있다.
-                        if (diary.getPhoto().equals("")) {
-                            newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
-                        } else {
-                            Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
-                            newDiaryBinding.photo.setImageBitmap(photo);
-                        }
                     }
                 }
+            }
+
+            // 피커 중에 아무것도 선택하지 않은 경우도 있기 때문에 아무것도 선택하지 않은 경우에는 기존의 사진을 보여줘야한다.
+            // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
+            // diray의 photo 필드는 디폴트 값으로 ""로 설정되어있다.
+            if (diary.getPhoto().equals("")) {
+                newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
+            } else {
+                Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
+                newDiaryBinding.photo.setImageBitmap(photo);
             }
 
             // photoUri는 무조건 생성되기 때문에 피커 중 아무것도 선택하지 않았거나 갤러리를 통해 이미지를 선택한 경우

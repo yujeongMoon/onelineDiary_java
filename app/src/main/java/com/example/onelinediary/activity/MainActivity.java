@@ -31,8 +31,8 @@ public class MainActivity extends FragmentActivity {
     private final String[] permissions = {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_MEDIA_LOCATION
+            Manifest.permission.READ_EXTERNAL_STORAGE
+//            Manifest.permission.ACCESS_MEDIA_LOCATION
     };
 
     private final int PERMISSION_REQUEST = 100;

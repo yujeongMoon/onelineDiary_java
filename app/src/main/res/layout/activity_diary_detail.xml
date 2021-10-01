@@ -73,7 +73,8 @@
             <com.example.onelinediary.custom.DoubleCancelImageView
                 android:id="@+id/detail_photo"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/diary_photo_height"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="H, 10:8"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/detail_toolbar_layout"
@@ -83,7 +84,6 @@
                 android:src="@drawable/default_placeholder_image"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"/>
-            <!--                app:layout_constraintDimensionRatio="H, 16:9"-->
 
             <LinearLayout
                 android:id="@+id/detail_contents_layout"
