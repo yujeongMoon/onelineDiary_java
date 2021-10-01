@@ -1,5 +1,7 @@
 package com.example.onelinediary.constant;
 
+import android.location.Location;
+
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.Utility;
 
@@ -32,4 +34,6 @@ public class Const {
     public static String currentYear = Utility.getYear();
 
     public static boolean addNewDiary = false;
+
+    public static Location currentLocation = null;
 }

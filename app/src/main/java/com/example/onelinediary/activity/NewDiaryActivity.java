@@ -3,6 +3,7 @@ package com.example.onelinediary.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.example.onelinediary.databinding.ActivityNewDiaryBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
+import com.example.onelinediary.utiliy.LocationUtility;
 import com.example.onelinediary.utiliy.Utility;
 
 import java.text.SimpleDateFormat;
@@ -41,6 +43,24 @@ public class NewDiaryActivity extends AppCompatActivity{
         setContentView(newDiaryBinding.getRoot());
 
         newDiaryBinding.todayDate.setText(Utility.getDate(Const.REPORTING_DATE_FORMAT));
+
+
+        // TODO 위치 정보 보여주기
+        Location location = LocationUtility.getLastLocation(this);
+
+        if (location != null) {
+            String address = LocationUtility.getAddress(location.getLatitude(), location.getLongitude(), this);
+            if (!address.equals("")) {
+                newDiaryBinding.currentLocation.setVisibility(View.VISIBLE);
+                newDiaryBinding.currentLocation.setText(address);
+            } else {
+                newDiaryBinding.currentLocation.setVisibility(View.GONE);
+                newDiaryBinding.currentLocation.setText("");
+            }
+        } else {
+            newDiaryBinding.currentLocation.setVisibility(View.GONE);
+            newDiaryBinding.currentLocation.setText("");
+        }
 
         newDiaryBinding.emojiHappyLayout.setOnClickListener(onClickListener);
         newDiaryBinding.emojiSmileLayout.setOnClickListener(onClickListener);

@@ -33,15 +33,15 @@
 
             <TextView
                 android:id="@+id/current_location"
-                android:layout_width="60dp"
-                android:layout_height="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/diary_margin_top"
-                android:layout_marginEnd="@dimen/diary_margin_end"
+                android:layout_marginStart="@dimen/diary_margin_start"
                 android:ellipsize="end"
                 android:textSize="15sp"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/today_date"
                 tools:text="강남대로 327" />
 
             <com.example.onelinediary.custom.DoubleCancelImageView
@@ -51,7 +51,7 @@
                 app:layout_constraintDimensionRatio="H, 10:8"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/today_date"
+                app:layout_constraintTop_toBottomOf="@+id/current_location"
                 android:layout_marginTop="30dp"
                 android:layout_marginStart="@dimen/diary_margin_start"
                 android:layout_marginEnd="@dimen/diary_margin_end"
