@@ -90,7 +90,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
                 app:layout_constraintTop_toBottomOf="@+id/detail_photo"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -105,6 +104,7 @@
                     android:layout_width="@dimen/detail_emoji_width"
                     android:layout_height="@dimen/detail_emoji_height"
                     android:layout_marginEnd="10dp"
+                    android:layout_gravity="top"
                     android:src="@drawable/emoji_blank_icon"
                     android:visibility="visible"/>
 
@@ -113,6 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text|textMultiLine"
+                    android:layout_gravity="center"
                     android:textSize="@dimen/diary_contents_text"
                     android:hint="@string/new_diary_contents_hint"
                     android:importantForAutofill="no"
@@ -122,6 +123,7 @@
                     android:id="@+id/text_detail_diary_contents_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:orientation="vertical"
                     android:visibility="visible">
 

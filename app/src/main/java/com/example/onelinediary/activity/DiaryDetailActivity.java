@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -111,6 +112,10 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
                 detailBinding.detailPhoto.setOnClickListener(v -> photoUri = Utility.selectPhoto(DiaryDetailActivity.this, UPDATE_PICKER_IMAGE_REQUEST));
             } else {
+                // TODO 키보드 내리기
+                InputMethodManager im = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(detailBinding.editDetailDiaryContents.getWindowToken(), 0);
+
                 if (isUpdate) {
                     isUpdate = false;
                     setCurrentMood(diary.getMood());
@@ -293,7 +298,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
     public void editDiary(View view) {
         // 작성한 일기 컨텐츠 저장
-        String contents = detailBinding.editDetailDiaryContents.getText().toString();
+        String contents = detailBinding.editDetailDiaryContents.getText().toString().trim();
         diary.setContents(contents);
 
         diary.setMood(currentMood);
@@ -305,8 +310,9 @@ public class DiaryDetailActivity extends AppCompatActivity {
             DatabaseUtility.updateDiary(this, Utility.getYear(), month, day, diary, isSuccess -> {
                 if (isSuccess) {
                     isUpdate = true;
-                    Toast.makeText(getApplicationContext(), getString(R.string.message_update_diary), Toast.LENGTH_LONG).show();
+
                     detailBinding.switchEditMode.setChecked(false);
+                    Toast.makeText(getApplicationContext(), getString(R.string.message_update_diary), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.error_message_update_diary), Toast.LENGTH_LONG).show();
                 }

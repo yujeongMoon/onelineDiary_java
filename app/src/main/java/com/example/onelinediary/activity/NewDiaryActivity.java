@@ -207,7 +207,7 @@ public class NewDiaryActivity extends AppCompatActivity{
         diary.setReportingDate(new SimpleDateFormat(Const.REPORTING_DATE_FORMAT).format(new Date()));
 
         // 작성한 일기 컨텐츠 저장
-        String contents = newDiaryBinding.diaryContents.getText().toString();
+        String contents = newDiaryBinding.diaryContents.getText().toString().trim();
         diary.setContents(contents);
 
         // 오늘의 기분 선택
