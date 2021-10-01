@@ -196,7 +196,7 @@ public class Utility {
 
     /**
      * uri를 bitmap image로 바꿔준다.
-     * @param cr ContentResolver // TODO 정리 필요
+     * @param cr ContentResolver
      * @param uri 사진의 경로
      * @return 비트맵 이미지
      * @throws FileNotFoundException => openInputStream()

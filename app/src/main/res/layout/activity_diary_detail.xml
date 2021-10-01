@@ -37,9 +37,7 @@
                     android:id="@+id/detail_today_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_gravity="center"
                     tools:text="2021년 9월 10일"
                     android:textSize="@dimen/diary_date_text"/>
 
@@ -51,9 +49,7 @@
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_edit_mode"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/detail_current_location"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_height="@dimen/diary_edit_mode_switch_height"
                     android:text="@string/edit_mode_title"
                     android:textSize="@dimen/diary_editmode_text"/>
 

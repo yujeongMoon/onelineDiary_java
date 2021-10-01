@@ -22,7 +22,7 @@
     <dimen name="main_setting_height">40dp</dimen>
     
     <!-- diary page -->
-    <dimen name="diary_margin_top">30dp</dimen>
+    <dimen name="diary_margin_top">20dp</dimen>
     <dimen name="diary_margin_start">20dp</dimen>
     <dimen name="diary_margin_end">20dp</dimen>
 
@@ -30,6 +30,7 @@
     <dimen name="diary_contents_text">18dp</dimen>
     <dimen name="diary_editmode_text">15dp</dimen>
 
+    <dimen name="diary_edit_mode_switch_height">30dp</dimen>
     <dimen name="diary_photo_height">300dp</dimen>
 
     <dimen name="detail_emoji_width">50dp</dimen>

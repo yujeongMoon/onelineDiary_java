@@ -112,7 +112,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
                 detailBinding.detailPhoto.setOnClickListener(v -> photoUri = Utility.selectPhoto(DiaryDetailActivity.this, UPDATE_PICKER_IMAGE_REQUEST));
             } else {
-                // TODO 키보드 내리기
                 InputMethodManager im = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 im.hideSoftInputFromWindow(detailBinding.editDetailDiaryContents.getWindowToken(), 0);
 
