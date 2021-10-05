@@ -176,11 +176,17 @@ public class NewDiaryActivity extends AppCompatActivity{
         newDiaryBinding.photo.initPreTime();
 
         if (requestCode == PICKER_IMAGE_REQUEST) { // 카메라와 갤러리 선택 팝업을 선택한 경우
-            if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우
+            if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우(구글 포토 포함)
                 Uri selectedImageUri = data.getData();
 
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 diary.setPhoto(path);
+
+                // photoUri는 무조건 생성되기 때문에 피커 중 아무것도 선택하지 않았거나 갤러리를 통해 이미지를 선택한 경우
+                // 더미 이미지가 생기기 때문에 photoUri 경로로 연결된 이미지를 지워주기 제공자에 있는 이미지르 삭제해야한다.
+                if (photoUri != null) {
+                    getContentResolver().delete(photoUri, null, null);
+                }
             } else { // 카메라를 선택했을 경우
                 if (photoUri != null) {
                     // uri로부터 Bitmap 이미지를 생성
@@ -204,12 +210,6 @@ public class NewDiaryActivity extends AppCompatActivity{
             } else {
                 Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
                 newDiaryBinding.photo.setImageBitmap(photo);
-            }
-
-            // photoUri는 무조건 생성되기 때문에 피커 중 아무것도 선택하지 않았거나 갤러리를 통해 이미지를 선택한 경우
-            // 더미 이미지가 생기기 때문에 photoUri 경로로 연결된 이미지를 지워주기 제공자에 있는 이미지르 삭제해야한다.
-            if (photoUri != null) {
-                getContentResolver().delete(photoUri, null, null);
             }
         }
     }

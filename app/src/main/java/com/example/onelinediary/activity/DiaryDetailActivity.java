@@ -151,6 +151,10 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 diary.setPhoto(path);
+
+                if (photoUri != null) {
+                    getContentResolver().delete(photoUri, null, null);
+                }
             } else { // 카메라를 선택한 경우
                 if (photoUri != null) {
                     Bitmap imageBitmap = null;
@@ -171,10 +175,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
             } else {
                 Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
                 detailBinding.detailPhoto.setImageBitmap(photo);
-            }
-
-            if (photoUri != null) {
-                getContentResolver().delete(photoUri, null, null);
             }
         }
     }
