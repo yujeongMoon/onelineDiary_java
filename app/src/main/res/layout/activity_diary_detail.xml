@@ -61,6 +61,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/detail_toolbar_layout"
                 app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="20dp"
                 android:layout_marginStart="20dp"
                 tools:text="강남대로 327"
                 android:textSize="15sp"
@@ -73,13 +74,14 @@
                 app:layout_constraintDimensionRatio="H, 10:8"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detail_toolbar_layout"
+                app:layout_constraintTop_toBottomOf="@+id/detail_current_location"
                 android:layout_marginTop="30dp"
                 android:layout_marginStart="@dimen/diary_margin_start"
                 android:layout_marginEnd="@dimen/diary_margin_end"
                 android:src="@drawable/default_placeholder_image"
                 android:scaleType="fitCenter"
-                android:adjustViewBounds="true"/>
+                android:adjustViewBounds="true"
+                android:background="@color/white"/>
 
             <LinearLayout
                 android:id="@+id/detail_contents_layout"

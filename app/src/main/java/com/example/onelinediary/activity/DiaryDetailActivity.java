@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.constant.Const;
@@ -49,6 +50,14 @@ public class DiaryDetailActivity extends AppCompatActivity {
         // 일기를 작성한 날짜
         detailBinding.detailTodayDate.setText(diary.getReportingDate());
 
+        // 일기를 작성한 위치
+        if (diary.getLocation().equals("")) {
+            detailBinding.detailCurrentLocation.setVisibility(View.GONE);
+        } else {
+            detailBinding.detailCurrentLocation.setVisibility(View.VISIBLE);
+            detailBinding.detailCurrentLocation.setText(diary.getLocation());
+        }
+
         // 일기를 작성할 때 선택한 기분
         setCurrentMood(diary.getMood());
 
@@ -58,6 +67,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
         // 일기와 같이 선택한 사진
         if (diary.getPhoto().equals("")) {
             detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+            detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.white));
         } else {
             /*
                 구글 포토에 있는 사진을 사용한 경우, uri에 "com.google.android.apps.photos.contentprovider"이 포함되어있다.
@@ -77,9 +87,11 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
             if (photo != null) {
                 detailBinding.detailPhoto.setImageBitmap(photo);
+                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.black));
             } else {
                 Toast.makeText(getApplicationContext(), getString(R.string.error_message_get_photo), Toast.LENGTH_LONG).show();
                 detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.white));
             }
         }
 
@@ -172,9 +184,11 @@ public class DiaryDetailActivity extends AppCompatActivity {
             // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
             if (diary.getPhoto().equals("")) {
                 detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.white));
             } else {
                 Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
                 detailBinding.detailPhoto.setImageBitmap(photo);
+                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.black));
             }
         }
     }

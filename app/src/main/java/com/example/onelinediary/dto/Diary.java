@@ -16,16 +16,9 @@ public class Diary implements Parcelable {
     private String contents = ""; // 일기 내용
     private int mood; // 오늘의 기분
     private String day; // 일기를 작성한 날짜(일)
+    private String location = ""; // 일기를 작성한 위치
 
     public Diary() { }
-
-    public Diary(String reportingDate, String photo, String contents, int mood, String day) {
-        this.reportingDate = reportingDate;
-        this.photo = photo;
-        this.contents = contents;
-        this.mood = mood;
-        this.day = day;
-    }
 
     protected Diary(Parcel in) {
         reportingDate = in.readString();
@@ -33,20 +26,7 @@ public class Diary implements Parcelable {
         contents = in.readString();
         mood = in.readInt();
         day = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(reportingDate);
-        dest.writeString(photo);
-        dest.writeString(contents);
-        dest.writeInt(mood);
-        dest.writeString(day);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        location = in.readString();
     }
 
     public static final Creator<Diary> CREATOR = new Creator<Diary>() {
@@ -101,6 +81,14 @@ public class Diary implements Parcelable {
         this.day = day;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
         result.put("contents", contents);
@@ -108,8 +96,24 @@ public class Diary implements Parcelable {
         result.put("mood", mood);
         result.put("reportingDate", reportingDate);
         result.put("day", day);
+        result.put("location", location);
 
         return result;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(reportingDate);
+        dest.writeString(photo);
+        dest.writeString(contents);
+        dest.writeInt(mood);
+        dest.writeString(day);
+        dest.writeString(location);
+    }
 }

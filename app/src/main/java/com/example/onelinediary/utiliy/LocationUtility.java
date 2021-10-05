@@ -84,20 +84,17 @@ public class LocationUtility {
         return location;
     }
 
-    public static void requestLocationUpdate(Context context) {
+    public static void requestLocationUpdate(Context context, LocationListener listener) {
         if (checkPermission(context)) {
             return;
         }
 
-        getLocationManager(context).requestLocationUpdates(getProvider(context), 10000, 10.0f, listener);
-    }
-
-    public static LocationListener listener = new LocationListener() {
-        @Override
-        public void onLocationChanged(@NonNull Location location) {
-            Const.currentLocation = location;
+        if (isGPSEnabled(context)) { // GPS 활성화됨
+            getLocationManager(context).requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10.0f, listener);
+        } else { // GPS 활성화 안됨
+            enableLocationSettings(context);
         }
-    };
+    }
 
     public static String getAddress(double latitude, double longitude, Context context) {
         Geocoder geocoder = new Geocoder(context);

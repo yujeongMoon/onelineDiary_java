@@ -10,6 +10,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.constant.Const;
@@ -44,15 +45,17 @@ public class NewDiaryActivity extends AppCompatActivity{
 
         newDiaryBinding.todayDate.setText(Utility.getDate(Const.REPORTING_DATE_FORMAT));
 
-
         // TODO 위치 정보 보여주기
         Location location = LocationUtility.getLastLocation(this);
 
         if (location != null) {
             String address = LocationUtility.getAddress(location.getLatitude(), location.getLongitude(), this);
             if (!address.equals("")) {
+                // 첫번째 공백 전의 텍스트를 삭제한다. 나라 지우기
+                address = address.substring(address.indexOf(" ") + 1);
                 newDiaryBinding.currentLocation.setVisibility(View.VISIBLE);
                 newDiaryBinding.currentLocation.setText(address);
+                diary.setLocation(address);
             } else {
                 newDiaryBinding.currentLocation.setVisibility(View.GONE);
                 newDiaryBinding.currentLocation.setText("");
@@ -207,9 +210,11 @@ public class NewDiaryActivity extends AppCompatActivity{
             // diray의 photo 필드는 디폴트 값으로 ""로 설정되어있다.
             if (diary.getPhoto().equals("")) {
                 newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
+                newDiaryBinding.photo.setBackground(ContextCompat.getDrawable(this, R.color.white));
             } else {
                 Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
                 newDiaryBinding.photo.setImageBitmap(photo);
+                newDiaryBinding.photo.setBackground(ContextCompat.getDrawable(this, R.color.black));
             }
         }
     }
