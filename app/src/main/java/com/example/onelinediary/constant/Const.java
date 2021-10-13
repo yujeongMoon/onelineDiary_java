@@ -36,4 +36,6 @@ public class Const {
     public static boolean addNewDiary = false;
 
     public static Location currentLocation = null;
+
+    public static int weather = -1;
 }

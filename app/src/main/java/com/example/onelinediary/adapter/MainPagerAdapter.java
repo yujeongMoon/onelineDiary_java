@@ -1,13 +1,11 @@
 package com.example.onelinediary.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.viewholder.MainPageViewHolder;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ViewholderMainDiaryBinding;
@@ -17,6 +15,8 @@ import java.util.ArrayList;
 
 public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
     private ViewholderMainDiaryBinding binding;
+
+    int weather = -1;
 
     @NonNull
     @Override
@@ -37,10 +37,18 @@ public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
         if (diaryListByMonth != null && !diaryListByMonth.isEmpty()) {
             holder.onBind(month, diaryListByMonth);
         }
+
+        if (weather != -1) {
+            holder.setWeather(weather);
+        }
     }
 
     @Override
     public int getItemCount() {
         return Const.monthKeyList.size();
+    }
+
+    public void setWeather(int weather) {
+        this.weather = weather;
     }
 }

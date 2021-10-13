@@ -80,6 +80,16 @@ public class Utility {
     }
 
     /**
+     * hour in am/pm : h
+     * hour in day(24) : k
+     * @return 현재 시간(시)
+     */
+    @SuppressLint("SimpleDateFormat")
+    public static String getTime_kk() {
+        return new SimpleDateFormat("kk").format(new Date());
+    }
+
+    /**
      * 원하는 포맷을 입력하면 오늘의 날짜르 해당 포맷으로 만들어준다.
      * @param format 입력한 포맷 ex) "yyyy-MM-dd"
      * @return 포맷에 맞게 변환된 오늘 날짜

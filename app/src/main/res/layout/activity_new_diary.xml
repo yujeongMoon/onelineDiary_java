@@ -38,7 +38,7 @@
                 android:layout_marginTop="@dimen/diary_margin_top"
                 android:layout_marginStart="@dimen/diary_margin_start"
                 android:ellipsize="end"
-                android:textSize="15sp"
+                android:textSize="15dp"
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/today_date"

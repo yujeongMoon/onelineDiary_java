@@ -70,6 +70,12 @@ public class MainActivity extends FragmentActivity {
             if (pagerAdapter == null) {
                 pagerAdapter = new MainPagerAdapter();
                 mainBinding.pager.setAdapter(pagerAdapter);
+
+                // 배경화면을 현재 날씨 아이콘으로 바꿔준다.
+//                if (Const.weather != -1) {
+//                    pagerAdapter.setWeather(Const.weather);
+//                    pagerAdapter.notifyDataSetChanged();
+//                }
                 // 현재 달의 페이지를 보여준다.
                 // 데이터가 순서대로 들어가기 때문에 diaryList의 마지막이 현재 달!
                 if (!Const.monthKeyList.isEmpty()) {

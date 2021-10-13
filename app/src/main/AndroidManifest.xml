@@ -50,7 +50,8 @@
         android:roundIcon="@mipmap/ic_favorite"
         android:supportsRtl="true"
         android:theme="@style/Theme.OnelineDiary"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".activity.DiaryDetailActivity"
             android:exported="true" />
