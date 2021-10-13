@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -16,6 +18,7 @@ import com.example.onelinediary.R;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityDiaryDetailBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
+import com.example.onelinediary.dialog.SelectDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
@@ -31,6 +34,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
     boolean isEnabled = false;
     boolean isUpdate = false;
+    boolean isChanged = false;
     
     int currentMood = Const.Mood.NONE.value;
 
@@ -57,6 +61,20 @@ public class DiaryDetailActivity extends AppCompatActivity {
             detailBinding.detailCurrentLocation.setVisibility(View.VISIBLE);
             detailBinding.detailCurrentLocation.setText(diary.getLocation());
         }
+
+        // 일기를 작성한 날의 날씨
+        // TODO 수정 모드에서는 수정하는 날의 날씨를 적용?
+        if (diary.getWeather().equals("")) {
+            detailBinding.detailCurrentWeather.setVisibility(View.GONE);
+        } else {
+            detailBinding.detailCurrentWeather.setVisibility(View.VISIBLE);
+            setCurrentWeather(diary.getWeather());
+        }
+
+        if (detailBinding.detailCurrentLocation.getVisibility() == View.GONE && detailBinding.detailCurrentWeather.getVisibility() == View.GONE)
+            detailBinding.detailInfoLayout.setVisibility(View.GONE);
+        else
+            detailBinding.detailInfoLayout.setVisibility(View.VISIBLE);
 
         // 일기를 작성할 때 선택한 기분
         setCurrentMood(diary.getMood());
@@ -107,6 +125,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 detailBinding.editDetailDiaryContents.setVisibility(View.VISIBLE);
 
                 detailBinding.editDetailDiaryContents.setText(diary.getContents());
+                detailBinding.editDetailDiaryContents.addTextChangedListener(watcher);
 
                 detailBinding.detailButtonLayout.setVisibility(View.VISIBLE);
 
@@ -150,6 +169,44 @@ public class DiaryDetailActivity extends AppCompatActivity {
         });
     }
 
+    private TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            isChanged = !s.toString().equals("");
+
+            if (diary.getContents().equals(s.toString())) {
+                isChanged = false;
+            }
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        if (isEnabled) {
+            if (isChanged) {
+                new SelectDialog("수정한 일기가 저장되지 않았습니다. editmode를 해제하시겠습니까?", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        detailBinding.switchEditMode.setChecked(false);
+                        isChanged = false;
+                    }
+                }).show(getSupportFragmentManager(), "finishUpdateDiary");
+            } else {
+                detailBinding.switchEditMode.setChecked(false);
+            }
+        } else {
+            finish();
+        }
+    }
+
     // newDiaryActivity와 같은 기능
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -164,6 +221,9 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 diary.setPhoto(path);
 
+                if (isEnabled)
+                    isChanged = true;
+
                 if (photoUri != null) {
                     getContentResolver().delete(photoUri, null, null);
                 }
@@ -176,6 +236,9 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
                     if (imageBitmap != null) {
                         diary.setPhoto(path);
+
+                        if (isEnabled)
+                            isChanged = true;
                     }
                 }
             }
@@ -254,9 +317,37 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 }
             }
 
+            if (currentMood == Const.Mood.NONE.value || currentMood == diary.getMood()) {
+                isChanged = false;
+            } else {
+                isChanged = true;
+            }
 //            diary.setMood(currentMood);
         }
     };
+
+    private void setCurrentWeather(String weather) {
+        switch (weather) {
+            case "1":
+                detailBinding.detailCurrentWeather.setImageResource(R.drawable.weather_rain);
+                break;
+            case "3":
+                detailBinding.detailCurrentWeather.setImageResource(R.drawable.weather_snow);
+                break;
+            case "4":
+                detailBinding.detailCurrentWeather.setImageResource(R.drawable.weather_shower);
+                break;
+            case "01":
+                detailBinding.detailCurrentWeather.setImageResource(R.drawable.weather_sunny);
+                break;
+            case "03":
+                detailBinding.detailCurrentWeather.setImageResource(R.drawable.weather_cloud);
+                break;
+            case "04":
+                detailBinding.detailCurrentWeather.setImageResource(R.drawable.weather_blur);
+                break;
+        }
+    }
 
     private void resetSelectedState() {
         detailBinding.emojiHappyCheck.setVisibility(View.INVISIBLE);
@@ -266,6 +357,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
         detailBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
 
         currentMood = Const.Mood.NONE.value;
+        isChanged = false;
 //        diary.setMood(currentMood);
     }
 
@@ -323,6 +415,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
             DatabaseUtility.updateDiary(this, Utility.getYear(), month, day, diary, isSuccess -> {
                 if (isSuccess) {
                     isUpdate = true;
+                    isChanged = false;
 
                     detailBinding.switchEditMode.setChecked(false);
                     Toast.makeText(getApplicationContext(), getString(R.string.message_update_diary), Toast.LENGTH_LONG).show();

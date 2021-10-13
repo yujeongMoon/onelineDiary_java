@@ -3,6 +3,7 @@ package com.example.onelinediary.constant;
 import android.location.Location;
 
 import com.example.onelinediary.dto.Diary;
+import com.example.onelinediary.dto.Weather;
 import com.example.onelinediary.utiliy.Utility;
 
 import java.util.ArrayList;
@@ -37,5 +38,7 @@ public class Const {
 
     public static Location currentLocation = null;
 
-    public static int weather = -1;
+    public static int weatherResId = -1; // resid
+
+    public static String weather = null;
 }

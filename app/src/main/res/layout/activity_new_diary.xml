@@ -31,6 +31,19 @@
                 android:layout_marginTop="@dimen/diary_margin_top"
                 android:layout_marginStart="@dimen/diary_margin_start"/>
 
+            <ImageView
+                android:id="@+id/current_weather"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/weather_rain"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/photo"
+                android:layout_marginTop="@dimen/diary_margin_top"
+                android:layout_marginEnd="@dimen/main_margin_end"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone"/>
+
             <TextView
                 android:id="@+id/current_location"
                 android:layout_width="wrap_content"
@@ -39,7 +52,7 @@
                 android:layout_marginStart="@dimen/diary_margin_start"
                 android:ellipsize="end"
                 android:textSize="15dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/today_date"
                 tools:text="강남대로 327" />

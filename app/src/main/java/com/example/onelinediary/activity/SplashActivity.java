@@ -5,7 +5,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,22 +18,21 @@ import com.example.onelinediary.utiliy.WeatherUtility;
 public class SplashActivity extends AppCompatActivity {
     private ActivitySplashBinding splashBinding;
 
+    Location location = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         splashBinding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(splashBinding.getRoot());
 
-        Location location = null;
-
         if (!LocationUtility.checkPermission(this)) {
-            location = LocationUtility.getLastLocation(this);
+            location = LocationUtility.getLastKnownLocation(this);
         }
 
         if (location != null) {
             WeatherUtility.getWeather(location.getLatitude(), location.getLongitude(), (isSuccess, result, error) -> {
                 if (isSuccess) {
-                    Log.d("SplashActivity", "weather isSuccess");
                     int resId;
                     switch (result.getPTY()) {
                         case "1":
@@ -63,7 +61,7 @@ public class SplashActivity extends AppCompatActivity {
                             resId = -1;
                     }
 
-                    Const.weather = resId;
+                    Const.weatherResId = resId;
 
                     runOnUiThread(() -> {
                         splashBinding.splashTitle.setVisibility(View.VISIBLE);

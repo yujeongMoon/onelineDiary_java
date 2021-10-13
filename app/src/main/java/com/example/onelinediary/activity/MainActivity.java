@@ -5,7 +5,10 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,7 +21,9 @@ import com.example.onelinediary.adapter.MainPagerAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityMainBinding;
 import com.example.onelinediary.utiliy.DatabaseUtility;
+import com.example.onelinediary.utiliy.LocationUtility;
 import com.example.onelinediary.utiliy.Utility;
+import com.example.onelinediary.utiliy.WeatherUtility;
 
 import java.util.ArrayList;
 
@@ -62,6 +67,12 @@ public class MainActivity extends FragmentActivity {
             progressDialog.show();
         }
 
+        LocationUtility.requestLocationUpdate(this, listener);
+
+        if (Const.currentLocation == null) {
+            Const.currentLocation = LocationUtility.getLastKnownLocation(this);
+        }
+
         DatabaseUtility.readYearDiaryList(this, Utility.getYear(), isSuccess -> {
             if (progressDialog != null) {
                 progressDialog.dismiss();
@@ -99,7 +110,24 @@ public class MainActivity extends FragmentActivity {
 
         // 일기가 삭제되었거나 화면 이동 후 어뎁터에게 알린다.
         notifyToPager();
+
+        // TODO 일기장 화면에서 사용하기 위해서 현재 위치의 날씨 정보를 얻어 둔다.
+        getCurrentWeather(Const.currentLocation);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        LocationUtility.getLocationManager(this).removeUpdates(listener);
+    }
+
+    public LocationListener listener = location -> {
+        Const.currentLocation = location;
+        getCurrentWeather(Const.currentLocation);
+        Toast.makeText(getApplicationContext(), "위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude(), Toast.LENGTH_LONG).show();
+        Log.d("currentLocation", "위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude());
+    };
 
     @SuppressLint("NotifyDataSetChanged")
     public void notifyToPager() {
@@ -112,6 +140,59 @@ public class MainActivity extends FragmentActivity {
                 // 시간차를 주면서 페이저의 포지션 바꾸기
                 mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
             }
+        }
+    }
+
+    private void getCurrentWeather(Location location) {
+        if (location != null) {
+            WeatherUtility.getWeather(location.getLatitude(), location.getLongitude(), (isSuccess, result, error) -> {
+                if (isSuccess) {
+                    int resId;
+                    String w;
+                    switch (result.getPTY()) {
+                        case "1":
+                            resId = R.drawable.weather_rain;
+                            w = "1";
+                            break;
+
+                        case "3":
+                            resId = R.drawable.weather_snow;
+                            w = "3";
+                            break;
+
+                        case "4":
+                            resId = R.drawable.weather_shower;
+                            w = "4";
+                            break;
+
+                        case "0":
+                            if (result.getSKY().equals("1")) {
+                                resId = R.drawable.weather_sunny;
+                                w = "01";
+                            } else if (result.getSKY().equals("3")) {
+                                resId = R.drawable.weather_cloud;
+                                w = "03";
+                            } else {
+                                resId = R.drawable.weather_blur;
+                                w = "04";
+                            }
+                            break;
+
+                        default:
+                            resId = -1;
+                            w = "";
+                    }
+
+                    Const.weatherResId = resId;
+                    Const.weather = w;
+                } else {
+                    Log.d("MainActivity", error.getErrorMessage());
+//                        Toast.makeText(getApplicationContext(), "현재 날씨를 가져오는 과정에서 문제가 발생하였습니다.", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            Log.d("MainActivity", "위치 정보가 없습니다.");
+//            Toast.makeText(getApplicationContext(), "위치 정보가 없습니다.", Toast.LENGTH_LONG).show();
         }
     }
 

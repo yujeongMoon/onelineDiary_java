@@ -17,6 +17,18 @@ public class Diary implements Parcelable {
     private int mood; // 오늘의 기분
     private String day; // 일기를 작성한 날짜(일)
     private String location = ""; // 일기를 작성한 위치
+    /**
+     * 0 : 없음
+     * - 01 : 맑음
+     * - 03 : 구름 많음
+     * - 04 : 흐림
+     *
+     * 1 : 비
+     * 2 : 비/눈
+     * 3 : 눈
+     * 4 : 소나기
+     */
+    private String weather = ""; // 일기를 작성한 날의 날씨
 
     public Diary() { }
 
@@ -27,6 +39,23 @@ public class Diary implements Parcelable {
         mood = in.readInt();
         day = in.readString();
         location = in.readString();
+        weather = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(reportingDate);
+        dest.writeString(photo);
+        dest.writeString(contents);
+        dest.writeInt(mood);
+        dest.writeString(day);
+        dest.writeString(location);
+        dest.writeString(weather);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<Diary> CREATOR = new Creator<Diary>() {
@@ -89,6 +118,14 @@ public class Diary implements Parcelable {
         this.location = location;
     }
 
+    public String getWeather() {
+        return weather;
+    }
+
+    public void setWeather(String weather) {
+        this.weather = weather;
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
         result.put("contents", contents);
@@ -97,23 +134,8 @@ public class Diary implements Parcelable {
         result.put("reportingDate", reportingDate);
         result.put("day", day);
         result.put("location", location);
+        result.put("weather", weather);
 
         return result;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(reportingDate);
-        dest.writeString(photo);
-        dest.writeString(contents);
-        dest.writeInt(mood);
-        dest.writeString(day);
-        dest.writeString(location);
     }
 }

@@ -6,7 +6,11 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,13 +20,18 @@ import com.example.onelinediary.R;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityNewDiaryBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
+import com.example.onelinediary.dialog.SelectDialog;
+import com.example.onelinediary.dto.ConnError;
 import com.example.onelinediary.dto.Diary;
+import com.example.onelinediary.dto.Weather;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.LocationUtility;
 import com.example.onelinediary.utiliy.Utility;
+import com.example.onelinediary.utiliy.WeatherUtility;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class NewDiaryActivity extends AppCompatActivity{
     private ActivityNewDiaryBinding newDiaryBinding;
@@ -36,6 +45,8 @@ public class NewDiaryActivity extends AppCompatActivity{
 
     Diary diary = new Diary();
 
+    boolean isChanged = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +56,57 @@ public class NewDiaryActivity extends AppCompatActivity{
 
         newDiaryBinding.todayDate.setText(Utility.getDate(Const.REPORTING_DATE_FORMAT));
 
+//        Location location = LocationUtility.getLastKnownLocation(this);
         // TODO 위치 정보 보여주기
-        Location location = LocationUtility.getLastLocation(this);
+        getCurrentLocation(Const.currentLocation);
 
+        // TODO 현재 날씨 보여주기
+        if (Const.weatherResId > 0) {
+            newDiaryBinding.currentWeather.setVisibility(View.VISIBLE);
+            newDiaryBinding.currentWeather.setImageResource(Const.weatherResId);
+
+            if (!Const.weather.equals("")) {
+                diary.setWeather(Const.weather);
+            } else {
+                diary.setWeather("");
+            }
+        } else {
+            newDiaryBinding.currentWeather.setVisibility(View.GONE);
+        }
+
+        newDiaryBinding.emojiHappyLayout.setOnClickListener(onClickListener);
+        newDiaryBinding.emojiSmileLayout.setOnClickListener(onClickListener);
+        newDiaryBinding.emojiBlankLayout.setOnClickListener(onClickListener);
+        newDiaryBinding.emojiSadLayout.setOnClickListener(onClickListener);
+        newDiaryBinding.emojiNervousLayout.setOnClickListener(onClickListener);
+
+        newDiaryBinding.photo.setOnClickListener(v -> photoUri = Utility.selectPhoto(NewDiaryActivity.this, PICKER_IMAGE_REQUEST));
+
+        newDiaryBinding.diaryContents.addTextChangedListener(watcher);
+    }
+
+    private TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            isChanged = !s.toString().equals("");
+        }
+    };
+
+    /**
+     * 현재 위치의 위도 경도를 사용하여 도로명 주소로 바꾼 후 사용자에게 보여준다.
+     * location == null이거나 도로명 주소로 변경이 되지 않는 경우에는 주소를 보여주지 않는다.
+     *
+     * @param location 현재 위치의 위도와 경도를 담고 있는 location 객체
+     */
+    private void getCurrentLocation(Location location) {
         if (location != null) {
             String address = LocationUtility.getAddress(location.getLatitude(), location.getLongitude(), this);
             if (!address.equals("")) {
@@ -64,14 +123,6 @@ public class NewDiaryActivity extends AppCompatActivity{
             newDiaryBinding.currentLocation.setVisibility(View.GONE);
             newDiaryBinding.currentLocation.setText("");
         }
-
-        newDiaryBinding.emojiHappyLayout.setOnClickListener(onClickListener);
-        newDiaryBinding.emojiSmileLayout.setOnClickListener(onClickListener);
-        newDiaryBinding.emojiBlankLayout.setOnClickListener(onClickListener);
-        newDiaryBinding.emojiSadLayout.setOnClickListener(onClickListener);
-        newDiaryBinding.emojiNervousLayout.setOnClickListener(onClickListener);
-
-        newDiaryBinding.photo.setOnClickListener(v -> photoUri = Utility.selectPhoto(NewDiaryActivity.this, PICKER_IMAGE_REQUEST));
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -135,6 +186,11 @@ public class NewDiaryActivity extends AppCompatActivity{
                 }
             }
 
+            if (currentMood == Const.Mood.NONE.value) {
+                isChanged = false;
+            } else {
+                isChanged = true;
+            }
             diary.setMood(currentMood);
         }
     };
@@ -148,14 +204,20 @@ public class NewDiaryActivity extends AppCompatActivity{
 
         currentMood = Const.Mood.NONE.value;
         diary.setMood(currentMood);
+
+        isChanged = false;
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
 
 //        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
-        finish();
+        if (isChanged) {
+            new SelectDialog("작성한 일기가 저장되지 않았습니다. 해당 화면을 나가시겠습니까??", v -> finish()).show(getSupportFragmentManager(), "finishAddDiary");
+        } else {
+            finish();
+        }
     }
 
     @Override
@@ -184,6 +246,7 @@ public class NewDiaryActivity extends AppCompatActivity{
 
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 diary.setPhoto(path);
+                isChanged = true;
 
                 // photoUri는 무조건 생성되기 때문에 피커 중 아무것도 선택하지 않았거나 갤러리를 통해 이미지를 선택한 경우
                 // 더미 이미지가 생기기 때문에 photoUri 경로로 연결된 이미지를 지워주기 제공자에 있는 이미지르 삭제해야한다.
@@ -201,6 +264,7 @@ public class NewDiaryActivity extends AppCompatActivity{
                     // photoUri는 무조건 생겨서 넘어오기 때문에 비트맵 이미지가 생성되는지 따로 체크한다.
                     if (imageBitmap != null) {
                         diary.setPhoto(path);
+                        isChanged = true;
                     }
                 }
             }

@@ -110,11 +110,11 @@ public class WeatherUtility {
         new Thread(() -> {
             JSONObject response = null;
             BufferedReader br;
-
+            HttpURLConnection conn = null;
             try {
                 URL url = new URL(getRequest(latitude, longitude));
 
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Content-type", "application/json");
                 conn.setRequestProperty("Accept", "application/json");
@@ -173,12 +173,13 @@ public class WeatherUtility {
                     callback.onComplete(true, weather, null);
                     br.close();
                 }
-
-                conn.disconnect();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
+            } finally {
+                if (conn != null)
+                    conn.disconnect();
             }
         }).start();
     }

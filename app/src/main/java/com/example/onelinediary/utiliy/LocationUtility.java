@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class LocationUtility {
+    public static LocationManager locationManager;
+
     public static boolean checkPermission(Context context) {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
@@ -68,20 +70,48 @@ public class LocationUtility {
             return null; // 위치 정보 권한 필요
         }
 
+        locationManager = getLocationManager(context);
         // 오래된 위치의 정보가 리턴될 수도 있고 provider에 대한 저장된 위치 정보가 없을 때는 null이 리턴될 수도 있다.
         Location location = null;
 
         if (isGPSEnabled(context)) { // GPS 활성화됨
-            location = getLocationManager(context).getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         } else { // GPS 활성화 안됨
             enableLocationSettings(context);
         }
 
         if (location == null) {
-            location = getLocationManager(context).getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
 
         return location;
+    }
+
+    public static Location getLastKnownLocation(Context context) {
+        if (checkPermission(context)) {
+            return null; // 위치 정보 권한 필요
+        }
+
+        locationManager = getLocationManager(context);
+        List<String> providers = getLocationManager(context).getProviders(true);
+        Location bestLocation = null;
+
+        for (String provider : providers) {
+            Location l = locationManager.getLastKnownLocation(provider);
+
+            if (l == null)
+                continue;
+
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                bestLocation = l;
+            }
+        }
+
+        if (bestLocation == null) {
+            bestLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+
+        return bestLocation;
     }
 
     public static void requestLocationUpdate(Context context, LocationListener listener) {
@@ -90,7 +120,7 @@ public class LocationUtility {
         }
 
         if (isGPSEnabled(context)) { // GPS 활성화됨
-            getLocationManager(context).requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10.0f, listener);
+            getLocationManager(context).requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10.0f, listener);
         } else { // GPS 활성화 안됨
             enableLocationSettings(context);
         }

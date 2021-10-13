@@ -56,17 +56,43 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/detail_current_location"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/detail_info_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@+id/detail_toolbar_layout"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
-                tools:text="강남대로 327"
-                android:textSize="15dp"
-                android:visibility="gone"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/diary_margin_top"
+                android:layout_marginEnd="@dimen/diary_margin_end"
+                android:layout_marginStart="@dimen/diary_margin_start"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/detail_current_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="강남대로 327"
+                    android:textSize="15dp"
+                    android:visibility="gone"/>
+
+                <androidx.legacy.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <ImageView
+                    android:id="@+id/detail_current_weather"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/weather_rain"
+                    app:layout_constraintTop_toBottomOf="@+id/detail_toolbar_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/detail_photo"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
 
             <com.example.onelinediary.custom.DoubleCancelImageView
                 android:id="@+id/detail_photo"
@@ -75,7 +101,7 @@
                 app:layout_constraintDimensionRatio="H, 10:8"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detail_current_location"
+                app:layout_constraintTop_toBottomOf="@+id/detail_info_layout"
                 android:layout_marginTop="30dp"
                 android:layout_marginStart="@dimen/diary_margin_start"
                 android:layout_marginEnd="@dimen/diary_margin_end"
