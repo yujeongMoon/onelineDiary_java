@@ -1,11 +1,9 @@
 package com.example.onelinediary.activity;
 
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +11,7 @@ import com.example.onelinediary.R;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivitySplashBinding;
 import com.example.onelinediary.utiliy.LocationUtility;
+import com.example.onelinediary.utiliy.Utility;
 import com.example.onelinediary.utiliy.WeatherUtility;
 
 public class SplashActivity extends AppCompatActivity {
@@ -64,28 +63,20 @@ public class SplashActivity extends AppCompatActivity {
                     Const.weatherResId = resId;
 
                     runOnUiThread(() -> {
-                        splashBinding.splashTitle.setVisibility(View.VISIBLE);
                         splashBinding.splashWeather.setVisibility(View.VISIBLE);
                         splashBinding.splashWeather.setImageResource(resId);
                     });
 
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                        Intent mainIntent = new Intent(this, MainActivity.class);
-                        startActivity(mainIntent);
-                        finish();
-                    }, 2000);
+                    // MainActivity로 이동
+                    Utility.startActivity(this, MainActivity.class, 2000);
+                } else { // 날씨 정보를 가져오지 못했을 때
+                    Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+
+                    Utility.startActivity(this, MainActivity.class, 2000);
                 }
             });
-        } else {
-            runOnUiThread(() -> {
-                splashBinding.splashTitle.setVisibility(View.VISIBLE);
-            });
-
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                Intent mainIntent = new Intent(this, MainActivity.class);
-                startActivity(mainIntent);
-                finish();
-            }, 2000);
+        } else { // location이 null일 때
+            Utility.startActivity(this, MainActivity.class, 2000);
         }
     }
 }

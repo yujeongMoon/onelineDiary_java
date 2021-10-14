@@ -106,7 +106,7 @@ public class WeatherUtility {
                 "&" + URLEncoder.encode("base_time", "UTF-8") + "=" + URLEncoder.encode(baseTime, "UTF-8");
     }
 
-    public static void getWeather(double latitude, double longitude, OnCompleteCallback<Weather, ConnError> callback) {
+    public static void getWeather(double latitude, double longitude, OnCompleteCallback<Weather, String> callback) {
         new Thread(() -> {
             JSONObject response = null;
             BufferedReader br;
@@ -130,7 +130,7 @@ public class WeatherUtility {
 
                 if (responseCode == 400 || responseCode == 401 || responseCode == 500) { // 기상 정보를 가져오지 못했을 때
                     ConnError error = new ConnError(responseCode, conn.getResponseMessage());
-                    callback.onComplete(false, null, error);
+                    callback.onComplete(false, null, conn.getResponseMessage());
                 } else { // 기상 정보를 성공적으로 가져왔을 때
                     // 스트림에서 결과값 String으로 변환
                     br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -175,8 +175,10 @@ public class WeatherUtility {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                callback.onComplete(false, null, e.getMessage());
             } catch (JSONException e) {
                 e.printStackTrace();
+                callback.onComplete(false, null, e.getMessage());
             } finally {
                 if (conn != null)
                     conn.disconnect();

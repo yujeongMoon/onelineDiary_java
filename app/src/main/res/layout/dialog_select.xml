@@ -45,8 +45,10 @@
         android:layout_height="match_parent"
         android:layout_above="@id/select_layout"
         android:gravity="center"
-        android:paddingTop="@dimen/dialog_message_padding"
-        android:paddingBottom="@dimen/dialog_message_padding"
+        android:paddingStart="10dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="20dp"
         android:textSize="@dimen/dialog_message_text"
         tools:text="다시 입력해주세요!" />
 </RelativeLayout>

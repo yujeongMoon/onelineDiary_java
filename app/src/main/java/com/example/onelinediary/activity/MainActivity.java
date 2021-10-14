@@ -186,7 +186,7 @@ public class MainActivity extends FragmentActivity {
                     Const.weatherResId = resId;
                     Const.weather = w;
                 } else {
-                    Log.d("MainActivity", error.getErrorMessage());
+                    Log.d("MainActivity", error);
 //                        Toast.makeText(getApplicationContext(), "현재 날씨를 가져오는 과정에서 문제가 발생하였습니다.", Toast.LENGTH_LONG).show();
                 }
             });

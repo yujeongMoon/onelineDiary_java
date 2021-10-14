@@ -10,12 +10,15 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
+
+import androidx.exifinterface.media.ExifInterface;
 
 import com.example.onelinediary.R;
 
@@ -30,6 +33,21 @@ import java.util.Date;
 public class Utility {
     public static boolean isStringNullOrEmpty(String text) {
         return text == null || text.isEmpty();
+    }
+
+    /**
+     * millisTime 시간만큼 지연을 시킨 후 해당 액티비티로 이동하는 메소드
+     *
+     * @param context 컨텍스트
+     * @param activityClass 이동할 액티비티
+     * @param millisTime 지연 시간
+     */
+    public static void startActivity(Context context, Class activityClass, int millisTime) {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Intent mainIntent = new Intent(context, activityClass);
+            context.startActivity(mainIntent);
+            ((Activity)context).finish();
+        }, millisTime);
     }
 
     /**

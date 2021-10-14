@@ -39,7 +39,7 @@
             android:textSize="@dimen/splash_text"
             android:textStyle="bold"
             android:text="@string/splash_text"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
     </LinearLayout>
 

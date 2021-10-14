@@ -38,7 +38,7 @@ public class ConfirmDialog extends DialogFragment {
         super.onResume();
 
         int width = Utility.dpToPx(requireContext(), 300);
-        int height = Utility.dpToPx(requireContext(), 200);
+        int height = Utility.dpToPx(requireContext(), 220);
 
         requireDialog().getWindow().setLayout(width, height);
     }
