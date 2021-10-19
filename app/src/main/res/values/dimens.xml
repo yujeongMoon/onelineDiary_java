@@ -18,8 +18,8 @@
 
     <dimen name="main_bottom_layout_padding">10dp</dimen>
 
-    <dimen name="main_setting_width">40dp</dimen>
-    <dimen name="main_setting_height">40dp</dimen>
+    <dimen name="main_icon_width">40dp</dimen>
+    <dimen name="main_icon_height">40dp</dimen>
     
     <!-- diary page -->
     <dimen name="diary_margin_top">20dp</dimen>

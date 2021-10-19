@@ -17,22 +17,22 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/dialog_button_height"
             android:layout_weight="1"
-            android:background="#ececec"
+            android:background="#ffb6c1"
             android:gravity="center"
             android:text="@string/ok"
             android:textSize="@dimen/dialog_button_text"/>
 
         <View
-            android:layout_width="@dimen/divider"
+            android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="#dddddd"/>
+            android:background="@android:color/darker_gray"/>
 
         <TextView
             android:id="@+id/cancel"
             android:layout_width="0dp"
             android:layout_height="@dimen/dialog_button_height"
             android:layout_weight="1"
-            android:background="#ececec"
+            android:background="#ffb6c1"
             android:gravity="center"
             android:text="@string/cancel"
             android:textSize="@dimen/dialog_button_text" />

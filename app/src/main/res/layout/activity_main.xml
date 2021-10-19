@@ -40,6 +40,17 @@
         android:paddingBottom="@dimen/main_bottom_layout_padding">
 
         <ImageButton
+            android:id="@+id/btn_notice"
+            android:layout_width="@dimen/main_icon_width"
+            android:layout_height="@dimen/main_icon_height"
+            android:background="@android:color/transparent"
+            android:src="@drawable/notice_black"
+            app:layout_constraintStart_toStartOf="@id/main_bottom_layout"
+            app:layout_constraintTop_toTopOf="@+id/main_bottom_layout"
+            app:layout_constraintBottom_toBottomOf="@+id/main_bottom_layout"
+            android:layout_marginStart="10dp"/>
+
+        <ImageButton
             android:id="@+id/btn_add_new_diary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,10 +63,10 @@
 
         <ImageButton
             android:id="@+id/btn_setting"
-            android:layout_width="@dimen/main_setting_width"
-            android:layout_height="@dimen/main_setting_height"
+            android:layout_width="@dimen/main_icon_width"
+            android:layout_height="@dimen/main_icon_height"
             android:background="@android:color/transparent"
-            android:src="@drawable/settings_black"
+            android:src="@drawable/setting_black"
             app:layout_constraintRight_toRightOf="@+id/main_bottom_layout"
             app:layout_constraintTop_toTopOf="@+id/main_bottom_layout"
             app:layout_constraintBottom_toBottomOf="@+id/main_bottom_layout"
