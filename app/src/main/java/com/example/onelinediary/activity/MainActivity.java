@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,6 +48,8 @@ public class MainActivity extends FragmentActivity {
 
     private MainPagerAdapter pagerAdapter;
     private ProgressDialog progressDialog = null;
+
+    boolean pressedBackOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +105,8 @@ public class MainActivity extends FragmentActivity {
         });
 
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
-        mainBinding.btnSetting.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "서비스 준비중입니다.", Toast.LENGTH_LONG).show());
+        mainBinding.btnSetting.setOnClickListener(v -> gotoSettingActivity());
+        mainBinding.btnNotice.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "서비스 준비중 입니다.", Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -125,9 +130,24 @@ public class MainActivity extends FragmentActivity {
     public LocationListener listener = location -> {
         Const.currentLocation = location;
         getCurrentWeather(Const.currentLocation);
-        Toast.makeText(getApplicationContext(), "위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude(), Toast.LENGTH_LONG).show();
-        Log.d("currentLocation", "위도 : " + location.getLatitude() + ", 경도 : " + location.getLongitude());
     };
+
+    /*
+        back키를 눌러서 앱을 종료할 때 두번 연속으로 클릭할 시 앱을 종료한다.
+        한 번 누른 후 2초안에 눌러야 연속으로 보고 앱을 종료한다. 2초가 넘으면 플래그를 초기화 시킨다.
+     */
+    @Override
+    public void onBackPressed() {
+        if (pressedBackOnce) {
+            super.onBackPressed();
+        }
+
+        pressedBackOnce = true;
+        Toast.makeText(getApplicationContext(), "앱을 종료하려면 한번 더 눌러주세요", Toast.LENGTH_SHORT).show();
+
+        // 플래그 초기화
+        new Handler(Looper.getMainLooper()).postDelayed(() -> pressedBackOnce = false, 2000);
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     public void notifyToPager() {
@@ -215,6 +235,11 @@ public class MainActivity extends FragmentActivity {
         startActivity(newDiaryIntent);
 
 //        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+    }
+
+    public void gotoSettingActivity() {
+        Intent settingIntent = new Intent(this, SettingActivity.class);
+        startActivity(settingIntent);
     }
 
     private void checkPermission(String[] permissions, int permissionRequest) {
