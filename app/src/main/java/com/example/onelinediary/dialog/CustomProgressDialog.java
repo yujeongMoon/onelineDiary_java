@@ -1,4 +1,4 @@
-package com.example.onelinediary.utiliy;
+package com.example.onelinediary.dialog;
 
 import android.app.ProgressDialog;
 import android.content.Context;

@@ -18,6 +18,12 @@ public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
 
     int weather = -1;
 
+    onDiaryInterface diaryInterface;
+
+    public interface onDiaryInterface {
+        void initDiaryCompleted();
+    }
+
     @NonNull
     @Override
     public MainPageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -29,11 +35,18 @@ public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
         return new MainPageViewHolder(binding);
     }
 
+    public void setDiaryInterface(onDiaryInterface diaryInterface) {
+        this.diaryInterface = diaryInterface;
+    }
+
     // 달마다 해당하는 arrayList를 넘겨줘야함.
     @Override
     public void onBindViewHolder(@NonNull MainPageViewHolder holder, int position) {
         String month = Const.monthKeyList.get(position);
         ArrayList<Diary> diaryListByMonth = Const.diaryList.get(month);
+        if(diaryInterface != null) {
+            diaryInterface.initDiaryCompleted();
+        }
         if (diaryListByMonth != null && !diaryListByMonth.isEmpty()) {
             holder.onBind(month, diaryListByMonth);
         }

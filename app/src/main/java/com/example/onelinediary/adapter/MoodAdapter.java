@@ -30,6 +30,12 @@ public class MoodAdapter extends BaseAdapter {
     String month;
     ArrayList<Diary> diaryList = new ArrayList<>();
 
+    // 해당 날짜에 일기가 있는지 구분해주는 플래그
+    boolean isExist = false;
+
+    // 해당 날짜에 일기가 있다고 판단되면 일기가 있는 인덱스를 저장해서 사용한다.
+    int index = 0;
+
     public MoodAdapter() {}
 
     public MoodAdapter(Context context) {
@@ -43,7 +49,7 @@ public class MoodAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return diaryList.size();
+        return Utility.getLastDayOfMonth(Integer.parseInt(Const.currentYear), Integer.parseInt(month));
     }
 
     @Override
@@ -59,60 +65,67 @@ public class MoodAdapter extends BaseAdapter {
     @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        int mood = diaryList.get(position).getMood();
-
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.viewholder_mood_item, parent, false);
 
             TextView day = convertView.findViewById(R.id.day);
-            day.setText(diaryList.get(position).getDay() + context.getString(R.string.day));
+            day.setText(position + 1 + "");
 
             ImageView emoji = convertView.findViewById(R.id.emoji);
-
-            switch (mood) {
-                case 1:
-                    emoji.setImageResource(R.drawable.emoji_happy_icon);
-                    break;
-                case 2:
-                    emoji.setImageResource(R.drawable.emoji_blushing_icon);
-                    break;
-                case 3:
-                    emoji.setImageResource(R.drawable.emoji_blank_icon);
-                    break;
-                case 4:
-                    emoji.setImageResource(R.drawable.emoji_consoling_icon);
-                    break;
-                case 5:
-                    emoji.setImageResource(R.drawable.emoji_nervous_icon);
-                    break;
+            for(int i = 0; i < diaryList.size(); i++) {
+                if (!isExist && Integer.parseInt(diaryList.get(i).getDay()) == (position + 1)) {
+                    index = i;
+                    isExist = true;
+                }
             }
-        } else {
-            View view = new View(parent.getContext());
-            view = (View) convertView;
-        }
 
-        convertView.setOnClickListener(v -> {
-            Intent detailIntent = new Intent(context, DiaryDetailActivity.class);
-            detailIntent.putExtra(Const.INTENT_KEY_MONTH, month);
-            detailIntent.putExtra(Const.INTENT_KEY_DIARY, diaryList.get(position));
-            context.startActivity(detailIntent);
-        });
+            if (isExist) {
+                int resId = 0;
 
-        /*
-        * onClick과 onLongClick이 동시에 실행되면 문제가 발생할 수 있다.
-        * onLongClick은 onClick과 다르게 반환값이 있다.
-        * 기본값은 false, 다음 이벤트가 진행되어 롱클릭 이 후 클릭 이벤트가 진행된다.
-        * true를 반환하면 동시에 실행되지않고 이벤트가 종료된다.
-        *
-        * 이모지를 롱클릭하면 일기 삭제를 진행한다.
-        * 사용자에게 다이얼로그를 띄워 삭제 여부를 물어본다.
-        */
-        String message = context.getString(R.string.dialog_message_delete_diary, month, diaryList.get(position).getDay());
-        convertView.setOnLongClickListener(v -> {
-            new SelectDialog(message, v1 -> DatabaseUtility.deleteDiary(context, Utility.getYear(), month, diaryList.get(position).getDay(), isSuccess -> {
-                if (isSuccess) {
-                    Toast.makeText(context, context.getString(R.string.message_delete_diary), Toast.LENGTH_LONG).show();
+                switch (diaryList.get(index).getMood()) {
+                    case 1:
+                        resId = R.drawable.emoji_happy_icon;
+                        break;
+                    case 2:
+                        resId = R.drawable.emoji_blushing_icon;
+                        break;
+                    case 3:
+                        resId = R.drawable.emoji_blank_icon;
+                        break;
+                    case 4:
+                        resId = R.drawable.emoji_consoling_icon;
+                        break;
+                    case 5:
+                        resId = R.drawable.emoji_nervous_icon;
+                        break;
+                }
+
+                emoji.setImageResource(resId);
+
+                convertView.setTag(index);
+                convertView.setOnClickListener(v -> {
+                    Intent detailIntent = new Intent(context, DiaryDetailActivity.class);
+                    detailIntent.putExtra(Const.INTENT_KEY_MONTH, month);
+                    detailIntent.putExtra(Const.INTENT_KEY_DIARY, diaryList.get((int)v.getTag()));
+                    context.startActivity(detailIntent);
+                });
+
+                /*
+                 * onClick과 onLongClick이 동시에 실행되면 문제가 발생할 수 있다.
+                 * onLongClick은 onClick과 다르게 반환값이 있다.
+                 * 기본값은 false, 다음 이벤트가 진행되어 롱클릭 이 후 클릭 이벤트가 진행된다.
+                 * true를 반환하면 동시에 실행되지않고 이벤트가 종료된다.
+                 *
+                 * 이모지를 롱클릭하면 일기 삭제를 진행한다.
+                 * 사용자에게 다이얼로그를 띄워 삭제 여부를 물어본다.
+                 */
+                String message = context.getString(R.string.dialog_message_delete_diary, month, diaryList.get(index).getDay());
+                View finalConvertView = convertView;
+                convertView.setOnLongClickListener(v -> {
+                    new SelectDialog(message, v1 -> DatabaseUtility.deleteDiary(context, Utility.getYear(), month, diaryList.get((int)finalConvertView.getTag()).getDay(), isSuccess -> {
+                        if (isSuccess) {
+                            Toast.makeText(context, context.getString(R.string.message_delete_diary), Toast.LENGTH_LONG).show();
 //                    View view = ((Activity)context).findViewById(R.id.main_layout);
 //                    Snackbar snackbar = Snackbar.make(v, R.string.message_delete_diary, Snackbar.LENGTH_LONG);
 //                    Snackbar.SnackbarLayout snackbarView = (Snackbar.SnackbarLayout) snackbar.getView();
@@ -124,19 +137,28 @@ public class MoodAdapter extends BaseAdapter {
 //                    snackbar.getView().setBackground(ContextCompat.getDrawable(context, R.drawable.snackbar));
 //                    snackbar.show();
 
-                    // 일기가 삭제되었다는 것을 알려준다?
-                    // 연결된 그리드 뷰에게 알려준다?
+                            // 일기가 삭제되었다는 것을 알려준다?
+                            // 연결된 그리드 뷰에게 알려준다?
 //                    notifyDataSetChanged();
 
-                    // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
-                    ((Activity)context).runOnUiThread(() -> ((MainActivity)context).notifyToPager());
-                } else {
-                    Toast.makeText(context, context.getString(R.string.error_message_delete_diary), Toast.LENGTH_LONG).show();
-                }
-            })).show(((FragmentActivity)context).getSupportFragmentManager(), "deleteDiarySuccess");
+                            // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
+                            Const.currentMoodResId = 0;
+                            ((Activity)context).runOnUiThread(() -> ((MainActivity)context).notifyToPager());
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.error_message_delete_diary), Toast.LENGTH_LONG).show();
+                        }
+                    })).show(((FragmentActivity)context).getSupportFragmentManager(), "deleteDiarySuccess");
 
-            return true;
-        });
+                    return true;
+                });
+                isExist = false;
+            } else {
+                convertView.setOnClickListener(null);
+            }
+        } else {
+            View view = new View(parent.getContext());
+            view = (View) convertView;
+        }
 
         return convertView;
     }

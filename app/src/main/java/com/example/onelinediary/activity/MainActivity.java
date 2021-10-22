@@ -2,7 +2,6 @@ package com.example.onelinediary.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -22,7 +21,8 @@ import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.MainPagerAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityMainBinding;
-import com.example.onelinediary.utiliy.CustomProgressDialog;
+import com.example.onelinediary.dialog.CustomProgressDialog;
+import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.LocationUtility;
 import com.example.onelinediary.utiliy.Utility;
@@ -84,6 +84,7 @@ public class MainActivity extends FragmentActivity {
 
             if (pagerAdapter == null) {
                 pagerAdapter = new MainPagerAdapter();
+                pagerAdapter.setDiaryInterface(this::checkExistDiary);
                 mainBinding.pager.setAdapter(pagerAdapter);
 
                 // 배경화면을 현재 날씨 아이콘으로 바꿔준다.
@@ -100,13 +101,43 @@ public class MainActivity extends FragmentActivity {
                     mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
                 }
             }
-
             loading = false;
         });
 
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
         mainBinding.btnSetting.setOnClickListener(v -> gotoSettingActivity());
         mainBinding.btnNotice.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "서비스 준비중 입니다.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void checkExistDiary() {
+        mainBinding.btnAddNewDiary.setImageResource(R.drawable.add_circle_outline_black);
+
+        // 현재 달의 일기 리스트
+        ArrayList<Diary> currentMonthDiaryList = Const.diaryList.get(Utility.getMonth());
+        // 오늘의 일기(이번 달 일기의 리스트의 마지막이 오늘의 일기)
+        Diary todayDiary = currentMonthDiaryList.get(currentMonthDiaryList.size() - 1);
+
+        if (Const.diaryList != null && Const.diaryList.containsKey(Utility.getMonth())) {
+            if (todayDiary.getDay().equals(Utility.getDay())) {
+                switch (todayDiary.getMood()) {
+                    case 1:
+                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_happy_icon);
+                        break;
+                    case 2:
+                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_blushing_icon);
+                        break;
+                    case 3:
+                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_blank_icon);
+                        break;
+                    case 4:
+                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_consoling_icon);
+                        break;
+                    case 5:
+                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_nervous_icon);
+                        break;
+                }
+            }
+        }
     }
 
     @Override

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Utility {
@@ -50,6 +51,12 @@ public class Utility {
             context.startActivity(mainIntent);
             ((Activity)context).finish();
         }, millisTime);
+    }
+
+    public static int getLastDayOfMonth(int year, int month) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, 1);
+        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
     /**

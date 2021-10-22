@@ -51,10 +51,10 @@
             app:layout_constraintBottom_toBottomOf="@+id/main_bottom_layout"
             android:layout_marginStart="10dp"/>
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_add_new_diary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@android:color/transparent"
             android:src="@drawable/add_circle_outline_black"
             app:layout_constraintTop_toTopOf="@+id/main_bottom_layout"

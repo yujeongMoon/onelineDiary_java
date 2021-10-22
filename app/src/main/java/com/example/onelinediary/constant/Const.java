@@ -49,4 +49,7 @@ public class Const {
     public static String weather = null;
 
     public static Uri photoUri = null;
+
+    // 오늘 일기를 썼다면 선택한 기분을 + 대신 보여주기 위해서 저장한다.
+    public static int currentMoodResId = 0;
 }

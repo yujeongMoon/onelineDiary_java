@@ -24,7 +24,7 @@ import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dialog.SelectDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.dto.PhotoInfo;
-import com.example.onelinediary.utiliy.CustomProgressDialog;
+import com.example.onelinediary.dialog.CustomProgressDialog;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
 import com.google.android.material.tabs.TabLayoutMediator;
