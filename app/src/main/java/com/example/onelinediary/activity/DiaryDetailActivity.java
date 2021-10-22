@@ -1,9 +1,11 @@
 package com.example.onelinediary.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -12,16 +14,24 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.onelinediary.R;
+import com.example.onelinediary.adapter.ImagePagerAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityDiaryDetailBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dialog.SelectDialog;
 import com.example.onelinediary.dto.Diary;
+import com.example.onelinediary.dto.PhotoInfo;
+import com.example.onelinediary.utiliy.CustomProgressDialog;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.ArrayList;
+
+import static com.example.onelinediary.constant.Const.PICKER_IMAGE_REQUEST;
 
 public class DiaryDetailActivity extends AppCompatActivity {
     private ActivityDiaryDetailBinding detailBinding;
@@ -35,11 +45,20 @@ public class DiaryDetailActivity extends AppCompatActivity {
     boolean isEnabled = false;
     boolean isUpdate = false;
     boolean isChanged = false;
+
+    // 상세 화면에서 보여줄 리스트
+    public ArrayList<PhotoInfo> oldPhotoList = new ArrayList<>();
+
+    // 수정 화면에서 보여줄 리스트
+   public ArrayList<PhotoInfo> newPhotoList = new ArrayList<>();
     
     int currentMood = Const.Mood.NONE.value;
 
-    Uri photoUri;
+    ImagePagerAdapter imagePagerAdapter;
 
+    int currentIndex = 0;
+
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,10 +102,10 @@ public class DiaryDetailActivity extends AppCompatActivity {
         detailBinding.textDetailDiaryContents.setText(diary.getContents());
 
         // 일기와 같이 선택한 사진
-        if (diary.getPhoto().equals("")) {
-            detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
-            detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.white));
-        } else {
+//        if (diary.getPhoto().equals("")) {
+//            detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+//            detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.white));
+//        } else {
             /*
                 구글 포토에 있는 사진을 사용한 경우, uri에 "com.google.android.apps.photos.contentprovider"이 포함되어있다.
                 구글 포토에서 사진을 선택하여 onActivityResult()에서 uri를 사용하는 경우에는 authority가 "com.google.android.apps.photos.contentprovider"로 지정되어 있기 때문에
@@ -101,22 +120,38 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 getContentResolver().query()로 cursor를 생성하고 입력한 uri에서 절대 경로를 알아낸다.
                 절대 경로를 이용하면 구글 포토 권한이 필요 없기 때문에 잘 진행된다.
              */
-            Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
-
-            if (photo != null) {
-                detailBinding.detailPhoto.setImageBitmap(photo);
-                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.black));
-            } else {
-                Toast.makeText(getApplicationContext(), getString(R.string.error_message_get_photo), Toast.LENGTH_LONG).show();
-                detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
-                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.white));
-            }
-        }
+//            Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
+//
+//            if (photo != null) {
+//                detailBinding.detailPhoto.setImageBitmap(photo);
+//                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.black));
+//            } else {
+//                Toast.makeText(getApplicationContext(), getString(R.string.error_message_get_photo), Toast.LENGTH_LONG).show();
+//                detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
+//                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.white));
+//            }
+//        }
 
         detailBinding.switchEditMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isEnabled = isChecked;
 
             if (isEnabled) {
+                // editmode on
+                // 이미지뷰에 클릭 이벤트를 추가하기 위해 알린다.
+                imagePagerAdapter.setEditable(true);
+
+                // 어뎁터의 리스트에 빈자리가 있다면 null로 채워주며 초기화한다.
+                if (imagePagerAdapter.photoList.size() < 3) {
+                    int size = imagePagerAdapter.photoList.size();
+                    for (int i = 0; i < 3 - size; i++) {
+                        newPhotoList.add(new PhotoInfo(null, null));
+                    }
+                } // 총 3개 보여주기
+
+                imagePagerAdapter.addPhotoList(newPhotoList);
+
+                detailBinding.indicator.setVisibility(View.VISIBLE);
+
                 detailBinding.detailEmoji.setVisibility(View.GONE);
 
                 detailBinding.detailEmojiLayout.setVisibility(View.VISIBLE);
@@ -129,8 +164,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
                 detailBinding.detailButtonLayout.setVisibility(View.VISIBLE);
 
-                detailBinding.detailPhoto.isClickEnabled(true);
-
                 // 기존에 선택한 기분을 확인해서 표시해준다.
                 currentMood = diary.getMood();
                 initMood();
@@ -140,15 +173,36 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 detailBinding.emojiBlankLayout.setOnClickListener(onClickListener);
                 detailBinding.emojiSadLayout.setOnClickListener(onClickListener);
                 detailBinding.emojiNervousLayout.setOnClickListener(onClickListener);
-
-                detailBinding.detailPhoto.setOnClickListener(v -> photoUri = Utility.selectPhoto(DiaryDetailActivity.this, UPDATE_PICKER_IMAGE_REQUEST));
             } else {
+                // editmode off
+                // 이미지뷰 클릭이 되지 않도록 설정한다.
+                imagePagerAdapter.setEditable(false);
+
+                detailBinding.detailPhoto.setCurrentItem(0);
+
                 InputMethodManager im = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 im.hideSoftInputFromWindow(detailBinding.editDetailDiaryContents.getWindowToken(), 0);
 
                 if (isUpdate) {
                     isUpdate = false;
                     setCurrentMood(diary.getMood());
+
+                    if (newPhotoList.isEmpty()) {
+                        newPhotoList.add(new PhotoInfo(null, null));
+                    }
+
+                    oldPhotoList.clear();
+                    oldPhotoList.addAll(newPhotoList);
+                    imagePagerAdapter.addPhotoList(oldPhotoList);
+                } else {
+                    newPhotoList.clear();
+                    newPhotoList.addAll(oldPhotoList);
+                    imagePagerAdapter.addPhotoList(oldPhotoList);
+                }
+
+                // 이미지가 1개 이하일 경우, indicator를 보여주지 않는다.
+                if (newPhotoList.size() < 2) {
+                    detailBinding.indicator.setVisibility(View.GONE);
                 }
 
                 detailBinding.detailEmoji.setVisibility(View.VISIBLE);
@@ -163,10 +217,58 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 detailBinding.textDetailDiaryContents.setText(diary.getContents());
 
                 detailBinding.detailButtonLayout.setVisibility(View.GONE);
-
-                detailBinding.detailPhoto.isClickEnabled(false);
             }
         });
+
+        CustomProgressDialog pDialog = new CustomProgressDialog(this);
+        pDialog.show();
+        new Handler().postDelayed(() -> {
+            imagePagerAdapter = new ImagePagerAdapter();
+
+            detailBinding.detailPhoto.setAdapter(imagePagerAdapter);
+
+            if (diary.getPhotoList() != null) { // 사진 여러장
+                newPhotoList = Utility.createPhotoInfoList(diary.getPhotoList());
+                imagePagerAdapter.addPhotoList(newPhotoList);
+            } else {
+                PhotoInfo photoInfo;
+                if (!diary.getPhoto().equals("")) { // 사진 한장
+                    photoInfo = new PhotoInfo(diary.getPhoto(), Utility.getRotatedBitmap(diary.getPhoto()));
+                } else {
+                    photoInfo = new PhotoInfo(null, null);
+                }
+                newPhotoList.add(photoInfo);
+                imagePagerAdapter.addPhoto(newPhotoList.get(0));
+                imagePagerAdapter.notifyDataSetChanged();
+            }
+
+//            progressDialog.dismiss();
+            pDialog.dismiss();
+            // 기존의 데이터 복사
+            oldPhotoList.addAll(newPhotoList);
+
+            TabLayoutMediator mediator = new TabLayoutMediator(detailBinding.indicator, detailBinding.detailPhoto, (tab, position) -> { });
+
+            // 뷰페이저와 탭레이아웃을 연결한다.
+            // 뷰페이저2에서는 이 방법을 통해서 연결한다.
+            mediator.attach();
+
+            // 이미지가 없거나 한개일 경우, indicator는 보여주지 않는다.
+            if (imagePagerAdapter.photoList.size() < 2) {
+                detailBinding.indicator.setVisibility(View.GONE);
+            } else {
+                detailBinding.indicator.setVisibility(View.VISIBLE);
+            }
+
+            detailBinding.detailPhoto.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+
+                    currentIndex = position;
+                }
+            });
+        }, 500);
     }
 
     private TextWatcher watcher = new TextWatcher() {
@@ -192,12 +294,9 @@ public class DiaryDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (isEnabled) {
             if (isChanged) {
-                new SelectDialog("수정한 일기가 저장되지 않았습니다. editmode를 해제하시겠습니까?", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        detailBinding.switchEditMode.setChecked(false);
-                        isChanged = false;
-                    }
+                new SelectDialog("수정한 일기가 저장되지 않았습니다. editmode를 해제하시겠습니까?", v -> {
+                    detailBinding.switchEditMode.setChecked(false);
+                    isChanged = false;
                 }).show(getSupportFragmentManager(), "finishUpdateDiary");
             } else {
                 detailBinding.switchEditMode.setChecked(false);
@@ -212,46 +311,49 @@ public class DiaryDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        detailBinding.detailPhoto.initPreTime();
+//        detailBinding.detailPhoto.initPreTime();
 
-        if (requestCode == UPDATE_PICKER_IMAGE_REQUEST) {
-            if (data != null && data.getData() != null) { // 갤러리를 선택한 경우
+        if (requestCode == PICKER_IMAGE_REQUEST) { // 카메라와 갤러리 선택 팝업을 선택한 경우
+            if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우(구글 포토 포함)
                 Uri selectedImageUri = data.getData();
 
+                Bitmap imageBitmap = null;
+
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
-                diary.setPhoto(path);
+                imageBitmap = Utility.getRotatedBitmap(path);
 
-                if (isEnabled)
-                    isChanged = true;
-
-                if (photoUri != null) {
-                    getContentResolver().delete(photoUri, null, null);
+                if (imagePagerAdapter != null && imagePagerAdapter.photoList.size() <= 3) {
+                    newPhotoList.set(currentIndex, new PhotoInfo(path, imageBitmap));
+                    imagePagerAdapter.addPhotoList(newPhotoList);
+                    imagePagerAdapter.isChanged = true;
                 }
-            } else { // 카메라를 선택한 경우
-                if (photoUri != null) {
+
+                isChanged = true;
+
+                // photoUri는 무조건 생성되기 때문에 피커 중 아무것도 선택하지 않았거나 갤러리를 통해 이미지를 선택한 경우
+                // 더미 이미지가 생기기 때문에 photoUri 경로로 연결된 이미지를 지워주기 제공자에 있는 이미지르 삭제해야한다.
+                if (Const.photoUri != null) {
+                    getContentResolver().delete(Const.photoUri, null, null);
+                }
+            } else { // 카메라를 선택했을 경우
+                if (Const.photoUri != null) {
+                    // uri로부터 Bitmap 이미지를 생성
                     Bitmap imageBitmap = null;
 
-                    String path = Utility.getRealPathFromURI(this, photoUri);
+                    String path = Utility.getRealPathFromURI(this, Const.photoUri);
                     imageBitmap = Utility.getRotatedBitmap(path);
 
+                    // photoUri는 무조건 생겨서 넘어오기 때문에 비트맵 이미지가 생성되는지 따로 체크한다.
                     if (imageBitmap != null) {
-                        diary.setPhoto(path);
+                        if (imagePagerAdapter != null && imagePagerAdapter.photoList.size() <= 3) {
+                            newPhotoList.set(currentIndex, new PhotoInfo(path, imageBitmap));
+                            imagePagerAdapter.addPhotoList(newPhotoList);
+                            imagePagerAdapter.isChanged = true;
+                        }
 
-                        if (isEnabled)
-                            isChanged = true;
+                        isChanged = true;
                     }
                 }
-            }
-
-            // 피커 중에 아무것도 선택하지 않은 경우도 있기 때문에 아무것도 선택하지 않은 경우에는 기존의 사진을 보여줘야한다.
-            // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
-            if (diary.getPhoto().equals("")) {
-                detailBinding.detailPhoto.setImageResource(R.drawable.default_placeholder_image);
-                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.white));
-            } else {
-                Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
-                detailBinding.detailPhoto.setImageBitmap(photo);
-                detailBinding.detailPhoto.setBackground(ContextCompat.getDrawable(this, R.color.black));
             }
         }
     }
@@ -407,6 +509,35 @@ public class DiaryDetailActivity extends AppCompatActivity {
         diary.setContents(contents);
 
         diary.setMood(currentMood);
+
+        // 사진 저장
+        newPhotoList.clear();
+        for(PhotoInfo photoInfo : imagePagerAdapter.photoList) {
+            if(photoInfo.getBitmapImage() != null) {
+                newPhotoList.add(photoInfo);
+            }
+        }
+
+        switch (newPhotoList.size()) {
+            case 0:
+                diary.setPhotoList(null);
+                diary.setPhoto("");
+                break;
+
+            case 1:
+                diary.setPhotoList(null);
+                diary.setPhoto(newPhotoList.get(0).getPath());
+                break;
+
+            default:
+                diary.setPhoto("");
+                ArrayList<String> pathList = new ArrayList<>();
+                for (int i = 0; i < newPhotoList.size(); i++) {
+                    pathList.add(newPhotoList.get(i).getPath());
+                }
+                diary.setPhotoList(pathList);
+                break;
+        }
 
         // 오늘의 기분 선택
         if (currentMood == Const.Mood.NONE.value) {

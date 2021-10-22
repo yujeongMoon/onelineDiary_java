@@ -21,6 +21,7 @@ import android.provider.Settings;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.example.onelinediary.R;
+import com.example.onelinediary.dto.PhotoInfo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Utility {
@@ -377,4 +379,47 @@ public class Utility {
 
         return Utility.rotateBitmap(photo, orientation); // 이미지가 회전되어 있을 경우, 원래대로 회전 시킨 후 비트맵 이미지를 반환
     }
+
+    public static ArrayList<PhotoInfo> createPhotoInfoList(ArrayList<String> pathList) {
+        ArrayList<PhotoInfo> bitmapList = new ArrayList<>();
+
+        for (String path : pathList) {
+            Bitmap image = Utility.getRotatedBitmap(path);
+            bitmapList.add(new PhotoInfo(path, image));
+        }
+
+        return bitmapList;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

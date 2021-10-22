@@ -14,6 +14,9 @@
 
     <dimen name="main_margin_start">20dp</dimen>
     <dimen name="main_margin_end">20dp</dimen>
+
+    <dimen name="page_margin">15dp</dimen>
+    <dimen name="pager_width">300dp</dimen>
     <!-- pager -->
 
     <dimen name="main_bottom_layout_padding">10dp</dimen>
@@ -58,4 +61,6 @@
     <dimen name="dialog_button_height">50dp</dimen>
 
     <dimen name="dialog_message_padding">30dp</dimen>
+
+
 </resources>

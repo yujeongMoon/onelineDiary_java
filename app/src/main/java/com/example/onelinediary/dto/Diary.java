@@ -3,6 +3,7 @@ package com.example.onelinediary.dto;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,8 @@ import java.util.Map;
  */
 public class Diary implements Parcelable {
     private String reportingDate; // 일기를 작성한 날짜
-    private String photo = ""; // 사진의 절대 경로
+    private String photo = ""; // 사진이 하나인 경우
+    private ArrayList<String> photoList = null; // 사진이 여러장인경우
     private String contents = ""; // 일기 내용
     private int mood; // 오늘의 기분
     private String day; // 일기를 작성한 날짜(일)
@@ -35,27 +37,12 @@ public class Diary implements Parcelable {
     protected Diary(Parcel in) {
         reportingDate = in.readString();
         photo = in.readString();
+        photoList = in.createStringArrayList();
         contents = in.readString();
         mood = in.readInt();
         day = in.readString();
         location = in.readString();
         weather = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(reportingDate);
-        dest.writeString(photo);
-        dest.writeString(contents);
-        dest.writeInt(mood);
-        dest.writeString(day);
-        dest.writeString(location);
-        dest.writeString(weather);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public static final Creator<Diary> CREATOR = new Creator<Diary>() {
@@ -84,6 +71,14 @@ public class Diary implements Parcelable {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public ArrayList<String> getPhotoList() {
+        return photoList;
+    }
+
+    public void setPhotoList(ArrayList<String> photoList) {
+        this.photoList = photoList;
     }
 
     public String getContents() {
@@ -130,6 +125,7 @@ public class Diary implements Parcelable {
         Map<String, Object> result = new HashMap<>();
         result.put("contents", contents);
         result.put("photo", photo);
+        result.put("photoList", photoList);
         result.put("mood", mood);
         result.put("reportingDate", reportingDate);
         result.put("day", day);
@@ -137,5 +133,22 @@ public class Diary implements Parcelable {
         result.put("weather", weather);
 
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(reportingDate);
+        dest.writeString(photo);
+        dest.writeStringList(photoList);
+        dest.writeString(contents);
+        dest.writeInt(mood);
+        dest.writeString(day);
+        dest.writeString(location);
+        dest.writeString(weather);
     }
 }

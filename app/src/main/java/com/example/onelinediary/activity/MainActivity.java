@@ -22,6 +22,7 @@ import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.MainPagerAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityMainBinding;
+import com.example.onelinediary.utiliy.CustomProgressDialog;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.LocationUtility;
 import com.example.onelinediary.utiliy.Utility;
@@ -47,7 +48,7 @@ public class MainActivity extends FragmentActivity {
     private final int PERMISSION_REQUEST = 100;
 
     private MainPagerAdapter pagerAdapter;
-    private ProgressDialog progressDialog = null;
+    private CustomProgressDialog progressDialog = null;
 
     boolean pressedBackOnce = false;
 
@@ -66,8 +67,7 @@ public class MainActivity extends FragmentActivity {
             loading = true;
 
         if (loading) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage(getString(R.string.message_progress_dialog));
+            progressDialog = new CustomProgressDialog(this);
             progressDialog.show();
         }
 

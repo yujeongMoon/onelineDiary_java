@@ -8,30 +8,28 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.onelinediary.R;
+import com.example.onelinediary.adapter.ImagePagerAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityNewDiaryBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dialog.SelectDialog;
-import com.example.onelinediary.dto.ConnError;
 import com.example.onelinediary.dto.Diary;
-import com.example.onelinediary.dto.Weather;
+import com.example.onelinediary.dto.PhotoInfo;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.LocationUtility;
 import com.example.onelinediary.utiliy.Utility;
-import com.example.onelinediary.utiliy.WeatherUtility;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 public class NewDiaryActivity extends AppCompatActivity{
     private ActivityNewDiaryBinding newDiaryBinding;
@@ -40,10 +38,15 @@ public class NewDiaryActivity extends AppCompatActivity{
 
     private int currentMood = Const.Mood.NONE.value;
 
-    String currentPhotoPath;
     Uri photoUri;
 
+    ImagePagerAdapter imagePagerAdapter = null;
+
     Diary diary = new Diary();
+
+    public ArrayList<PhotoInfo> newPhotoList = new ArrayList<>();
+
+    int currentIndex = 0;
 
     boolean isChanged = false;
 
@@ -56,11 +59,8 @@ public class NewDiaryActivity extends AppCompatActivity{
 
         newDiaryBinding.todayDate.setText(Utility.getDate(Const.REPORTING_DATE_FORMAT));
 
-//        Location location = LocationUtility.getLastKnownLocation(this);
-        // TODO 위치 정보 보여주기
         getCurrentLocation(Const.currentLocation);
 
-        // TODO 현재 날씨 보여주기
         if (Const.weatherResId > 0) {
             newDiaryBinding.currentWeather.setVisibility(View.VISIBLE);
             newDiaryBinding.currentWeather.setImageResource(Const.weatherResId);
@@ -83,6 +83,33 @@ public class NewDiaryActivity extends AppCompatActivity{
         newDiaryBinding.photo.setOnClickListener(v -> photoUri = Utility.selectPhoto(NewDiaryActivity.this, PICKER_IMAGE_REQUEST));
 
         newDiaryBinding.diaryContents.addTextChangedListener(watcher);
+
+        imagePagerAdapter = new ImagePagerAdapter();
+
+        // 이미지 초기화
+        if (imagePagerAdapter.photoList.size() == 0) {
+            for (int i = 0; i < 3; i++) {
+                imagePagerAdapter.photoList.add(i, new PhotoInfo(null, null));
+            }
+        }
+
+        newDiaryBinding.photo.setAdapter(imagePagerAdapter);
+        imagePagerAdapter.isEditable = true;
+
+        TabLayoutMediator mediator = new TabLayoutMediator(newDiaryBinding.indicator, newDiaryBinding.photo, (tab, position) -> { });
+
+        // 뷰페이저와 탭레이아웃을 연결한다.
+        // 뷰페이저2에서는 이 방법을 통해서 연결한다.
+        mediator.attach();
+
+        newDiaryBinding.photo.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+
+                currentIndex = position;
+            }
+        });
     }
 
     private TextWatcher watcher = new TextWatcher() {
@@ -238,47 +265,46 @@ public class NewDiaryActivity extends AppCompatActivity{
         // 팝업이 떴다고 가정하고 팝업이 내려갈 때 여기서 첫번째 클릭의 시간을 초기화 시켜준다.
         // 초기화를 시키지 않으면 팝업이 내려가는 동시에 이미지뷰를 클릭을 했을 때 시간이 짧아서 팝업이 뜨지 않는다.
         // 그렇기때문에 첫번째 클릭 시간을 초기화 시켜줘야한다.
-        newDiaryBinding.photo.initPreTime();
+//        newDiaryBinding.photo.initPreTime();
 
         if (requestCode == PICKER_IMAGE_REQUEST) { // 카메라와 갤러리 선택 팝업을 선택한 경우
             if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우(구글 포토 포함)
                 Uri selectedImageUri = data.getData();
 
+                Bitmap imageBitmap = null;
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
-                diary.setPhoto(path);
+                imageBitmap = Utility.getRotatedBitmap(path);
+
+                if (imagePagerAdapter != null && imagePagerAdapter.photoList.size() <= 3) {
+                    imagePagerAdapter.addPhotoWithIndex(currentIndex, new PhotoInfo(path, imageBitmap));
+                    imagePagerAdapter.isChanged = true;
+                }
+
                 isChanged = true;
 
                 // photoUri는 무조건 생성되기 때문에 피커 중 아무것도 선택하지 않았거나 갤러리를 통해 이미지를 선택한 경우
                 // 더미 이미지가 생기기 때문에 photoUri 경로로 연결된 이미지를 지워주기 제공자에 있는 이미지르 삭제해야한다.
-                if (photoUri != null) {
-                    getContentResolver().delete(photoUri, null, null);
+                if (Const.photoUri != null) {
+                    getContentResolver().delete(Const.photoUri, null, null);
                 }
             } else { // 카메라를 선택했을 경우
-                if (photoUri != null) {
+                if (Const.photoUri != null) {
                     // uri로부터 Bitmap 이미지를 생성
                     Bitmap imageBitmap = null;
 
-                    String path = Utility.getRealPathFromURI(this, photoUri);
+                    String path = Utility.getRealPathFromURI(this, Const.photoUri);
                     imageBitmap = Utility.getRotatedBitmap(path);
 
                     // photoUri는 무조건 생겨서 넘어오기 때문에 비트맵 이미지가 생성되는지 따로 체크한다.
                     if (imageBitmap != null) {
-                        diary.setPhoto(path);
+                        if (imagePagerAdapter != null && imagePagerAdapter.photoList.size() <= 3) {
+                            imagePagerAdapter.addPhotoWithIndex(currentIndex, new PhotoInfo(path, imageBitmap));
+                            imagePagerAdapter.isChanged = true;
+                        }
+
                         isChanged = true;
                     }
                 }
-            }
-
-            // 피커 중에 아무것도 선택하지 않은 경우도 있기 때문에 아무것도 선택하지 않은 경우에는 기존의 사진을 보여줘야한다.
-            // 기존에 이미지가 없는 경우에는 디폴트 사진을 보여준다.
-            // diray의 photo 필드는 디폴트 값으로 ""로 설정되어있다.
-            if (diary.getPhoto().equals("")) {
-                newDiaryBinding.photo.setImageResource(R.drawable.default_placeholder_image);
-                newDiaryBinding.photo.setBackground(ContextCompat.getDrawable(this, R.color.white));
-            } else {
-                Bitmap photo = Utility.getRotatedBitmap(diary.getPhoto());
-                newDiaryBinding.photo.setImageBitmap(photo);
-                newDiaryBinding.photo.setBackground(ContextCompat.getDrawable(this, R.color.black));
             }
         }
     }
@@ -299,6 +325,34 @@ public class NewDiaryActivity extends AppCompatActivity{
         String contents = newDiaryBinding.diaryContents.getText().toString().trim();
         diary.setContents(contents);
 
+        // 사진 저장
+        for(PhotoInfo photoInfo : imagePagerAdapter.photoList) {
+            if(photoInfo.getBitmapImage() != null) {
+                newPhotoList.add(photoInfo);
+            }
+        }
+
+        switch (newPhotoList.size()) {
+            case 0:
+                diary.setPhotoList(null);
+                diary.setPhoto("");
+                break;
+
+            case 1:
+                diary.setPhotoList(null);
+                diary.setPhoto(newPhotoList.get(0).getPath());
+                break;
+
+            default:
+                diary.setPhoto("");
+                ArrayList<String> pathList = new ArrayList<>();
+                for (int i = 0; i < newPhotoList.size(); i++) {
+                    pathList.add(newPhotoList.get(i).getPath());
+                }
+                diary.setPhotoList(pathList);
+                break;
+        }
+
         // 오늘의 기분 선택
         if (currentMood == Const.Mood.NONE.value) {
             new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(getSupportFragmentManager(), "mood");
@@ -308,6 +362,7 @@ public class NewDiaryActivity extends AppCompatActivity{
                     new ConfirmDialog(getString(R.string.message_save_diary),
                             v -> {
                                 Const.addNewDiary = true;
+                                newPhotoList.clear();
                                 NewDiaryActivity.this.finish();
                             }).show(getSupportFragmentManager(), "newDiarySuccess");
                 } else {

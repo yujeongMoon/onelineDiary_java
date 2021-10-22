@@ -70,8 +70,6 @@ public class SplashActivity extends AppCompatActivity {
                     // MainActivity로 이동
                     Utility.startActivity(this, MainActivity.class, 2000);
                 } else { // 날씨 정보를 가져오지 못했을 때
-                    Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-
                     Utility.startActivity(this, MainActivity.class, 2000);
                 }
             });
