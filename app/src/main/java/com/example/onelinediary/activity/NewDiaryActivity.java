@@ -265,7 +265,7 @@ public class NewDiaryActivity extends AppCompatActivity{
         // 팝업이 떴다고 가정하고 팝업이 내려갈 때 여기서 첫번째 클릭의 시간을 초기화 시켜준다.
         // 초기화를 시키지 않으면 팝업이 내려가는 동시에 이미지뷰를 클릭을 했을 때 시간이 짧아서 팝업이 뜨지 않는다.
         // 그렇기때문에 첫번째 클릭 시간을 초기화 시켜줘야한다.
-//        newDiaryBinding.photo.initPreTime();
+        imagePagerAdapter.initPreTime();
 
         if (requestCode == PICKER_IMAGE_REQUEST) { // 카메라와 갤러리 선택 팝업을 선택한 경우
             if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우(구글 포토 포함)
@@ -324,6 +324,10 @@ public class NewDiaryActivity extends AppCompatActivity{
         // 작성한 일기 컨텐츠 저장
         String contents = newDiaryBinding.diaryContents.getText().toString().trim();
         diary.setContents(contents);
+
+        if (newPhotoList.size() != 0) {
+            newPhotoList.clear();
+        }
 
         // 사진 저장
         for(PhotoInfo photoInfo : imagePagerAdapter.photoList) {

@@ -58,4 +58,8 @@ public class ImagePagerViewHolder extends RecyclerView.ViewHolder {
             }
         }
     }
+
+    public void initPreTime() {
+        imageBinding.photo.initPreTime();
+    }
 }

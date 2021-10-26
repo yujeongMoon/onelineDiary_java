@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -115,26 +117,28 @@ public class MainActivity extends FragmentActivity {
         // 현재 달의 일기 리스트
         ArrayList<Diary> currentMonthDiaryList = Const.diaryList.get(Utility.getMonth());
         // 오늘의 일기(이번 달 일기의 리스트의 마지막이 오늘의 일기)
-        Diary todayDiary = currentMonthDiaryList.get(currentMonthDiaryList.size() - 1);
+        if (currentMonthDiaryList != null) {
+            Diary todayDiary = currentMonthDiaryList.get(currentMonthDiaryList.size() - 1);
 
-        if (Const.diaryList != null && Const.diaryList.containsKey(Utility.getMonth())) {
-            if (todayDiary.getDay().equals(Utility.getDay())) {
-                switch (todayDiary.getMood()) {
-                    case 1:
-                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_happy_icon);
-                        break;
-                    case 2:
-                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_blushing_icon);
-                        break;
-                    case 3:
-                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_blank_icon);
-                        break;
-                    case 4:
-                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_consoling_icon);
-                        break;
-                    case 5:
-                        mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_nervous_icon);
-                        break;
+            if (Const.diaryList != null && Const.diaryList.containsKey(Utility.getMonth())) {
+                if (todayDiary.getDay().equals(Utility.getDay())) {
+                    switch (todayDiary.getMood()) {
+                        case 1:
+                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_happy_icon);
+                            break;
+                        case 2:
+                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_blushing_icon);
+                            break;
+                        case 3:
+                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_blank_icon);
+                            break;
+                        case 4:
+                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_consoling_icon);
+                            break;
+                        case 5:
+                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_nervous_icon);
+                            break;
+                    }
                 }
             }
         }

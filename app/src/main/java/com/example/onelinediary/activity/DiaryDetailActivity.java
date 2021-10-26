@@ -311,7 +311,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-//        detailBinding.detailPhoto.initPreTime();
+        imagePagerAdapter.initPreTime();
 
         if (requestCode == PICKER_IMAGE_REQUEST) { // 카메라와 갤러리 선택 팝업을 선택한 경우
             if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우(구글 포토 포함)
@@ -511,7 +511,11 @@ public class DiaryDetailActivity extends AppCompatActivity {
         diary.setMood(currentMood);
 
         // 사진 저장
-        newPhotoList.clear();
+//        newPhotoList.clear();
+        if (newPhotoList.size() != 0) {
+            newPhotoList.clear();
+        }
+
         for(PhotoInfo photoInfo : imagePagerAdapter.photoList) {
             if(photoInfo.getBitmapImage() != null) {
                 newPhotoList.add(photoInfo);

@@ -53,10 +53,30 @@ public class Utility {
         }, millisTime);
     }
 
-    public static int getLastDayOfMonth(int year, int month) {
+    /**
+     * 입력한 달의 마지막 날짜를 알려준다.
+     *
+     * @param year 연도
+     * @param month 달
+     * @return 해당 달의 마지막 날짜
+     */
+    public static int getLastDayNumberOfMonth(int year, int month) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month - 1, 1);
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * 현재 달 1일의 요일(1:일요일, ... 7:토요일)을 알려준다.
+     *
+     * @param year 연도
+     * @param month 달
+     * @return 해당 달의 1일의 요일
+     */
+    public static int getStartDayOfMonth(int year, int month) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, 1);
+        return calendar.get(Calendar.DAY_OF_WEEK);
     }
 
     /**

@@ -238,7 +238,7 @@
 
     </ScrollView>
 
-    <LinearLayout
+    <com.example.onelinediary.custom.DoubleCancelLinearLayout
         android:id="@+id/button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -260,6 +260,6 @@
             android:paddingBottom="@dimen/button_padding"
             android:background="#ffb6c1"/>
 
-    </LinearLayout>
+    </com.example.onelinediary.custom.DoubleCancelLinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

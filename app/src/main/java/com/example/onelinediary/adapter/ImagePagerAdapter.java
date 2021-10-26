@@ -20,6 +20,7 @@ public class ImagePagerAdapter extends RecyclerView.Adapter<ImagePagerViewHolder
     public ArrayList<PhotoInfo> photoList = new ArrayList<>();
     public boolean isChanged = false;
     public boolean isEditable = false;
+    public ImagePagerViewHolder holder;
 
     @NonNull
     @Override
@@ -30,6 +31,7 @@ public class ImagePagerAdapter extends RecyclerView.Adapter<ImagePagerViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ImagePagerViewHolder holder, int position) {
+        this.holder = holder;
         holder.onBind(isEditable, position, photoList.get(position).getBitmapImage());
     }
 
@@ -67,5 +69,8 @@ public class ImagePagerAdapter extends RecyclerView.Adapter<ImagePagerViewHolder
     public void deletePhotoList(int position) {
         photoList.set(position, new PhotoInfo(null, null));
         this.notifyDataSetChanged();
+    }
+    public void initPreTime() {
+        holder.initPreTime();
     }
 }

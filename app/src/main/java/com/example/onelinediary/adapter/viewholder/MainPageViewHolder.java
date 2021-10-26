@@ -2,6 +2,8 @@ package com.example.onelinediary.adapter.viewholder;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
