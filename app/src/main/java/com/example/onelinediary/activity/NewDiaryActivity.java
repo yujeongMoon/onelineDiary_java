@@ -237,8 +237,6 @@ public class NewDiaryActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
-
 //        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
         if (isChanged) {
             new SelectDialog("작성한 일기가 저장되지 않았습니다. 해당 화면을 나가시겠습니까??", v -> finish()).show(getSupportFragmentManager(), "finishAddDiary");
@@ -250,16 +248,6 @@ public class NewDiaryActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // 카메라를 실행해서 외부의 저장하지 않고 바로 썸네일로 보여주는 경우
-//                Bundle extras = data.getExtras();
-//                if (extras != null) { // 카메라로 사진을 찍은 경우
-//                // MediaStore.ACTION_IMAGE_CAPTURE
-//                // 사진을 찍은 후 "data" 키 값으로 사진이 넘어온다.
-//                    Bitmap imageBitmap = (Bitmap) extras.get("data"); // thumbnail
-//                    newDiaryBinding.photo.setImageBitmap(imageBitmap);
-//                }
-
 
         // 선택 팝업이 뜨고 선택을 하거나 하지 않아도 무조건 거치는 메소드이기 때문에
         // 팝업이 떴다고 가정하고 팝업이 내려갈 때 여기서 첫번째 클릭의 시간을 초기화 시켜준다.

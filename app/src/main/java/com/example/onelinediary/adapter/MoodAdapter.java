@@ -67,7 +67,6 @@ public class MoodAdapter extends BaseAdapter {
         // 해당 달마다의 마지막 날짜
         lastDayInMonth = Utility.getLastDayNumberOfMonth(Integer.parseInt(Const.currentYear), Integer.parseInt(month));
 
-//        return startDayInMonth + lastDayInMonth;
         return lastDayInMonth + startDayInMonth;
     }
 
@@ -102,7 +101,6 @@ public class MoodAdapter extends BaseAdapter {
 
                 for(int i = 0; i < diaryList.size(); i++) {
                     if (!isExist && Integer.parseInt(diaryList.get(i).getDay()) == ((position - startDayInMonth) + 1)) {
-//                        if (!isExist && Integer.parseInt(diaryList.get(i).getDay()) == position + 1) {
                         index = i;
                         isExist = true;
                     }
@@ -169,7 +167,7 @@ public class MoodAdapter extends BaseAdapter {
 //                    notifyDataSetChanged();
 
                                 // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
-                                Const.currentMoodResId = 0;
+                                Const.todayDiary = null;
                                 ((Activity)context).runOnUiThread(() -> ((MainActivity)context).notifyToPager());
                             } else {
                                 Toast.makeText(context, context.getString(R.string.error_message_delete_diary), Toast.LENGTH_LONG).show();

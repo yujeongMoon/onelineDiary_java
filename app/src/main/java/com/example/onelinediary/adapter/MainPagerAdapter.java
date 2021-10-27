@@ -44,24 +44,18 @@ public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
     public void onBindViewHolder(@NonNull MainPageViewHolder holder, int position) {
         String month = Const.monthKeyList.get(position);
         ArrayList<Diary> diaryListByMonth = Const.diaryList.get(month);
+
+        // 오늘 일기를 쓴 지 확인하고 일기를 썼다면 일기 추가 버튼을 오늘의 기분 이모지로 바꿔준다.
         if(diaryInterface != null) {
             diaryInterface.initDiaryCompleted();
         }
         if (diaryListByMonth != null && !diaryListByMonth.isEmpty()) {
             holder.onBind(month, diaryListByMonth);
         }
-
-        if (weather != -1) {
-            holder.setWeather(weather);
-        }
     }
 
     @Override
     public int getItemCount() {
         return Const.monthKeyList.size();
-    }
-
-    public void setWeather(int weather) {
-        this.weather = weather;
     }
 }

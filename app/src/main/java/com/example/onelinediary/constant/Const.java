@@ -44,12 +44,17 @@ public class Const {
     // 메인 화면에서 현재 위치를 저장해두는 객체
     public static Location currentLocation = null;
 
+    // 현재 날씨의 이모티콘 리소스 아이디를 저장한다.
     public static int weatherResId = -1; // resid
 
     public static String weather = null;
 
+    // 카메라로 찍었을 때, 이미지의 uri를 저장한다.
     public static Uri photoUri = null;
 
     // 오늘 일기를 썼다면 선택한 기분을 + 대신 보여주기 위해서 저장한다.
     public static int currentMoodResId = 0;
+
+    // 오늘 일기를 썼다면 오늘의 일기를 저장할 객체
+    public static Diary todayDiary = null;
 }

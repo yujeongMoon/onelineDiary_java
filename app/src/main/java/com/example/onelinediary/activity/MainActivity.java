@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.MainPagerAdapter;
@@ -89,11 +90,6 @@ public class MainActivity extends FragmentActivity {
                 pagerAdapter.setDiaryInterface(this::checkExistDiary);
                 mainBinding.pager.setAdapter(pagerAdapter);
 
-                // 배경화면을 현재 날씨 아이콘으로 바꿔준다.
-//                if (Const.weather != -1) {
-//                    pagerAdapter.setWeather(Const.weather);
-//                    pagerAdapter.notifyDataSetChanged();
-//                }
                 // 현재 달의 페이지를 보여준다.
                 // 데이터가 순서대로 들어가기 때문에 diaryList의 마지막이 현재 달!
                 if (!Const.monthKeyList.isEmpty()) {
@@ -122,6 +118,7 @@ public class MainActivity extends FragmentActivity {
 
             if (Const.diaryList != null && Const.diaryList.containsKey(Utility.getMonth())) {
                 if (todayDiary.getDay().equals(Utility.getDay())) {
+                    Const.todayDiary = todayDiary;
                     switch (todayDiary.getMood()) {
                         case 1:
                             mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_happy_icon);
@@ -266,10 +263,17 @@ public class MainActivity extends FragmentActivity {
 //    }
 
     public void addNewDiary() {
-        Intent newDiaryIntent = new Intent(this, NewDiaryActivity.class);
-        startActivity(newDiaryIntent);
-
 //        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+
+        if (Const.todayDiary != null) {
+            Intent detailIntent = new Intent(this, DiaryDetailActivity.class);
+            detailIntent.putExtra(Const.INTENT_KEY_MONTH, Utility.getMonth());
+            detailIntent.putExtra(Const.INTENT_KEY_DIARY, Const.todayDiary);
+            startActivity(detailIntent);
+        } else {
+            Intent newDiaryIntent = new Intent(this, NewDiaryActivity.class);
+            startActivity(newDiaryIntent);
+        }
     }
 
     public void gotoSettingActivity() {

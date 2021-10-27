@@ -36,8 +36,6 @@ import static com.example.onelinediary.constant.Const.PICKER_IMAGE_REQUEST;
 public class DiaryDetailActivity extends AppCompatActivity {
     private ActivityDiaryDetailBinding detailBinding;
 
-    private final int UPDATE_PICKER_IMAGE_REQUEST = 200;
-
     String month;
     String day;
     Diary diary;
@@ -82,7 +80,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
         }
 
         // 일기를 작성한 날의 날씨
-        // TODO 수정 모드에서는 수정하는 날의 날씨를 적용?
         if (diary.getWeather().equals("")) {
             detailBinding.detailCurrentWeather.setVisibility(View.GONE);
         } else {
@@ -222,6 +219,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
         CustomProgressDialog pDialog = new CustomProgressDialog(this);
         pDialog.show();
+
         new Handler().postDelayed(() -> {
             imagePagerAdapter = new ImagePagerAdapter();
 
@@ -242,7 +240,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 imagePagerAdapter.notifyDataSetChanged();
             }
 
-//            progressDialog.dismiss();
             pDialog.dismiss();
             // 기존의 데이터 복사
             oldPhotoList.addAll(newPhotoList);
@@ -424,7 +421,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
             } else {
                 isChanged = true;
             }
-//            diary.setMood(currentMood);
         }
     };
 
@@ -460,7 +456,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
         currentMood = Const.Mood.NONE.value;
         isChanged = false;
-//        diary.setMood(currentMood);
     }
 
     private void initMood() {
@@ -511,7 +506,6 @@ public class DiaryDetailActivity extends AppCompatActivity {
         diary.setMood(currentMood);
 
         // 사진 저장
-//        newPhotoList.clear();
         if (newPhotoList.size() != 0) {
             newPhotoList.clear();
         }

@@ -37,8 +37,4 @@ public class MainPageViewHolder extends RecyclerView.ViewHolder {
         adapter.addDiaryList(month, diaryList);
         binding.moodLayout.setAdapter(adapter);
     }
-
-    public void setWeather(int weather) {
-        binding.moodLayout.setBackgroundResource(weather);
-    }
 }
