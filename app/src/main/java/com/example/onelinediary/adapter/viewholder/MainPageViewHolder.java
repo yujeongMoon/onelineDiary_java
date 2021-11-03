@@ -13,6 +13,7 @@ import com.example.onelinediary.adapter.MoodAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ViewholderMainDiaryBinding;
 import com.example.onelinediary.dto.Diary;
+import com.example.onelinediary.utiliy.Utility;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,13 @@ public class MainPageViewHolder extends RecyclerView.ViewHolder {
     public void onBind(String month, ArrayList<Diary> diaryList) {
         binding.year.setText(Const.currentYear);
         binding.month.setText(month + context.getString(R.string.month));
+
+        if (Utility.isStringNullOrEmpty(Const.nickname)) {
+            binding.nickname.setVisibility(View.GONE);
+        } else {
+            binding.nickname.setVisibility(View.VISIBLE);
+            binding.nickname.setText(Const.nickname + "님의");
+        }
 
         MoodAdapter adapter = new MoodAdapter(context);
         adapter.addDiaryList(month, diaryList);

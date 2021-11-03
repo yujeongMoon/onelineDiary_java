@@ -22,6 +22,20 @@
         android:layout_marginTop="20dp"/>
 
     <TextView
+        android:id="@+id/nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="곰돌이"
+        android:textSize="15dp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@+id/year"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/month"
+        android:layout_marginTop="5dp"
+        android:visibility="visible"/>
+
+    <TextView
         android:id="@+id/month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,10 +43,9 @@
         android:textStyle="bold"
         android:textSize="@dimen/main_month_text"
         android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/year"
+        app:layout_constraintTop_toBottomOf="@+id/nickname"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="5dp"
         android:layout_marginBottom="20dp"/>
 
     <LinearLayout

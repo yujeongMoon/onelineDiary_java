@@ -1,6 +1,8 @@
 package com.example.onelinediary.utiliy;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -17,7 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
+
+import okhttp3.internal.Util;
 
 /**
  * firebase Realtime database
@@ -33,6 +38,10 @@ public class DatabaseUtility {
 //        void onComplete(boolean isSuccess, HashMap<String, ArrayList<Diary>> result);
         void onComplete(boolean isSuccess);
     }
+
+    public interface onCompleteResultCallback<T> {
+        void onComplete(boolean isSuccess, T result);
+    }
 //    데이터 베이스의 인스턴스를 검색하고 쓰려고 하는 위치를 참조
 //    FirebaseDatabase database = FirebaseDatabase.getInstance();
 //    DatabaseReference reference = database.getReference(); // default
@@ -42,7 +51,7 @@ public class DatabaseUtility {
         return FirebaseDatabase.getInstance().getReference();
     }
 
-    public static void writeNewDiary(Context context, Diary newDiary, onCompleteCallback onComplete) {
+    public static void writeNewDiary(Context context, Diary newDiary, onCompleteCallback callback) {
         getReference() // 데이터 베이스 참조(default)
                 .child(Utility.getAndroidId(context))
                 .child(Const.DATABASE_CHILD_DIARY)
@@ -50,8 +59,8 @@ public class DatabaseUtility {
                 .child(Utility.getMonth())
                 .child(Utility.getDay())
                 .setValue(newDiary)
-                .addOnSuccessListener(unused -> onComplete.onComplete(true))
-                .addOnFailureListener(e -> onComplete.onComplete(false));
+                .addOnSuccessListener(unused -> callback.onComplete(true))
+                .addOnFailureListener(e -> callback.onComplete(false));
     }
 
     /**
@@ -156,15 +165,15 @@ public class DatabaseUtility {
      * @param month 월
      * @param day 일
      * @param diary 수정된 일기 내용
-     * @param onComplete 콜백 메소드
+     * @param callback 콜백 메소드
      */
-    public static void updateDiary(Context context, String year, String month, String day, Diary diary, onCompleteCallback onComplete) {
+    public static void updateDiary(Context context, String year, String month, String day, Diary diary, onCompleteCallback callback) {
         Map<String, Object> diaryUpdate = new HashMap<>();
-        diaryUpdate.put("/" + Utility.getAndroidId(context) + "/diary/" + year + "/" + month + "/" + day, diary.toMap());
+        diaryUpdate.put("/" + Utility.getAndroidId(context) + "/" + Const.DATABASE_CHILD_DIARY + "/" + year + "/" + month + "/" + day, diary.toMap());
 
         getReference().updateChildren(diaryUpdate)
-                .addOnSuccessListener(unused -> onComplete.onComplete(true))
-                .addOnFailureListener(e -> onComplete.onComplete(false));
+                .addOnSuccessListener(unused -> callback.onComplete(true))
+                .addOnFailureListener(e -> callback.onComplete(false));
     }
 
     /**
@@ -175,9 +184,9 @@ public class DatabaseUtility {
      * @param year 연도
      * @param month 월
      * @param day 일
-     * @param onComplete 콜백 메소드
+     * @param callback 콜백 메소드
      */
-    public static void deleteDiary(Context context, String year, String month, String day, onCompleteCallback onComplete) {
+    public static void deleteDiary(Context context, String year, String month, String day, onCompleteCallback callback) {
         getReference()
                 .child(Utility.getAndroidId(context))
                 .child(Const.DATABASE_CHILD_DIARY)
@@ -185,7 +194,59 @@ public class DatabaseUtility {
                 .child(month)
                 .child(day)
                 .removeValue()
-                .addOnSuccessListener(unused -> onComplete.onComplete(true))
-                .addOnFailureListener(e -> onComplete.onComplete(false));
+                .addOnSuccessListener(unused -> callback.onComplete(true))
+                .addOnFailureListener(e -> callback.onComplete(false));
+    }
+
+    /**
+     * 사용자의 닉네임을 등록하는 메소드
+     * 안드로이드 아이디로는 구분하기 어렵기때문에 닉네임을 설정한다.
+     * TODO 중복 가능?
+     *
+     * @param context 컨텍스트
+     * @param nickname 닉네임
+     * @param callback 콜백 메소드
+     */
+    public static void setNickname(Context context, String nickname, onCompleteCallback callback) {
+        getReference()
+                .child(Utility.getAndroidId(context))
+                .child(Const.DATABASE_CHILD_MYINFO)
+                .child(Const.DATABASE_CHILD_NICKNAME)
+                .setValue(nickname)
+                .addOnSuccessListener(unused -> callback.onComplete(true))
+                .addOnFailureListener(e -> callback.onComplete(false));
+    }
+
+    /**
+     * DB에서 저장된 닉네임을 가져오는 메소드
+     * 설정한 닉네임이 있다면 닉네임 값을 가져오고 없을 경우에는 빈 문자열을 결과로 넘겨준다.
+     * 닉네임의 경우, 빈 문자열은 닉네임이 없음을 의미한다.
+     *
+     * @param context 컨텍스트
+     * @param callback 콜백메소드
+     */
+    public static void getNickname(Context context, onCompleteResultCallback<String> callback) {
+        Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_MYINFO).child(Const.DATABASE_CHILD_NICKNAME);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    if (TextUtils.isEmpty(snapshot.getValue().toString())) {
+                        callback.onComplete(false, "");
+                    } else {
+                        callback.onComplete(true, snapshot.getValue().toString());
+                    }
+                } else {
+                    callback.onComplete(false, "");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

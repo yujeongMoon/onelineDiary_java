@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import android.provider.Settings;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.example.onelinediary.R;
+import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.dto.PhotoInfo;
 
 import java.io.File;
@@ -418,7 +420,31 @@ public class Utility {
         return bitmapList;
     }
 
+    public static String SPFileKey = "__oneLineDiary__";
 
+    public static SharedPreferences getSharedPreference(Context context) {
+        return context.getSharedPreferences(SPFileKey, Context.MODE_PRIVATE);
+    }
+
+    public static void putString(Context context, String key, String value) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public static void putBoolean(Context context, String key, Boolean value) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    public static String getString(Context context, String key) {
+        return getSharedPreference(context).getString(key, "");
+    }
+
+    public static Boolean getBoolean(Context context, String key) {
+        return getSharedPreference(context).getBoolean(key, false);
+    }
 
 
 

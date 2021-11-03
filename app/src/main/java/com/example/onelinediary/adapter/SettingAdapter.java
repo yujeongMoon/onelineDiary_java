@@ -90,4 +90,10 @@ public class SettingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         items.add(item);
         this.notifyDataSetChanged();
     }
+
+    public void updateItem(int position, Item item) {
+        items.set(position, item);
+        // 포지션과 객체를 같이 넘기는 notifyItemChanged()를 사용하면 애니메이션 없이 해당 위치의 아이템을 변경할 수 있다.
+        this.notifyItemChanged(position, item);
+    }
 }

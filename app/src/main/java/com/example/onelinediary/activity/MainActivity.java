@@ -79,7 +79,7 @@ public class MainActivity extends FragmentActivity {
         if (Const.currentLocation == null) {
             Const.currentLocation = LocationUtility.getLastKnownLocation(this);
         }
-
+        
         DatabaseUtility.readYearDiaryList(this, Utility.getYear(), isSuccess -> {
             if (progressDialog != null) {
                 progressDialog.dismiss();
@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity {
         // 현재 달의 일기 리스트
         ArrayList<Diary> currentMonthDiaryList = Const.diaryList.get(Utility.getMonth());
         // 오늘의 일기(이번 달 일기의 리스트의 마지막이 오늘의 일기)
-        if (currentMonthDiaryList != null) {
+        if (currentMonthDiaryList != null && currentMonthDiaryList.size() > 0) {
             Diary todayDiary = currentMonthDiaryList.get(currentMonthDiaryList.size() - 1);
 
             if (Const.diaryList != null && Const.diaryList.containsKey(Utility.getMonth())) {
@@ -189,6 +189,13 @@ public class MainActivity extends FragmentActivity {
             // 새로 일기를 쓴 경우에는 어느 페이지에 있어도 현재 날짜가 포함된 제일 마지막 페이지로 이동하게 한다.
             if (Const.addNewDiary) {
                 Const.addNewDiary = false;
+                // 시간차를 주면서 페이저의 포지션 바꾸기
+                mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
+            }
+
+            // 일기를 삭제하면 현재 날짜가 포함된 제일 마지막 페이지로 이동하게 하거나 바로 전 달의 페이지로 이동한다.
+            if (Const.deleteDiary) {
+                Const.deleteDiary = false;
                 // 시간차를 주면서 페이저의 포지션 바꾸기
                 mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
             }

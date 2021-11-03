@@ -11,7 +11,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Const {
+    // 데이터 베이스 키
     public static String DATABASE_CHILD_DIARY = "diary";
+    public static String DATABASE_CHILD_MYINFO = "myInfo";
+    public static String DATABASE_CHILD_NICKNAME = "nickname";
+
+    public static String SP_KEY_NICKNAME = "com.example.onelinediary.nickname";
+    public static String SP_KEY_INSTALLED = "com.example.onelinediary.isInstalled";
+
 
     public static String INTENT_KEY_MONTH = "month";
     public static String INTENT_KEY_DIARY = "diary";
@@ -41,6 +48,9 @@ public class Const {
     // 새로운 다이어리 추가 여부에 관한 플래그
     public static boolean addNewDiary = false;
 
+    // 기존의 다이어리 삭제 여부에 관한 플래그
+    public static boolean deleteDiary = false;
+
     // 메인 화면에서 현재 위치를 저장해두는 객체
     public static Location currentLocation = null;
 
@@ -57,4 +67,7 @@ public class Const {
 
     // 오늘 일기를 썼다면 오늘의 일기를 저장할 객체
     public static Diary todayDiary = null;
+
+    // 사용자 닉네임
+    public static String nickname = "";
 }

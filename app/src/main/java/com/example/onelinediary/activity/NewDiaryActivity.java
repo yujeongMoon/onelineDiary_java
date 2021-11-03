@@ -65,7 +65,7 @@ public class NewDiaryActivity extends AppCompatActivity{
             newDiaryBinding.currentWeather.setVisibility(View.VISIBLE);
             newDiaryBinding.currentWeather.setImageResource(Const.weatherResId);
 
-            if (!Const.weather.equals("")) {
+            if (Const.weather != null && !Const.weather.equals("")) {
                 diary.setWeather(Const.weather);
             } else {
                 diary.setWeather("");

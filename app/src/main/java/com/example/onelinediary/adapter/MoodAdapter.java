@@ -168,6 +168,8 @@ public class MoodAdapter extends BaseAdapter {
 
                                 // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
                                 Const.todayDiary = null;
+                                Const.deleteDiary = true;
+
                                 ((Activity)context).runOnUiThread(() -> ((MainActivity)context).notifyToPager());
                             } else {
                                 Toast.makeText(context, context.getString(R.string.error_message_delete_diary), Toast.LENGTH_LONG).show();

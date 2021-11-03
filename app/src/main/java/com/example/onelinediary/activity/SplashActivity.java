@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.onelinediary.R;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivitySplashBinding;
+import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.LocationUtility;
 import com.example.onelinediary.utiliy.Utility;
 import com.example.onelinediary.utiliy.WeatherUtility;
@@ -24,6 +25,28 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         splashBinding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(splashBinding.getRoot());
+
+        // 앱을 처음 설치하거나 재설치 했을 경우, DB에 닉네임이 있는 지 확인한 후 닉네임 값을 가져온다.
+        // 기기에 닉네임이 저장되어있다면 닉네임을 사용하고 없다면 보여주지 않는다.
+        Boolean isInstalled = Utility.getBoolean(SplashActivity.this, Const.SP_KEY_INSTALLED);
+        String nickname = Utility.getString(this, Const.SP_KEY_NICKNAME);
+
+        if (!isInstalled) {
+            DatabaseUtility.getNickname(this, (isSuccess, result) -> {
+                Const.nickname = result;
+                Utility.putString(SplashActivity.this, Const.SP_KEY_NICKNAME, result);
+                Utility.putBoolean(SplashActivity.this, Const.SP_KEY_INSTALLED, true);
+            });
+        } else {
+            if (!nickname.equals("")) {
+                Const.nickname = nickname;
+                splashBinding.nicknameLayout.setVisibility(View.VISIBLE);
+                splashBinding.nickname.setText(nickname);
+            } else {
+                Const.nickname = "";
+                splashBinding.nicknameLayout.setVisibility(View.GONE);
+            }
+        }
 
         if (!LocationUtility.checkPermission(this)) {
             location = LocationUtility.getLastKnownLocation(this);
