@@ -5,6 +5,8 @@
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.5111111111111111" />
         <entry key="app/src/main/res/drawable-mdpi/default_dot.xml" value="0.5748717948717949" />
+        <entry key="app/src/main/res/drawable-xxxhdpi/bg_message_box.xml" value="0.5388888888888889" />
+        <entry key="app/src/main/res/drawable/bg_btn_send_message.xml" value="0.5388888888888889" />
         <entry key="app/src/main/res/drawable/circle_gray.xml" value="0.5838541666666667" />
         <entry key="app/src/main/res/drawable/emoticon_excited_outline.xml" value="0.31574074074074077" />
         <entry key="app/src/main/res/drawable/face_black_24.xml" value="0.5748717948717949" />
@@ -17,7 +19,9 @@
         <entry key="app/src/main/res/drawable/star_24.xml" value="0.5748717948717949" />
         <entry key="app/src/main/res/drawable/tab_selector.xml" value="0.5748717948717949" />
         <entry key="app/src/main/res/drawable/view_image_border.xml" value="0.36770833333333336" />
+        <entry key="app/src/main/res/layout/activity_admin.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_diary_detail.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_feedback.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37592592592592594" />
         <entry key="app/src/main/res/layout/activity_new_diary.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_setting.xml" value="0.37520391517128876" />
@@ -35,8 +39,11 @@
         <entry key="app/src/main/res/layout/viewholder_item_basic.xml" value="0.5677083333333334" />
         <entry key="app/src/main/res/layout/viewholder_item_basic_btn.xml" value="0.5515587529976019" />
         <entry key="app/src/main/res/layout/viewholder_item_basic_switch.xml" value="0.5677083333333334" />
+        <entry key="app/src/main/res/layout/viewholder_item_feedback_list.xml" value="0.5" />
         <entry key="app/src/main/res/layout/viewholder_item_text.xml" value="0.5677083333333334" />
         <entry key="app/src/main/res/layout/viewholder_main_diary.xml" value="0.4104882459312839" />
+        <entry key="app/src/main/res/layout/viewholder_message_left.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/viewholder_message_right.xml" value="0.5" />
         <entry key="app/src/main/res/layout/viewholder_mood_item.xml" value="0.5677083333333334" />
         <entry key="app/src/main/res/xml/file_paths.xml" value="0.5677083333333334" />
       </map>

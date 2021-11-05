@@ -4,7 +4,7 @@ import android.location.Location;
 import android.net.Uri;
 
 import com.example.onelinediary.dto.Diary;
-import com.example.onelinediary.dto.Weather;
+import com.example.onelinediary.dto.Feedback;
 import com.example.onelinediary.utiliy.Utility;
 
 import java.util.ArrayList;
@@ -15,10 +15,10 @@ public class Const {
     public static String DATABASE_CHILD_DIARY = "diary";
     public static String DATABASE_CHILD_MYINFO = "myInfo";
     public static String DATABASE_CHILD_NICKNAME = "nickname";
+    public static String DATABASE_CHILD_FEEDBACK = "feedback";
 
     public static String SP_KEY_NICKNAME = "com.example.onelinediary.nickname";
     public static String SP_KEY_INSTALLED = "com.example.onelinediary.isInstalled";
-
 
     public static String INTENT_KEY_MONTH = "month";
     public static String INTENT_KEY_DIARY = "diary";
@@ -26,6 +26,8 @@ public class Const {
     public static String REPORTING_DATE_FORMAT = "yyyy년 MM월 dd일";
 
     public static int PICKER_IMAGE_REQUEST = 100;
+
+    public static String ADMIN_ANDROID_ID = "f9670e4b6e4d9a4f";
 
     // 기분 정의
     public enum Mood {
@@ -70,4 +72,16 @@ public class Const {
 
     // 사용자 닉네임
     public static String nickname = "";
+
+    // 안드로이드 아이디
+    public static String androidId;
+
+    // DB에서 내려받은 피드백을 저장하는 리스트
+    public static ArrayList<Feedback> feedbackList;
+
+    // 관리자 페이지에서 피드백을 보낸 사용자의 리스트
+    public static ArrayList<String> userList;
+
+    // 관리자 페이지에서 피드백을 보낸 사용자의 마지막 피드백 내용
+    public static ArrayList<Feedback> userLastFeedbackList;
 }

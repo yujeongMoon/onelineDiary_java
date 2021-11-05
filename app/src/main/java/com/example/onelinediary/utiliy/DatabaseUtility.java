@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.dto.Diary;
+import com.example.onelinediary.dto.Feedback;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -223,7 +224,7 @@ public class DatabaseUtility {
      * 닉네임의 경우, 빈 문자열은 닉네임이 없음을 의미한다.
      *
      * @param context 컨텍스트
-     * @param callback 콜백메소드
+     * @param callback 콜백 메소드
      */
     public static void getNickname(Context context, onCompleteResultCallback<String> callback) {
         Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_MYINFO).child(Const.DATABASE_CHILD_NICKNAME);
@@ -241,6 +242,90 @@ public class DatabaseUtility {
                     callback.onComplete(false, "");
                 }
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    // TODO 피드백 저장하기
+    /**
+     * 피드백의 내용이나 답변을 DB에 저장하는 메소드
+     * 각자의 안드로이드 아이디 테이블 안에 피드백 테이블을 생성해서 저장한다.
+     * 사용자와 관리자는 사용자의 피드백 테이블을 공유하면서 1:1 대화를 주고 받는다.
+     *
+     * @param context 컨텍스트
+     * @param feedback 작성한 피드백
+     * @param callback 콜백 매소드
+     */
+    public static void writeFeedback(Context context, String androidId, Feedback feedback, onCompleteCallback callback) {
+        String reportingDate = String.valueOf(System.currentTimeMillis());
+
+        getReference()
+                .child(androidId)
+                .child(Const.DATABASE_CHILD_FEEDBACK)
+                .child(reportingDate)
+                .setValue(feedback)
+                .addOnSuccessListener(unused -> callback.onComplete(true))
+                .addOnFailureListener(e -> callback.onComplete(false));
+    }
+
+    // TODO 피드백 불러오기
+    public static void readFeedback(String androidId, onCompleteCallback callback) {
+        Const.feedbackList = new ArrayList<>();
+        Query query = getReference().child(androidId).child(Const.DATABASE_CHILD_FEEDBACK);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Const.feedbackList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    // 불러온 피드백 데이터를 리스트에 저장한다.
+                    Const.feedbackList.add(dataSnapshot.getValue(Feedback.class));
+                }
+
+                callback.onComplete(true);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public static void addFeedbackListWithUser(String androidId, Feedback feedback, onCompleteCallback callback) {
+        getReference()
+                .child("admin")
+                .child("feedbackList")
+                .child(androidId)
+                .setValue(feedback)
+                .addOnSuccessListener(unused -> callback.onComplete(true))
+                .addOnFailureListener(e -> callback.onComplete(false));
+    }
+
+    // TODO 관리자용 전체 사용자 피드백 리스트 불러오기
+    public static void readFeedbackListWithUser(onCompleteCallback callback) {
+        Const.userList = new ArrayList<>();
+        Const.userLastFeedbackList = new ArrayList<>();
+
+        Query query = getReference().child("admin").child("feedbackList");
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Const.userList.clear();
+                Const.userLastFeedbackList.clear();
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Const.userList.add(dataSnapshot.getKey());
+                    Const.userLastFeedbackList.add(dataSnapshot.getValue(Feedback.class));
+                }
+
+                callback.onComplete(true);
             }
 
             @Override

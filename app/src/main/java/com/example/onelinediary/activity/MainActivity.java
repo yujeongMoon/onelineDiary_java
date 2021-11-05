@@ -105,6 +105,9 @@ public class MainActivity extends FragmentActivity {
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
         mainBinding.btnSetting.setOnClickListener(v -> gotoSettingActivity());
         mainBinding.btnNotice.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "서비스 준비중 입니다.", Toast.LENGTH_SHORT).show());
+
+        // 안드로이드 아이디 저장
+        Const.androidId = Utility.getAndroidId(this);
     }
 
     private void checkExistDiary() {

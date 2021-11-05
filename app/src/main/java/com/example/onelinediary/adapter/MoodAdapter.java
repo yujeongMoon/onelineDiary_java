@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,9 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.view.MotionEventCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.activity.DiaryDetailActivity;
@@ -62,7 +57,7 @@ public class MoodAdapter extends BaseAdapter {
         // 해당 달의 1일의 요일(1:일 ~ 7:토)
         // 예를 들어 1일의 요일이 화요일이면 일,월 2개의 더미가 쌓인 후 일기를 순서대로 보여준다.
         // 더미가 쌓이는 만큼 늘어나야 하기때문에 반환된 요일 값에서 -1을 한 값을 마지막 날짜에 더해서 어뎁터가 가진 데이터의 크기를 만들어준다.
-        startDayInMonth = Utility.getStartDayOfMonth(Integer.parseInt(Const.currentYear), Integer.parseInt(month)) - 1;
+        startDayInMonth = Utility.getDayOfWeek(Integer.parseInt(Const.currentYear), Integer.parseInt(month), 1) - 1;
 
         // 해당 달마다의 마지막 날짜
         lastDayInMonth = Utility.getLastDayNumberOfMonth(Integer.parseInt(Const.currentYear), Integer.parseInt(month));

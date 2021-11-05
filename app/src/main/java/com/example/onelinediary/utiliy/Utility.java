@@ -69,16 +69,61 @@ public class Utility {
     }
 
     /**
-     * 현재 달 1일의 요일(1:일요일, ... 7:토요일)을 알려준다.
+     * 원하는 날짜의 요일(1:일요일, ... 7:토요일)을 알려준다.
      *
      * @param year 연도
      * @param month 달
-     * @return 해당 달의 1일의 요일
+     * @return 원하는 날짜의 요일
      */
-    public static int getStartDayOfMonth(int year, int month) {
+    public static int getDayOfWeek(int year, int month, int day) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month - 1, 1);
+        calendar.set(year, month - 1, day);
         return calendar.get(Calendar.DAY_OF_WEEK);
+    }
+
+    /**
+     * 현재 날짜의 요일(1:일요일, ... 7:토요일)을 알려준다.
+     *
+     * @return 원하는 날짜의 요일
+     */
+    public static int getTodayOfWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(getYearToInt(), getMonthToInt() - 1, getDayToInt());
+        return calendar.get(Calendar.DAY_OF_WEEK);
+    }
+
+    /**
+     * 몇 일인지 입력하면 요일로 바꿔주는 메소드
+     * @param day 원하는 날짜의 일
+     * @return 요일
+     */
+    public static String changeDayOfWeekToString(int day) {
+        String dayOfWeek = "";
+        switch (day) {
+            case 1:
+                dayOfWeek = "일";
+                break;
+            case 2:
+                dayOfWeek = "월";
+                break;
+            case 3:
+                dayOfWeek = "화";
+                break;
+            case 4:
+                dayOfWeek = "수";
+                break;
+            case 5:
+                dayOfWeek = "목";
+                break;
+            case 6:
+                dayOfWeek = "금";
+                break;
+            case 7:
+                dayOfWeek = "토";
+                break;
+        }
+
+        return dayOfWeek;
     }
 
     /**
@@ -129,6 +174,29 @@ public class Utility {
     }
 
     /**
+     * @return integer 현재 연도
+     */
+    public static int getYearToInt() {
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
+
+    /**
+     * 인덱스가 0부터 시작하기 때문에 1을 더해준다.
+     * 0이 1월
+     * @return integer 현재 달
+     */
+    public static int getMonthToInt() {
+        return Calendar.getInstance().get(Calendar.MONTH) + 1;
+    }
+
+    /**
+     * @return integer 현재 일
+     */
+    public static int getDayToInt() {
+        return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
      * hour in am/pm : h
      * hour in day(24) : k
      * @return 현재 시간(시)
@@ -136,6 +204,19 @@ public class Utility {
     @SuppressLint("SimpleDateFormat")
     public static String getTime_kk() {
         return new SimpleDateFormat("kk").format(new Date());
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String getTime_a_hh_mm() {
+        String time = new SimpleDateFormat("a").format(new Date());
+
+        if (time.equals("AM")) {
+            time = "오전";
+        } else {
+            time = "오후";
+        }
+
+        return time + " " + new SimpleDateFormat("h:mm").format(new Date());
     }
 
     /**
@@ -147,6 +228,20 @@ public class Utility {
     public static String getDate(String format) {
         return new SimpleDateFormat(format).format(new Date());
     }
+
+    /**
+     * 원하는 포맷을 입력하면 오늘의 날짜를 해당 포맷으로 만들어준다.
+     * 요일을 추가해서 보여준다.
+     * @param format 입력한 포맷 ex) "yyyy-MM-dd"
+     * @return 포맷에 맞게 변환된 오늘 날짜
+     */
+    @SuppressLint("SimpleDateFormat")
+    public static String getDateWithDayOfWeek(String format) {
+        String day = changeDayOfWeekToString(getTodayOfWeek());
+        return new SimpleDateFormat(format).format(new Date()) + " (" + day + ")";
+    }
+
+    // TODO 두 날짜가 같은 날짜인지 비교해주는 메소드
 
     public static Uri selectPhoto(Context context, int requestCode) {
         // 카메라를 사용하여 사진을 찍게 해주는 인텐트
