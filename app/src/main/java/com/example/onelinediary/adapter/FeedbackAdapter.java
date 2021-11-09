@@ -30,11 +30,15 @@ public class FeedbackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     Context context;
     ArrayList<Feedback> feedbackList = new ArrayList<>();
 
+    public FeedbackAdapter() {}
+
+    public FeedbackAdapter(Context context) {
+        this.context = context;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        this.context = parent.getContext();
-
         if (viewType == itemType.MESSAGE_LEFT.value) {
             ViewholderMessageLeftBinding messageLeftBinding = ViewholderMessageLeftBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new MessageItemLeftViewHolder(messageLeftBinding);
@@ -68,7 +72,8 @@ public class FeedbackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (feedbackList.get(position).getAndroidId().equals(Const.androidId)) {
+        // 작성자의 안드로이드 아이디와 기기에 저장된 안드로이드 아이디가 같을 경우, 내가 보낸 메세지이기 때문에 오른쪽으로 메세지 박스를 보여준다.
+        if (feedbackList.get(position).getAndroidId().equals(Utility.getString(context, Const.SP_KEY_ANDROID_ID))) {
             return itemType.MESSAGE_RIGHT.value;
         } else {
             return itemType.MESSAGE_LEFT.value;

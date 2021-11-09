@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.FeedbackActivity">
+    tools:context=".activity.FeedbackActivity"
+    android:id="@+id/rootView">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/feedback_recyclerview"
@@ -31,7 +32,7 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:inputType="text|textNoSuggestions|textMultiLine"
-            android:background="@android:color/white"/>
+            android:background="@android:color/white" />
 
         <TextView
             android:id="@+id/btn_send_feedback"

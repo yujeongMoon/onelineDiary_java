@@ -26,12 +26,11 @@ public class AdminActivity extends AppCompatActivity {
         adminAdapter = new AdminAdapter();
         adminBinding.feedbackListRecyclerview.setAdapter(adminAdapter);
 
-        DatabaseUtility.readFeedbackListWithUser(new DatabaseUtility.onCompleteCallback() {
-            @Override
-            public void onComplete(boolean isSuccess) {
-                adminAdapter.addUserList(Const.userList);
-                adminAdapter.adduserLastFeedbackList(Const.userLastFeedbackList);
-            }
+        // admin/feedbackList에 저장된 마지막 피드백 리스트를 가져온다.
+        // 해당 위치의 값들이 바뀔때마다 호출된다.
+        DatabaseUtility.readFeedbackListWithUser(isSuccess -> {
+            adminAdapter.addUserList(Const.userList);
+            adminAdapter.adduserLastFeedbackList(Const.userLastFeedbackList);
         });
     }
 }

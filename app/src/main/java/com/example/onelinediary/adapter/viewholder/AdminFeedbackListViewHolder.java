@@ -1,5 +1,6 @@
 package com.example.onelinediary.adapter.viewholder;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.View;
 
@@ -12,7 +13,7 @@ import com.example.onelinediary.databinding.ViewholderItemFeedbackListBinding;
 import com.example.onelinediary.dto.Feedback;
 
 public class AdminFeedbackListViewHolder extends RecyclerView.ViewHolder {
-    private ViewholderItemFeedbackListBinding feedbackListBinding;
+    private final ViewholderItemFeedbackListBinding feedbackListBinding;
 
     public AdminFeedbackListViewHolder(@NonNull ViewholderItemFeedbackListBinding feedbackListBinding) {
         super(feedbackListBinding.getRoot());
@@ -20,23 +21,18 @@ public class AdminFeedbackListViewHolder extends RecyclerView.ViewHolder {
         this.feedbackListBinding = feedbackListBinding;
     }
 
+    @SuppressLint("SetTextI18n")
     public void onBind(String androidId, Feedback feedback) {
-        if (feedback.getNickname().equals("")) {
-            feedbackListBinding.nickname.setText("사용자");
-        } else {
-            feedbackListBinding.nickname.setText(feedback.getNickname());
-        }
+        feedbackListBinding.nickname.setText(feedback.getNickname());
 
         feedbackListBinding.feedbackLastContents.setText(feedback.getContents());
-        feedbackListBinding.date.setText("11월 5일");
+        String[] reportingDate = feedback.getReportingDate().split("\\s");
+        feedbackListBinding.date.setText(reportingDate[1] + " " + reportingDate[2]);
 
-        feedbackListBinding.userLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent feedbackIntent = new Intent(feedbackListBinding.getRoot().getContext(), FeedbackActivity.class);
-                feedbackIntent.putExtra("androidId", androidId);
-                feedbackListBinding.getRoot().getContext().startActivity(feedbackIntent);
-            }
+        feedbackListBinding.userLayout.setOnClickListener(v -> {
+            Intent feedbackIntent = new Intent(feedbackListBinding.getRoot().getContext(), FeedbackActivity.class);
+            feedbackIntent.putExtra(Const.INTENT_KEY_ANDROID_ID, androidId);
+            feedbackListBinding.getRoot().getContext().startActivity(feedbackIntent);
         });
     }
 }

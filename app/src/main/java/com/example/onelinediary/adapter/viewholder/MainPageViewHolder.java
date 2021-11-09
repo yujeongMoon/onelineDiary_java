@@ -2,7 +2,6 @@ package com.example.onelinediary.adapter.viewholder;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -18,31 +17,32 @@ import com.example.onelinediary.utiliy.Utility;
 import java.util.ArrayList;
 
 public class MainPageViewHolder extends RecyclerView.ViewHolder {
-    private ViewholderMainDiaryBinding binding;
+    private final ViewholderMainDiaryBinding mainDiaryBinding;
 
     Context context;
 
-    public MainPageViewHolder(@NonNull ViewholderMainDiaryBinding binding) {
-        super(binding.getRoot());
-        this.binding = binding;
+    public MainPageViewHolder(@NonNull ViewholderMainDiaryBinding mainDiaryBinding) {
+        super(mainDiaryBinding.getRoot());
+        this.mainDiaryBinding = mainDiaryBinding;
 
-        context = binding.getRoot().getContext();
+        context = mainDiaryBinding.getRoot().getContext();
     }
 
     @SuppressLint("SetTextI18n")
     public void onBind(String month, ArrayList<Diary> diaryList) {
-        binding.year.setText(Const.currentYear);
-        binding.month.setText(month + context.getString(R.string.month));
+        mainDiaryBinding.year.setText(Const.currentYear);
+        mainDiaryBinding.month.setText(month + context.getString(R.string.month));
 
-        if (Utility.isStringNullOrEmpty(Const.nickname)) {
-            binding.nickname.setVisibility(View.GONE);
+        if (Utility.isStringNullOrEmpty(Utility.getString(context, Const.SP_KEY_NICKNAME))) {
+            mainDiaryBinding.nickname.setVisibility(View.GONE);
         } else {
-            binding.nickname.setVisibility(View.VISIBLE);
-            binding.nickname.setText(Const.nickname + "님의");
+            mainDiaryBinding.nickname.setVisibility(View.VISIBLE);
+            mainDiaryBinding.nickname.setText(Const.nickname + "님의");
         }
 
+        // 그리드 뷰 데이터와 어뎁터 설정
         MoodAdapter adapter = new MoodAdapter(context);
         adapter.addDiaryList(month, diaryList);
-        binding.moodLayout.setAdapter(adapter);
+        mainDiaryBinding.moodLayout.setAdapter(adapter);
     }
 }

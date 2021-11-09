@@ -104,10 +104,7 @@ public class MainActivity extends FragmentActivity {
 
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
         mainBinding.btnSetting.setOnClickListener(v -> gotoSettingActivity());
-        mainBinding.btnNotice.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "서비스 준비중 입니다.", Toast.LENGTH_SHORT).show());
-
-        // 안드로이드 아이디 저장
-        Const.androidId = Utility.getAndroidId(this);
+        mainBinding.btnNotice.setOnClickListener(v -> Toast.makeText(getApplicationContext(), getString(R.string.message_prepare_service), Toast.LENGTH_SHORT).show());
     }
 
     private void checkExistDiary() {
@@ -151,8 +148,7 @@ public class MainActivity extends FragmentActivity {
         // 일기가 삭제되었거나 화면 이동 후 어뎁터에게 알린다.
         notifyToPager();
 
-        // TODO 일기장 화면에서 사용하기 위해서 현재 위치의 날씨 정보를 얻어 둔다.
-        getCurrentWeather(Const.currentLocation);
+//        getCurrentWeather(Const.currentLocation);
     }
 
     @Override
@@ -178,7 +174,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         pressedBackOnce = true;
-        Toast.makeText(getApplicationContext(), "앱을 종료하려면 한번 더 눌러주세요", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.message_close_app), Toast.LENGTH_SHORT).show();
 
         // 플래그 초기화
         new Handler(Looper.getMainLooper()).postDelayed(() -> pressedBackOnce = false, 2000);

@@ -1,22 +1,17 @@
 package com.example.onelinediary.adapter.viewholder;
 
-import android.widget.CompoundButton;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.onelinediary.databinding.ViewholderItemBasicBtnBinding;
 import com.example.onelinediary.databinding.ViewholderItemBasicSwitchBinding;
-import com.example.onelinediary.dto.BasicItemBtn;
 import com.example.onelinediary.dto.BasicItemSwitch;
 
 public class BasicItemSwitchViewHolder extends RecyclerView.ViewHolder {
-    private ViewholderItemBasicSwitchBinding basicSwitchBinding;
+    private final ViewholderItemBasicSwitchBinding basicSwitchBinding;
 
-    public BasicItemSwitchViewHolder(@NonNull ViewholderItemBasicSwitchBinding binding) {
-        super(binding.getRoot());
-        basicSwitchBinding = binding;
+    public BasicItemSwitchViewHolder(@NonNull ViewholderItemBasicSwitchBinding basicSwitchBinding) {
+        super(basicSwitchBinding.getRoot());
+        this.basicSwitchBinding = basicSwitchBinding;
     }
 
     public void onBind(BasicItemSwitch item) {
@@ -24,17 +19,8 @@ public class BasicItemSwitchViewHolder extends RecyclerView.ViewHolder {
         basicSwitchBinding.title.setText(item.getTitle());
 
         // switch 초기화
-        if (item.isEnabled()) {
-            basicSwitchBinding.basicSwitch.setChecked(true);
-        } else {
-            basicSwitchBinding.basicSwitch.setChecked(false);
-        }
+        basicSwitchBinding.basicSwitch.setChecked(item.isEnabled());
 
-        basicSwitchBinding.basicSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-            }
-        });
+        basicSwitchBinding.basicSwitch.setOnCheckedChangeListener(item.getListener());
     }
 }

@@ -150,6 +150,17 @@ public class Utility {
     }
 
     /**
+     * 관리자의 아이디와 같은 지 비교해주는 메소드
+     * 관리자의 아이디와 같을 경우, true 아니면 false
+     *
+     * @param androidId 비교할 안드로이드 아이디
+     * @return true or false
+     */
+    public static boolean isAdmin(String androidId) {
+        return Const.ADMIN_ANDROID_ID.equals(androidId);
+    }
+
+    /**
      * @return 현재 연도
      */
     @SuppressLint("SimpleDateFormat")
@@ -208,13 +219,8 @@ public class Utility {
 
     @SuppressLint("SimpleDateFormat")
     public static String getTime_a_hh_mm() {
+        // AM, PM이 아니라 오전, 오후를 반환해준다.
         String time = new SimpleDateFormat("a").format(new Date());
-
-        if (time.equals("AM")) {
-            time = "오전";
-        } else {
-            time = "오후";
-        }
 
         return time + " " + new SimpleDateFormat("h:mm").format(new Date());
     }
@@ -540,34 +546,4 @@ public class Utility {
     public static Boolean getBoolean(Context context, String key) {
         return getSharedPreference(context).getBoolean(key, false);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

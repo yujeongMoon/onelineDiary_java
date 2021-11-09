@@ -16,12 +16,16 @@ public class Const {
     public static String DATABASE_CHILD_MYINFO = "myInfo";
     public static String DATABASE_CHILD_NICKNAME = "nickname";
     public static String DATABASE_CHILD_FEEDBACK = "feedback";
+    public static String DATABASE_CHILD_ADMIN = "admin";
+    public static String DATABASE_CHILD_FEEDBACK_LIST = "feedbackList";
 
     public static String SP_KEY_NICKNAME = "com.example.onelinediary.nickname";
     public static String SP_KEY_INSTALLED = "com.example.onelinediary.isInstalled";
+    public static String SP_KEY_ANDROID_ID = "com.example.onelinediary.androidId";
 
     public static String INTENT_KEY_MONTH = "month";
     public static String INTENT_KEY_DIARY = "diary";
+    public static String INTENT_KEY_ANDROID_ID = "androidId";
 
     public static String REPORTING_DATE_FORMAT = "yyyy년 MM월 dd일";
 
@@ -71,6 +75,7 @@ public class Const {
     public static Diary todayDiary = null;
 
     // 사용자 닉네임
+    // 처음에 팝업에 입력한 닉네임 값을 사용하기 위해 선언함.
     public static String nickname = "";
 
     // 안드로이드 아이디

@@ -29,7 +29,7 @@ public class SettingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public int getValue() { return value; }
     }
 
-    private ArrayList<Item> items = new ArrayList<>();
+    public ArrayList<Item> items = new ArrayList<>();
 
     @NonNull
     @Override

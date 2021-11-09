@@ -1,7 +1,6 @@
 package com.example.onelinediary.adapter;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -18,8 +17,10 @@ public class ImagePagerAdapter extends RecyclerView.Adapter<ImagePagerViewHolder
     private ViewholderImageBinding imageBinding;
 
     public ArrayList<PhotoInfo> photoList = new ArrayList<>();
+
     public boolean isChanged = false;
     public boolean isEditable = false;
+
     public ImagePagerViewHolder holder;
 
     @NonNull

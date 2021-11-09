@@ -239,7 +239,7 @@ public class NewDiaryActivity extends AppCompatActivity{
     public void onBackPressed() {
 //        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
         if (isChanged) {
-            new SelectDialog("작성한 일기가 저장되지 않았습니다. 해당 화면을 나가시겠습니까??", v -> finish()).show(getSupportFragmentManager(), "finishAddDiary");
+            new SelectDialog(getString(R.string.dialog_message_notify_exit), v -> finish()).show(getSupportFragmentManager(), "finishAddDiary");
         } else {
             finish();
         }

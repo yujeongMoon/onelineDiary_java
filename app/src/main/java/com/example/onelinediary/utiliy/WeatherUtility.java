@@ -1,7 +1,5 @@
 package com.example.onelinediary.utiliy;
 
-import android.util.Log;
-
 import com.example.onelinediary.dto.ConnError;
 import com.example.onelinediary.dto.Weather;
 
@@ -126,15 +124,12 @@ public class WeatherUtility {
 //                conn.setDoInput(true);
                 int responseCode = conn.getResponseCode();
 
-                Log.d("weatherUtility", "getResponse");
-
                 if (responseCode == 400 || responseCode == 401 || responseCode == 500) { // 기상 정보를 가져오지 못했을 때
                     ConnError error = new ConnError(responseCode, conn.getResponseMessage());
                     callback.onComplete(false, null, conn.getResponseMessage());
                 } else { // 기상 정보를 성공적으로 가져왔을 때
                     // 스트림에서 결과값 String으로 변환
                     br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    Log.d("weatherUtility", "br");
 
                     StringBuilder sb = new StringBuilder();
                     String line = "";
@@ -142,7 +137,6 @@ public class WeatherUtility {
                         sb.append(line); // 스트림에서 결과값 String으로 변환
                     }
 
-                    Log.d("weatherUtility", "sb & res");
                     // 결과값 String을 json 객체로 변환
                     response = new JSONObject(sb.toString());
                     JSONObject items = response.getJSONObject("response").getJSONObject("body").getJSONObject("items");
@@ -153,7 +147,6 @@ public class WeatherUtility {
 
                     String currentTime = Utility.getTime_kk() + "00";
                     for (int i = 0; i < itemArray.length(); i++) {
-                        Log.d("weatherUtility", i + "");
                         JSONObject item = new JSONObject(itemArray.get(i).toString());
 
                         if (item.get("fcstTime").toString().equals(currentTime)) { // 12번

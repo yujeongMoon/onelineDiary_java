@@ -1,27 +1,25 @@
 package com.example.onelinediary.activity;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.SettingAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivitySettingBinding;
+import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dialog.InputDialog;
 import com.example.onelinediary.dto.BasicItemBtn;
 import com.example.onelinediary.dto.BasicItemSwitch;
 import com.example.onelinediary.dto.TextItem;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
-
-import okhttp3.internal.Util;
 
 public class SettingActivity extends AppCompatActivity {
     private ActivitySettingBinding settingBinding;
@@ -40,15 +38,15 @@ public class SettingActivity extends AppCompatActivity {
         adapter.addItem(new TextItem("최신 버전입니다."));
 
         // 닉네임을 설정했다면 "변경", 닉네임을 설정하지 않았다면 "설정"
-        String buttonText = "설정";
+        String buttonText = getString(R.string.setting);
         if (!Const.nickname.equals("")) {
-            buttonText = "변경";
+            buttonText = getString(R.string.change);
         }
-        adapter.addItem(new BasicItemBtn(R.drawable.star_24, "닉네임 설정 및 변경", buttonText, setNicknameListener));
+        adapter.addItem(new BasicItemBtn(R.drawable.star_24, getString(R.string.title_setting_nickname), buttonText, setNicknameListener));
 
-        adapter.addItem(new BasicItemSwitch(R.drawable.lock_black_24, "암호 설정", false));
-        adapter.addItem(new BasicItemSwitch(R.drawable.push_notification_black_24, "푸시 알림 설정", false));
-        adapter.addItem(new BasicItemBtn(R.drawable.face_black_24, "피드백 및 응원의 한마디", "보내기", moveFeedbackActivityListener));
+        adapter.addItem(new BasicItemSwitch(R.drawable.lock_black_24, getString(R.string.title_setting_security), false, setSecurity));
+        adapter.addItem(new BasicItemSwitch(R.drawable.push_notification_black_24, getString(R.string.title_setting_push), false, null));
+        adapter.addItem(new BasicItemBtn(R.drawable.face_black_24, getString(R.string.title_setting_push), getString(R.string.send), moveFeedbackActivityListener));
 
         settingBinding.settingRecyclerview.setAdapter(adapter);
     }
@@ -56,7 +54,7 @@ public class SettingActivity extends AppCompatActivity {
     View.OnClickListener setNicknameListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            new InputDialog("닉네임을 입력해주세요!", v1 -> {
+            new InputDialog(getString(R.string.dialog_message_input_nickname), v1 -> {
                 if (Utility.isStringNullOrEmpty(Const.nickname)) {
                     Const.nickname = "";
                 }
@@ -68,13 +66,16 @@ public class SettingActivity extends AppCompatActivity {
                         // 닉네임을 불러올 때 DB에서 가져오는 시간을 줄이기 위해서 저장한다.
                         Utility.putString(SettingActivity.this, Const.SP_KEY_NICKNAME, Const.nickname);
 
+                        BasicItemBtn itemBtn = (BasicItemBtn) adapter.items.get(1);
                         if (!Const.nickname.equals("")) {
-                            Toast.makeText(getApplicationContext(), "닉네임이 저장되었습니다.", Toast.LENGTH_SHORT).show();
-                            adapter.updateItem(1, new BasicItemBtn(R.drawable.face_black_24, "닉네임 설정 및 변경", "변경", setNicknameListener));
+                            Toast.makeText(getApplicationContext(), getString(R.string.message_save_nickname), Toast.LENGTH_SHORT).show();
+                            itemBtn.setButtonText(getString(R.string.change));
                         } else {
-                            Toast.makeText(getApplicationContext(), "닉네임이 초기화되었습니다.", Toast.LENGTH_SHORT).show();
-                            adapter.updateItem(1, new BasicItemBtn(R.drawable.face_black_24, "닉네임 설정 및 변경", "설정", setNicknameListener));
+                            Toast.makeText(getApplicationContext(), getString(R.string.message_reset_nickname), Toast.LENGTH_SHORT).show();
+                            itemBtn.setButtonText(getString(R.string.setting));
                         }
+
+                        adapter.updateItem(1, itemBtn);
                     } else {
                         Utility.putString(SettingActivity.this, Const.SP_KEY_NICKNAME, "");
                         Toast.makeText(getApplicationContext(), "오류가 발생하였습니다. 잠시 후에 다시 시도해주세요!", Toast.LENGTH_SHORT).show();
@@ -106,14 +107,29 @@ public class SettingActivity extends AppCompatActivity {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-
-        if (Const.androidId.equals(Const.ADMIN_ANDROID_ID)) {
-            Intent adminIntent = new Intent(SettingActivity.this, AdminActivity.class);
-            startActivity(adminIntent);
+        if (Utility.getString(this, Const.SP_KEY_NICKNAME).equals("")) { // 닉네임이 없을 때
+            new ConfirmDialog(getString(R.string.dialog_message_notify_set_nickname), null).show(getSupportFragmentManager(), "setNicknameBeforeFeedback");
         } else {
-            Intent feedbackIntent = new Intent(SettingActivity.this, FeedbackActivity.class);
-            feedbackIntent.putExtra("androidId", Utility.getAndroidId(this));
-            startActivity(feedbackIntent);
+            // 저장된 안드로이드 아이디와 관리자의 아이디가 같을 경우, 관리자 화면으로 이동한다.
+            if (Utility.getString(this, Const.SP_KEY_ANDROID_ID).equals(Const.ADMIN_ANDROID_ID)) {
+                Intent adminIntent = new Intent(SettingActivity.this, AdminActivity.class);
+                startActivity(adminIntent);
+            } else {
+                Intent feedbackIntent = new Intent(SettingActivity.this, FeedbackActivity.class);
+                feedbackIntent.putExtra(Const.INTENT_KEY_ANDROID_ID, Utility.getAndroidId(this));
+                startActivity(feedbackIntent);
+            }
+        }
+    };
+
+    CompoundButton.OnCheckedChangeListener setSecurity = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                Toast.makeText(getApplicationContext(), "암호가 설정되었습니다.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "암호가 해제되었습니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     };
 }

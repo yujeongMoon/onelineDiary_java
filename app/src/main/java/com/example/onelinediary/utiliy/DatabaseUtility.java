@@ -299,8 +299,8 @@ public class DatabaseUtility {
 
     public static void addFeedbackListWithUser(String androidId, Feedback feedback, onCompleteCallback callback) {
         getReference()
-                .child("admin")
-                .child("feedbackList")
+                .child(Const.DATABASE_CHILD_ADMIN)
+                .child(Const.DATABASE_CHILD_FEEDBACK_LIST)
                 .child(androidId)
                 .setValue(feedback)
                 .addOnSuccessListener(unused -> callback.onComplete(true))
@@ -312,7 +312,7 @@ public class DatabaseUtility {
         Const.userList = new ArrayList<>();
         Const.userLastFeedbackList = new ArrayList<>();
 
-        Query query = getReference().child("admin").child("feedbackList");
+        Query query = getReference().child(Const.DATABASE_CHILD_ADMIN).child(Const.DATABASE_CHILD_FEEDBACK_LIST);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override

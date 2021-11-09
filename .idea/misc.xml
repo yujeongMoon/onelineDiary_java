@@ -37,14 +37,14 @@
         <entry key="app/src/main/res/layout/view_snackbar.xml" value="0.5677083333333334" />
         <entry key="app/src/main/res/layout/viewholder_image.xml" value="0.3541666666666667" />
         <entry key="app/src/main/res/layout/viewholder_item_basic.xml" value="0.5677083333333334" />
-        <entry key="app/src/main/res/layout/viewholder_item_basic_btn.xml" value="0.5515587529976019" />
+        <entry key="app/src/main/res/layout/viewholder_item_basic_btn.xml" value="0.5" />
         <entry key="app/src/main/res/layout/viewholder_item_basic_switch.xml" value="0.5677083333333334" />
         <entry key="app/src/main/res/layout/viewholder_item_feedback_list.xml" value="0.5" />
         <entry key="app/src/main/res/layout/viewholder_item_text.xml" value="0.5677083333333334" />
         <entry key="app/src/main/res/layout/viewholder_main_diary.xml" value="0.4104882459312839" />
         <entry key="app/src/main/res/layout/viewholder_message_left.xml" value="0.1" />
         <entry key="app/src/main/res/layout/viewholder_message_right.xml" value="0.5" />
-        <entry key="app/src/main/res/layout/viewholder_mood_item.xml" value="0.5677083333333334" />
+        <entry key="app/src/main/res/layout/viewholder_mood_item.xml" value="0.5" />
         <entry key="app/src/main/res/xml/file_paths.xml" value="0.5677083333333334" />
       </map>
     </option>

@@ -83,6 +83,7 @@ public class MoodAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.viewholder_mood_item, parent, false);
             TextView day = convertView.findViewById(R.id.day);
             ImageView emoji = convertView.findViewById(R.id.emoji);
+            View line = convertView.findViewById(R.id.day_line);
 
             if (position < startDayInMonth) {
                 day.setVisibility(View.GONE);
@@ -93,6 +94,12 @@ public class MoodAdapter extends BaseAdapter {
                 emoji.setVisibility(View.VISIBLE);
 
                 day.setText((position - startDayInMonth) + 1 + "");
+
+                if (Utility.getMonth().equals(month) && Utility.getDayToInt() == Integer.parseInt(day.getText().toString())) {
+                    line.setVisibility(View.VISIBLE);
+                } else {
+                    line.setVisibility(View.INVISIBLE);
+                }
 
                 for(int i = 0; i < diaryList.size(); i++) {
                     if (!isExist && Integer.parseInt(diaryList.get(i).getDay()) == ((position - startDayInMonth) + 1)) {

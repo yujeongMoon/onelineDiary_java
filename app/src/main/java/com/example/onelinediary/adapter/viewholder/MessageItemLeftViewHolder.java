@@ -8,7 +8,7 @@ import com.example.onelinediary.databinding.ViewholderMessageLeftBinding;
 import com.example.onelinediary.dto.Feedback;
 
 public class MessageItemLeftViewHolder extends RecyclerView.ViewHolder {
-    private ViewholderMessageLeftBinding messageLeftBinding;
+    private final ViewholderMessageLeftBinding messageLeftBinding;
 
     public MessageItemLeftViewHolder(ViewholderMessageLeftBinding messageLeftBinding) {
         super(messageLeftBinding.getRoot());

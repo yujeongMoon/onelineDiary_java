@@ -291,7 +291,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (isEnabled) {
             if (isChanged) {
-                new SelectDialog("수정한 일기가 저장되지 않았습니다. editmode를 해제하시겠습니까?", v -> {
+                new SelectDialog(getString(R.string.dialog_message_exit_editmode), v -> {
                     detailBinding.switchEditMode.setChecked(false);
                     isChanged = false;
                 }).show(getSupportFragmentManager(), "finishUpdateDiary");

@@ -17,13 +17,13 @@ import com.example.onelinediary.utiliy.Utility;
 import static com.example.onelinediary.constant.Const.PICKER_IMAGE_REQUEST;
 
 public class ImagePagerViewHolder extends RecyclerView.ViewHolder {
-    private ViewholderImageBinding imageBinding;
-    private ImagePagerAdapter adapter;
+    private final ViewholderImageBinding imageBinding;
+    private final ImagePagerAdapter adapter;
 
-    public ImagePagerViewHolder(ImagePagerAdapter adapter, @NonNull ViewholderImageBinding binding) {
-        super(binding.getRoot());
+    public ImagePagerViewHolder(ImagePagerAdapter adapter, @NonNull ViewholderImageBinding imageBinding) {
+        super(imageBinding.getRoot());
 
-        imageBinding = binding;
+        this.imageBinding = imageBinding;
         this.adapter = adapter;
     }
 
