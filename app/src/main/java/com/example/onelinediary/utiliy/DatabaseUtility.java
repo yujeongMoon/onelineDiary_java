@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.dto.Feedback;
+import com.example.onelinediary.dto.PinInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -273,7 +274,6 @@ public class DatabaseUtility {
                 .addOnFailureListener(e -> callback.onComplete(false));
     }
 
-    // TODO 피드백 불러오기
     public static void readFeedback(String androidId, onCompleteCallback callback) {
         Const.feedbackList = new ArrayList<>();
         Query query = getReference().child(androidId).child(Const.DATABASE_CHILD_FEEDBACK);
@@ -307,7 +307,6 @@ public class DatabaseUtility {
                 .addOnFailureListener(e -> callback.onComplete(false));
     }
 
-    // TODO 관리자용 전체 사용자 피드백 리스트 불러오기
     public static void readFeedbackListWithUser(onCompleteCallback callback) {
         Const.userList = new ArrayList<>();
         Const.userLastFeedbackList = new ArrayList<>();
@@ -333,5 +332,16 @@ public class DatabaseUtility {
 
             }
         });
+    }
+
+    public static void setPinNumber(Context context, PinInfo pinInfo, onCompleteCallback callback) {
+        getReference()
+                .child(Utility.getAndroidId(context))
+                .child(Const.DATABASE_CHILD_MYINFO)
+                .child("security")
+                .child("pin")
+                .setValue(pinInfo)
+                .addOnSuccessListener(unused -> callback.onComplete(true))
+                .addOnFailureListener(e -> callback.onComplete(false));
     }
 }

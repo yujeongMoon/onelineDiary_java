@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.onelinediary">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" /> <!-- 사용자의 현재 위치 정보를 가져오기위해 필요한 권한이다. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- geocoder를 이용하기 위해서 필요한 권한이다. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!--
-        사용자가 기기 카메라로 찍은 사진은 기기의 공용 외부 저장소에 저장되므로 모든 앱에서 엑세스할 수 있다.
-        사진을 공유하기 위한 디렉터리를 제공하는데 이 디텍터리는 모든 앱에서 공유하기 때문에 이 디렉터리를 읽고 쓰려면
-        READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE 권한이 각각 필요하다.
+        기기의 유니크한 값인 안드로이드 아이디를 가져오기 위해서 필요한 권한
+        안드로이드 아이디는 로그인 대신 사용자를 구분할 때 사용한다.
+        기기를 완전히 초기화 시키는 경우에는 값이 바꿘다.
     -->
     <application
         android:allowBackup="true"
@@ -16,14 +30,20 @@
         android:theme="@style/Theme.OnelineDiary"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.PinActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.SecurityActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.AdminActivity"
             android:exported="true" />
         <activity
             android:name=".activity.FeedbackActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".activity.SettingActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".activity.DiaryDetailActivity"
             android:exported="true" />
@@ -52,24 +72,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-    </application>
-
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
-    <!--
-        기기의 유니크한 값인 안드로이드 아이디를 가져오기 위해서 필요한 권한
-        안드로이드 아이디는 로그인 대신 사용자를 구분할 때 사용한다.
-        기기를 완전히 초기화 시키는 경우에는 값이 바꿘다.
-    -->
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- 앱이 사진 위치 정보에 엑세스해야 하는 경우에 필요한 권한이다. -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 사용자의 현재 위치 정보를 가져오기위해 필요한 권한이다. -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- geocoder를 이용하기 위해서 필요한 권한이다. -->
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    </application> <!-- 앱이 사진 위치 정보에 엑세스해야 하는 경우에 필요한 권한이다. -->
 
 </manifest>

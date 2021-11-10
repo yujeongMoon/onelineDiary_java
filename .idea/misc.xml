@@ -6,12 +6,16 @@
         <entry key="../../../../../../layout/custom_preview.xml" value="0.5111111111111111" />
         <entry key="app/src/main/res/drawable-mdpi/default_dot.xml" value="0.5748717948717949" />
         <entry key="app/src/main/res/drawable-xxxhdpi/bg_message_box.xml" value="0.5388888888888889" />
+        <entry key="app/src/main/res/drawable-xxxhdpi/circle_pink.xml" value="0.5138888888888888" />
         <entry key="app/src/main/res/drawable/bg_btn_send_message.xml" value="0.5388888888888889" />
+        <entry key="app/src/main/res/drawable/bg_outline_circle.xml" value="0.33" />
         <entry key="app/src/main/res/drawable/circle_gray.xml" value="0.5838541666666667" />
         <entry key="app/src/main/res/drawable/emoticon_excited_outline.xml" value="0.31574074074074077" />
         <entry key="app/src/main/res/drawable/face_black_24.xml" value="0.5748717948717949" />
         <entry key="app/src/main/res/drawable/lock_black_24.xml" value="0.5748717948717949" />
+        <entry key="app/src/main/res/drawable/lock_open_black_24.xml" value="0.5138888888888888" />
         <entry key="app/src/main/res/drawable/notice_black.xml" value="0.5748717948717949" />
+        <entry key="app/src/main/res/drawable/pin_number_black_24.xml" value="0.5138888888888888" />
         <entry key="app/src/main/res/drawable/push_notification_black_24.xml" value="0.5748717948717949" />
         <entry key="app/src/main/res/drawable/selected_dot.xml" value="0.5748717948717949" />
         <entry key="app/src/main/res/drawable/setting_black_24.xml" value="0.5748717948717949" />
@@ -24,6 +28,8 @@
         <entry key="app/src/main/res/layout/activity_feedback.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37592592592592594" />
         <entry key="app/src/main/res/layout/activity_new_diary.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_pin.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_security.xml" value="0.558974358974359" />
         <entry key="app/src/main/res/layout/activity_setting.xml" value="0.37520391517128876" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.5" />
         <entry key="app/src/main/res/layout/dialog_confirm.xml" value="0.5677083333333334" />
@@ -45,6 +51,7 @@
         <entry key="app/src/main/res/layout/viewholder_message_left.xml" value="0.1" />
         <entry key="app/src/main/res/layout/viewholder_message_right.xml" value="0.5" />
         <entry key="app/src/main/res/layout/viewholder_mood_item.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/viewholder_pin_item.xml" value="0.5" />
         <entry key="app/src/main/res/xml/file_paths.xml" value="0.5677083333333334" />
       </map>
     </option>

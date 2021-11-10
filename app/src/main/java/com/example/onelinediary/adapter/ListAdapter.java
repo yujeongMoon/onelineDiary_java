@@ -20,7 +20,7 @@ import com.example.onelinediary.dto.TextItem;
 
 import java.util.ArrayList;
 
-public class SettingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public enum itemType {
         TEXT(0), BASIC_BTN(1), BASIC_SWITCH(2);
 

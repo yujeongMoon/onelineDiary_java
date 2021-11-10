@@ -3,14 +3,13 @@ package com.example.onelinediary.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onelinediary.R;
-import com.example.onelinediary.adapter.SettingAdapter;
+import com.example.onelinediary.adapter.ListAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivitySettingBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
@@ -24,7 +23,7 @@ import com.example.onelinediary.utiliy.Utility;
 public class SettingActivity extends AppCompatActivity {
     private ActivitySettingBinding settingBinding;
 
-    private SettingAdapter adapter;
+    private ListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +33,7 @@ public class SettingActivity extends AppCompatActivity {
 
         settingBinding.settingRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new SettingAdapter();
+        adapter = new ListAdapter();
         adapter.addItem(new TextItem("최신 버전입니다."));
 
         // 닉네임을 설정했다면 "변경", 닉네임을 설정하지 않았다면 "설정"
@@ -44,9 +43,9 @@ public class SettingActivity extends AppCompatActivity {
         }
         adapter.addItem(new BasicItemBtn(R.drawable.star_24, getString(R.string.title_setting_nickname), buttonText, setNicknameListener));
 
-        adapter.addItem(new BasicItemSwitch(R.drawable.lock_black_24, getString(R.string.title_setting_security), false, setSecurity));
+        adapter.addItem(new BasicItemBtn(R.drawable.lock_black_24, getString(R.string.title_setting_security), getString(R.string.setting), setSecurity));
         adapter.addItem(new BasicItemSwitch(R.drawable.push_notification_black_24, getString(R.string.title_setting_push), false, null));
-        adapter.addItem(new BasicItemBtn(R.drawable.face_black_24, getString(R.string.title_setting_push), getString(R.string.send), moveFeedbackActivityListener));
+        adapter.addItem(new BasicItemBtn(R.drawable.face_black_24, getString(R.string.title_setting_feedback), getString(R.string.send), moveFeedbackActivityListener));
 
         settingBinding.settingRecyclerview.setAdapter(adapter);
     }
@@ -122,14 +121,11 @@ public class SettingActivity extends AppCompatActivity {
         }
     };
 
-    CompoundButton.OnCheckedChangeListener setSecurity = new CompoundButton.OnCheckedChangeListener() {
+    View.OnClickListener setSecurity = new View.OnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-                Toast.makeText(getApplicationContext(), "암호가 설정되었습니다.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "암호가 해제되었습니다.", Toast.LENGTH_SHORT).show();
-            }
+        public void onClick(View v) {
+            Intent securityIntent = new Intent(SettingActivity.this, SecurityActivity.class);
+            startActivity(securityIntent);
         }
     };
 }

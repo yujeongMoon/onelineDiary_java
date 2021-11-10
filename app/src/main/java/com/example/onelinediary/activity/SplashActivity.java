@@ -1,7 +1,11 @@
 package com.example.onelinediary.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -92,13 +96,30 @@ public class SplashActivity extends AppCompatActivity {
                         splashBinding.splashWeather.setImageResource(resId);
                     });
 
-                    // MainActivity로 이동
-                    Utility.startActivity(this, MainActivity.class, 2000);
-                } else { // 날씨 정보를 가져오지 못했을 때
-                    Utility.startActivity(this, MainActivity.class, 2000);
+                    gotoNextActivity();
+                } else {
+                    gotoNextActivity();
                 }
             });
         } else { // location이 null일 때
+            gotoNextActivity();
+        }
+    }
+
+    private void gotoNextActivity() {
+        if (Utility.getString(getApplicationContext(), "setPinNumber").equals("Y")) {
+            Intent pinLoginIntent = new Intent(this, PinActivity.class);
+            pinLoginIntent.putExtra("isLogin", true);
+            startActivity(pinLoginIntent);
+
+//            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+//                Intent mainIntent = new Intent(context, activityClass);
+//                context.startActivity(mainIntent);
+//                ((Activity)context).finish();
+//            }, millisTime);
+
+            finish();
+        } else {
             Utility.startActivity(this, MainActivity.class, 2000);
         }
     }
