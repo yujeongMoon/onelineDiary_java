@@ -22,10 +22,13 @@ public class Const {
     public static String SP_KEY_NICKNAME = "com.example.onelinediary.nickname";
     public static String SP_KEY_INSTALLED = "com.example.onelinediary.isInstalled";
     public static String SP_KEY_ANDROID_ID = "com.example.onelinediary.androidId";
+    public static String SP_KEY_SET_PIN_NUMBER = "com.example.onelinediary.setPinNumber";
+    public static String SP_KEY_PIN_NUMBER = "com.example.onelinediary.pinNumber";
 
     public static String INTENT_KEY_MONTH = "month";
     public static String INTENT_KEY_DIARY = "diary";
     public static String INTENT_KEY_ANDROID_ID = "androidId";
+    public static String INTENT_KEY_IS_LOGIN = "isLogin";
 
     public static String REPORTING_DATE_FORMAT = "yyyy년 MM월 dd일";
 

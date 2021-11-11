@@ -71,7 +71,7 @@ public class FeedbackActivity extends AppCompatActivity {
             String contents = feedbackBinding.feedbackContents.getText().toString();
 
             if (!contents.equals("")) { // 입력한 값이 있을 경우
-                feedback.setNickname(Utility.getString(FeedbackActivity.this, Const.SP_KEY_NICKNAME));
+                feedback.setNickname(Utility.getString(getApplicationContext(), Const.SP_KEY_NICKNAME));
                 feedback.setAndroidId(Utility.getAndroidId(FeedbackActivity.this));
                 feedback.setReportingDate(Utility.getDateWithDayOfWeek("yyyy년 MM월 d일"));
                 feedback.setReportingTime(Utility.getTime_a_hh_mm());
@@ -82,25 +82,19 @@ public class FeedbackActivity extends AppCompatActivity {
 
                 // 전송 버튼을 클릭하면 DB에 저장한다.
                 // androidId/feedback/currentTime.. 해당 경로에 저장된다.
-                DatabaseUtility.writeFeedback(FeedbackActivity.this, androidId, feedback, new DatabaseUtility.onCompleteCallback() {
+                DatabaseUtility.writeFeedback(androidId, feedback, new DatabaseUtility.onCompleteCallback() {
                     @Override
                     public void onComplete(boolean isSuccess) {
                         if (isSuccess) {
+                            // 관리자 화면에서 보여주기 위한 마지막 피드백 리스트에 추가
                             if (!feedback.getContents().equals("") && !androidId.equals(Const.ADMIN_ANDROID_ID)) {
-                                DatabaseUtility.addFeedbackListWithUser(androidId, feedback, new DatabaseUtility.onCompleteCallback() {
-                                    @Override
-                                    public void onComplete(boolean isSuccess) {
-
-                                    }
-                                });
+                                DatabaseUtility.addFeedbackListWithUser(androidId, feedback, null);
                             }
                         } else { // 피드백 작성이 실패했을 경우
 
                         }
                     }
                 });
-            } else { // 입력한 값이 없을 경우
-
             }
         }
     };

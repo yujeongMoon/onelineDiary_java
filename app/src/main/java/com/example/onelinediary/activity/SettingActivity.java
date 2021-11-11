@@ -63,7 +63,7 @@ public class SettingActivity extends AppCompatActivity {
                     if (isSuccess) {
                         // 변경된 닉네임을 기기에 저장한다.
                         // 닉네임을 불러올 때 DB에서 가져오는 시간을 줄이기 위해서 저장한다.
-                        Utility.putString(SettingActivity.this, Const.SP_KEY_NICKNAME, Const.nickname);
+                        Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, Const.nickname);
 
                         BasicItemBtn itemBtn = (BasicItemBtn) adapter.items.get(1);
                         if (!Const.nickname.equals("")) {
@@ -76,7 +76,7 @@ public class SettingActivity extends AppCompatActivity {
 
                         adapter.updateItem(1, itemBtn);
                     } else {
-                        Utility.putString(SettingActivity.this, Const.SP_KEY_NICKNAME, "");
+                        Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, "");
                         Toast.makeText(getApplicationContext(), "오류가 발생하였습니다. 잠시 후에 다시 시도해주세요!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -106,11 +106,11 @@ public class SettingActivity extends AppCompatActivity {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-        if (Utility.getString(this, Const.SP_KEY_NICKNAME).equals("")) { // 닉네임이 없을 때
+        if (Utility.getString(getApplicationContext(), Const.SP_KEY_NICKNAME).equals("")) { // 닉네임이 없을 때
             new ConfirmDialog(getString(R.string.dialog_message_notify_set_nickname), null).show(getSupportFragmentManager(), "setNicknameBeforeFeedback");
         } else {
             // 저장된 안드로이드 아이디와 관리자의 아이디가 같을 경우, 관리자 화면으로 이동한다.
-            if (Utility.getString(this, Const.SP_KEY_ANDROID_ID).equals(Const.ADMIN_ANDROID_ID)) {
+            if (Utility.getString(getApplicationContext(), Const.SP_KEY_ANDROID_ID).equals(Const.ADMIN_ANDROID_ID)) {
                 Intent adminIntent = new Intent(SettingActivity.this, AdminActivity.class);
                 startActivity(adminIntent);
             } else {

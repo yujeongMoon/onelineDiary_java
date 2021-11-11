@@ -1,6 +1,5 @@
 package com.example.onelinediary.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -30,18 +29,18 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(splashBinding.getRoot());
 
         // preference에 안드로이드 아이디를 저장한다.
-        Utility.putString(this, Const.SP_KEY_ANDROID_ID, Utility.getAndroidId(this));
+        Utility.putString(getApplicationContext(), Const.SP_KEY_ANDROID_ID, Utility.getAndroidId(this));
 
         // 앱을 처음 설치하거나 재설치 했을 경우, DB에 닉네임이 있는 지 확인한 후 닉네임 값을 가져온다.
         // 기기에 닉네임이 저장되어있다면 닉네임을 사용하고 없다면 보여주지 않는다.
-        Boolean isInstalled = Utility.getBoolean(SplashActivity.this, Const.SP_KEY_INSTALLED);
-        String nickname = Utility.getString(this, Const.SP_KEY_NICKNAME);
+        Boolean isInstalled = Utility.getBoolean(getApplicationContext(), Const.SP_KEY_INSTALLED);
+        String nickname = Utility.getString(getApplicationContext(), Const.SP_KEY_NICKNAME);
 
         if (!isInstalled) {
             DatabaseUtility.getNickname(this, (isSuccess, result) -> {
                 Const.nickname = result;
-                Utility.putString(SplashActivity.this, Const.SP_KEY_NICKNAME, result);
-                Utility.putBoolean(SplashActivity.this, Const.SP_KEY_INSTALLED, true);
+                Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, result);
+                Utility.putBoolean(getApplicationContext(), Const.SP_KEY_INSTALLED, true);
             });
         } else {
             if (!nickname.equals("")) {
@@ -95,32 +94,30 @@ public class SplashActivity extends AppCompatActivity {
                         splashBinding.splashWeather.setVisibility(View.VISIBLE);
                         splashBinding.splashWeather.setImageResource(resId);
                     });
-
-                    gotoNextActivity();
-                } else {
-                    gotoNextActivity();
                 }
             });
+
+            gotoNextActivity();
         } else { // location이 null일 때
             gotoNextActivity();
         }
     }
 
     private void gotoNextActivity() {
-        if (Utility.getString(getApplicationContext(), "setPinNumber").equals("Y")) {
-            Intent pinLoginIntent = new Intent(this, PinActivity.class);
-            pinLoginIntent.putExtra("isLogin", true);
-            startActivity(pinLoginIntent);
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            Intent nextIntent;
+            @Override
+            public void run() {
+                if (Utility.getString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER).equals("Y")) {
+                    nextIntent = new Intent(SplashActivity.this, PinActivity.class);
+                    nextIntent.putExtra(Const.INTENT_KEY_IS_LOGIN, true);
+                } else {
+                    nextIntent = new Intent(SplashActivity.this, MainActivity.class);
+                }
 
-//            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-//                Intent mainIntent = new Intent(context, activityClass);
-//                context.startActivity(mainIntent);
-//                ((Activity)context).finish();
-//            }, millisTime);
-
-            finish();
-        } else {
-            Utility.startActivity(this, MainActivity.class, 2000);
-        }
+                startActivity(nextIntent);
+                finish();
+            }
+        }, 3000);
     }
 }

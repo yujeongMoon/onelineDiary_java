@@ -19,35 +19,23 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-
-import okhttp3.internal.Util;
 
 /**
  * firebase Realtime database
  */
 public class DatabaseUtility {
 
-    private static HashMap<String, ArrayList<Diary>> yearDiaryList = new HashMap<>(); // 해당 연도의 일기를 담을 해시맵
-//    private static Queue<String> keyListQueue;
-
-    public onCompleteCallback callback;
+    private static final HashMap<String, ArrayList<Diary>> yearDiaryList = new HashMap<>(); // 해당 연도의 일기를 담을 해시맵
 
     public interface onCompleteCallback {
-//        void onComplete(boolean isSuccess, HashMap<String, ArrayList<Diary>> result);
         void onComplete(boolean isSuccess);
     }
 
     public interface onCompleteResultCallback<T> {
         void onComplete(boolean isSuccess, T result);
     }
-//    데이터 베이스의 인스턴스를 검색하고 쓰려고 하는 위치를 참조
-//    FirebaseDatabase database = FirebaseDatabase.getInstance();
-//    DatabaseReference reference = database.getReference(); // default
-
+    // 데이터 베이스의 인스턴스를 검색하고 쓰려고 하는 위치를 참조
     // 인스턴스를 생성해서 데이터베이스 참조값을 반환한다.
     public static DatabaseReference getReference() {
         return FirebaseDatabase.getInstance().getReference();
@@ -61,8 +49,16 @@ public class DatabaseUtility {
                 .child(Utility.getMonth())
                 .child(Utility.getDay())
                 .setValue(newDiary)
-                .addOnSuccessListener(unused -> callback.onComplete(true))
-                .addOnFailureListener(e -> callback.onComplete(false));
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
     }
 
     /**
@@ -81,7 +77,6 @@ public class DatabaseUtility {
      * @param year 원하는 연도
      */
     public static void readYearDiaryList(Context context, String year, onCompleteCallback callback) {
-//        keyListQueue = new LinkedList<>(); // 넣은 순서 그대로 사용하기 위해서 LinkedList를 사용한다.
         Const.monthKeyList = new ArrayList<>();
         Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_DIARY).child(year);
 
@@ -92,32 +87,22 @@ public class DatabaseUtility {
                 Const.monthKeyList.clear();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    keyListQueue.offer(dataSnapshot.getKey()); // 큐에 key(월)을 넣어 저장한다.
                     Const.monthKeyList.add(dataSnapshot.getKey());
 
                     readMonthDiaryList(context, year, dataSnapshot.getKey());
                 }
-//                requestMonthList(context, year, callback); // 큐에 저정한 키값을 사용하여 해당 연도 일기가 저장된 해시맵을 완성한다.
                 Const.diaryList = yearDiaryList;
-                callback.onComplete(true);
+
+                if (callback != null)
+                    callback.onComplete(true);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("DB__readYearDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
-
-//    private static void requestMonthList(final Context context, final String year, onCompleteCallback callback) {
-//        if(keyListQueue.isEmpty()) { // 큐가 비었다면(해시맵이 완성되었다면)
-//            Const.diaryList = yearDiaryList;
-//            callback.onComplete(true);
-//            return;
-//        }
-//
-//        readMonthDiaryList(context, year, keyListQueue.poll()); // 큐에서 키값 하나씩 빼서 사용한다.
-//    }
 
     /**
      * readYearDiaryList() 안에서 반복적으로 호출되어 달마다 일기를 저장해주는 메소드
@@ -142,16 +127,17 @@ public class DatabaseUtility {
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Diary diary = dataSnapshot.getValue(Diary.class); // 하루 일기를 객체로 생성한다.
-                    diary.setDay(dataSnapshot.getKey());
+
+                    if (diary != null)
+                        diary.setDay(dataSnapshot.getKey());
                     dList.add(diary);
                 }
                 yearDiaryList.put(month, dList); // 해당 월을 key로, 일기 리스트를 value로 저장한다.
-//                requestMonthList(context, year); // 다음 월의 일기를 저장하기 위해 호출한다.
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("DB__readMonthDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -174,8 +160,16 @@ public class DatabaseUtility {
         diaryUpdate.put("/" + Utility.getAndroidId(context) + "/" + Const.DATABASE_CHILD_DIARY + "/" + year + "/" + month + "/" + day, diary.toMap());
 
         getReference().updateChildren(diaryUpdate)
-                .addOnSuccessListener(unused -> callback.onComplete(true))
-                .addOnFailureListener(e -> callback.onComplete(false));
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
     }
 
     /**
@@ -196,8 +190,16 @@ public class DatabaseUtility {
                 .child(month)
                 .child(day)
                 .removeValue()
-                .addOnSuccessListener(unused -> callback.onComplete(true))
-                .addOnFailureListener(e -> callback.onComplete(false));
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
     }
 
     /**
@@ -215,8 +217,16 @@ public class DatabaseUtility {
                 .child(Const.DATABASE_CHILD_MYINFO)
                 .child(Const.DATABASE_CHILD_NICKNAME)
                 .setValue(nickname)
-                .addOnSuccessListener(unused -> callback.onComplete(true))
-                .addOnFailureListener(e -> callback.onComplete(false));
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
     }
 
     /**
@@ -247,22 +257,20 @@ public class DatabaseUtility {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("DB__getNickname", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
 
-    // TODO 피드백 저장하기
     /**
      * 피드백의 내용이나 답변을 DB에 저장하는 메소드
      * 각자의 안드로이드 아이디 테이블 안에 피드백 테이블을 생성해서 저장한다.
      * 사용자와 관리자는 사용자의 피드백 테이블을 공유하면서 1:1 대화를 주고 받는다.
      *
-     * @param context 컨텍스트
      * @param feedback 작성한 피드백
      * @param callback 콜백 매소드
      */
-    public static void writeFeedback(Context context, String androidId, Feedback feedback, onCompleteCallback callback) {
+    public static void writeFeedback(String androidId, Feedback feedback, onCompleteCallback callback) {
         String reportingDate = String.valueOf(System.currentTimeMillis());
 
         getReference()
@@ -270,8 +278,16 @@ public class DatabaseUtility {
                 .child(Const.DATABASE_CHILD_FEEDBACK)
                 .child(reportingDate)
                 .setValue(feedback)
-                .addOnSuccessListener(unused -> callback.onComplete(true))
-                .addOnFailureListener(e -> callback.onComplete(false));
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
     }
 
     public static void readFeedback(String androidId, onCompleteCallback callback) {
@@ -287,12 +303,13 @@ public class DatabaseUtility {
                     Const.feedbackList.add(dataSnapshot.getValue(Feedback.class));
                 }
 
-                callback.onComplete(true);
+                if (callback != null)
+                    callback.onComplete(true);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("DB__readFeedback", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -303,8 +320,16 @@ public class DatabaseUtility {
                 .child(Const.DATABASE_CHILD_FEEDBACK_LIST)
                 .child(androidId)
                 .setValue(feedback)
-                .addOnSuccessListener(unused -> callback.onComplete(true))
-                .addOnFailureListener(e -> callback.onComplete(false));
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
     }
 
     public static void readFeedbackListWithUser(onCompleteCallback callback) {
@@ -324,12 +349,13 @@ public class DatabaseUtility {
                     Const.userLastFeedbackList.add(dataSnapshot.getValue(Feedback.class));
                 }
 
-                callback.onComplete(true);
+                if (callback != null)
+                    callback.onComplete(true);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d("DB__readFeedbackListWithUser", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -341,7 +367,15 @@ public class DatabaseUtility {
                 .child("security")
                 .child("pin")
                 .setValue(pinInfo)
-                .addOnSuccessListener(unused -> callback.onComplete(true))
-                .addOnFailureListener(e -> callback.onComplete(false));
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
     }
 }

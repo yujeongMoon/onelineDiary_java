@@ -112,7 +112,7 @@ public class NewDiaryActivity extends AppCompatActivity{
         });
     }
 
-    private TextWatcher watcher = new TextWatcher() {
+    private final TextWatcher watcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
@@ -259,7 +259,7 @@ public class NewDiaryActivity extends AppCompatActivity{
             if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우(구글 포토 포함)
                 Uri selectedImageUri = data.getData();
 
-                Bitmap imageBitmap = null;
+                Bitmap imageBitmap;
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 imageBitmap = Utility.getRotatedBitmap(path);
 
@@ -278,7 +278,7 @@ public class NewDiaryActivity extends AppCompatActivity{
             } else { // 카메라를 선택했을 경우
                 if (Const.photoUri != null) {
                     // uri로부터 Bitmap 이미지를 생성
-                    Bitmap imageBitmap = null;
+                    Bitmap imageBitmap;
 
                     String path = Utility.getRealPathFromURI(this, Const.photoUri);
                     imageBitmap = Utility.getRotatedBitmap(path);

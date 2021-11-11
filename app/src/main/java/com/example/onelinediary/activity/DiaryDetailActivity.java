@@ -87,6 +87,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
             setCurrentWeather(diary.getWeather());
         }
 
+        // 위치랑 날씨가 없다면 레이아웃을 gone 처리한다.
         if (detailBinding.detailCurrentLocation.getVisibility() == View.GONE && detailBinding.detailCurrentWeather.getVisibility() == View.GONE)
             detailBinding.detailInfoLayout.setVisibility(View.GONE);
         else
@@ -268,7 +269,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
         }, 500);
     }
 
-    private TextWatcher watcher = new TextWatcher() {
+    private final TextWatcher watcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
@@ -314,7 +315,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
             if (data != null && data.getData() != null) { // 갤러리를 선택했을 경우(구글 포토 포함)
                 Uri selectedImageUri = data.getData();
 
-                Bitmap imageBitmap = null;
+                Bitmap imageBitmap;
 
                 String path = Utility.getRealPathFromURI(this, selectedImageUri);
                 imageBitmap = Utility.getRotatedBitmap(path);
@@ -335,7 +336,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
             } else { // 카메라를 선택했을 경우
                 if (Const.photoUri != null) {
                     // uri로부터 Bitmap 이미지를 생성
-                    Bitmap imageBitmap = null;
+                    Bitmap imageBitmap;
 
                     String path = Utility.getRealPathFromURI(this, Const.photoUri);
                     imageBitmap = Utility.getRotatedBitmap(path);

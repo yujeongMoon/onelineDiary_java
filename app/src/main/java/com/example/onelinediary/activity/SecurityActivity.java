@@ -6,15 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.ListAdapter;
+import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivitySecurityBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
-import com.example.onelinediary.dto.BasicItemBtn;
 import com.example.onelinediary.dto.BasicItemSwitch;
 import com.example.onelinediary.dto.PinInfo;
 import com.example.onelinediary.utiliy.DatabaseUtility;
@@ -23,6 +21,7 @@ import com.example.onelinediary.utiliy.Utility;
 public class SecurityActivity extends AppCompatActivity {
     private ActivitySecurityBinding securityBinding;
 
+    private final int PIN_REQUEST = 100;
     private ListAdapter adapter;
 
     @Override
@@ -36,11 +35,11 @@ public class SecurityActivity extends AppCompatActivity {
         adapter = new ListAdapter();
 
         boolean isEnabled = false;
-        if (Utility.getString(getApplicationContext(), "setPinNumber").equals("Y")) {
+        if (Utility.getString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER).equals("Y")) {
             isEnabled = true;
         }
 
-        adapter.addItem(new BasicItemSwitch(R.drawable.pin_number_black_24, "pin 번호", isEnabled, setPinNumber));
+        adapter.addItem(new BasicItemSwitch(R.drawable.pin_number_black_24, getString(R.string.title_security_pin), isEnabled, setPinNumber));
         securityBinding.securityRecyclerview.setAdapter(adapter);
     }
 
@@ -49,21 +48,17 @@ public class SecurityActivity extends AppCompatActivity {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
                 Intent pinIntent = new Intent(SecurityActivity.this, PinActivity.class);
-                pinIntent.putExtra("isLogin", false);
-                startActivityForResult(pinIntent, 100);
+                pinIntent.putExtra(Const.INTENT_KEY_IS_LOGIN, false);
+                startActivityForResult(pinIntent, PIN_REQUEST);
             } else {
-                if (Utility.getString(SecurityActivity.this, "setPinNumber").equals("Y")) {
-                    DatabaseUtility.setPinNumber(SecurityActivity.this, new PinInfo("N", ""), new DatabaseUtility.onCompleteCallback() {
-                        @Override
-                        public void onComplete(boolean isSuccess) {
-                            new ConfirmDialog("암호 설정을 해제합니다.", v -> {
-                                adapter.updateItem(0, new BasicItemSwitch(R.drawable.pin_number_black_24, "pin 번호", false, setPinNumber));
+                if (Utility.getString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER).equals("Y")) {
+                    DatabaseUtility.setPinNumber(SecurityActivity.this, new PinInfo("N", ""),
+                            isSuccess -> new ConfirmDialog(getString(R.string.dialog_message_unlock_pin), v -> {
+                        adapter.updateItem(0, new BasicItemSwitch(R.drawable.pin_number_black_24, getString(R.string.title_security_pin), false, setPinNumber));
 
-                                Utility.putString(getApplicationContext(), "setPinNumber", "N");
-                                Utility.putString(getApplicationContext(), "pinNumber", "");
-                            }).show(getSupportFragmentManager(), "resetSecurityPin");
-                        }
-                    });
+                        Utility.putString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER, "N");
+                        Utility.putString(getApplicationContext(), Const.SP_KEY_PIN_NUMBER, "");
+                    }).show(getSupportFragmentManager(), "resetSecurityPin"));
                 }
             }
         }
@@ -73,8 +68,10 @@ public class SecurityActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // 암호 설정을 하는 중에 취소를 하는 경우
+        // RESULT_CANCELED을 넘겨 알린다.
         if(resultCode == RESULT_CANCELED) {
-            adapter.updateItem(0, new BasicItemSwitch(R.drawable.pin_number_black_24, "pin 번호", false, setPinNumber));
+            adapter.updateItem(0, new BasicItemSwitch(R.drawable.pin_number_black_24, getString(R.string.title_security_pin), false, setPinNumber));
         }
     }
 }

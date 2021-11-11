@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.example.onelinediary.R;
 
 public class PinAdapter extends BaseAdapter {
-    private final String[] numbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "reset", "0", "cancel"};
+    private final String[] numbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "x", "0", "<"};
     pinClickListener pinClickListener;
 
     public interface pinClickListener {
@@ -46,22 +46,13 @@ public class PinAdapter extends BaseAdapter {
 
             TextView number = convertView.findViewById(R.id.number);
 
-            if (numbers[position].equals("reset")) {
-                number.setText("r");
-            } else if (numbers[position].equals("cancel")) {
-                number.setText("c");
-            } else {
-                number.setText(numbers[position]);
-            }
-            
+            number.setText(numbers[position]);
+
             convertView.setTag(numbers[position]);
 
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (pinClickListener != null)
-                        pinClickListener.onPinClick((String)v.getTag());
-                }
+            convertView.setOnClickListener(v -> {
+                if (pinClickListener != null)
+                    pinClickListener.onPinClick((String)v.getTag());
             });
         } else {
             View view = new View(parent.getContext());
