@@ -10,15 +10,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.PagerAdapter;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.MainPagerAdapter;
@@ -119,23 +116,7 @@ public class MainActivity extends FragmentActivity {
             if (Const.diaryList != null && Const.diaryList.containsKey(Utility.getMonth())) {
                 if (todayDiary.getDay().equals(Utility.getDay())) {
                     Const.todayDiary = todayDiary;
-                    switch (todayDiary.getMood()) {
-                        case 1:
-                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_happy_icon);
-                            break;
-                        case 2:
-                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_blushing_icon);
-                            break;
-                        case 3:
-                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_blank_icon);
-                            break;
-                        case 4:
-                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_consoling_icon);
-                            break;
-                        case 5:
-                            mainBinding.btnAddNewDiary.setImageResource(R.drawable.emoji_nervous_icon);
-                            break;
-                    }
+                    mainBinding.btnAddNewDiary.setImageResource(Utility.migrationMoodToEmoji(this, todayDiary));
                 }
             }
         }

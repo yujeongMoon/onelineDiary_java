@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onelinediary.R;
-import com.example.onelinediary.adapter.MoodAdapter;
+import com.example.onelinediary.adapter.MainMoodAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ViewholderMainDiaryBinding;
 import com.example.onelinediary.dto.Diary;
@@ -41,7 +41,7 @@ public class MainPageViewHolder extends RecyclerView.ViewHolder {
         }
 
         // 그리드 뷰 데이터와 어뎁터 설정
-        MoodAdapter adapter = new MoodAdapter(context);
+        MainMoodAdapter adapter = new MainMoodAdapter(context);
         adapter.addDiaryList(month, diaryList);
         mainDiaryBinding.moodLayout.setAdapter(adapter);
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="emoticon_arrays">
+        <item>love</item>
+        <item>happy</item>
+        <item>smile</item>
+        <item>shy</item>
+        <item>thinking</item>
+        <item>laughing</item>
+        <item>nervous</item>
+        <item>angry</item>
+        <item>sad</item>
+        <item>sick</item>
+        <item>dd</item>
+    </string-array>
+</resources>

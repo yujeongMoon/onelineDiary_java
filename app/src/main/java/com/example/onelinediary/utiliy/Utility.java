@@ -18,11 +18,13 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.TextUtils;
 
 import androidx.exifinterface.media.ExifInterface;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.constant.Const;
+import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.dto.PhotoInfo;
 
 import java.io.File;
@@ -545,5 +547,72 @@ public class Utility {
 
     public static Boolean getBoolean(Context context, String key) {
         return getSharedPreference(context).getBoolean(key, false);
+    }
+
+    /***
+     * <pre>리소스 명을 입력하면 drawable id로 변환해줌.</pre>
+     * @param res 리소스명
+     * @return id로 변환된 리소스
+     */
+    public static int getResourceImage(Context context, String res){
+        return context.getResources().getIdentifier(res,"drawable",context.getPackageName());
+    }
+
+    /**
+     * 2021.11.12
+     * 이모지를 전체적으로 변경하고 추가하면서 저장 방식을 변경(mood type(int) -> emoji imageFile name(String))
+     * 이 전의 일기를 유지하기 위해 이모티콘을 마이그레이션 하여 비슷한 이모지로 보일 수 있도록 하기위해 사용한다.
+     *
+     * mood type(diary.getMood) 값이 있을 경우, 값에 따라 맞는 비슷한 이모지의 리소스 아이디를 반환해준다.
+     * 없을 경우, 이모지 이름 값(diary.getIconName)으로 리소스 아이디 값을 가져와서 반환해준다.
+     *
+     * @param context 컨텍스트
+     * @param diary 마이그레이션 할 일기
+     * @return 이모지의 리소스 아이디
+     */
+    public static int migrationMoodToEmoji(Context context, Diary diary) {
+        if (TextUtils.isEmpty(diary.getIconName())) {
+            switch (diary.getMood()) {
+                case 1:
+                    return R.drawable.happy;
+                case 2:
+                    return R.drawable.shy;
+                case 3:
+                default:
+                    return R.drawable.dd;
+                case 4:
+                    return R.drawable.sad;
+                case 5:
+                    return R.drawable.nervous;
+            }
+        } else {
+            return getResourceImage(context, diary.getIconName());
+        }
+    }
+
+    /**
+     * Emoticon 클래스에 이미지 파일 명을 저장하기 때문에 리소스 아이디 대신 이미지 파일명을 반횐하는 기능이 필요
+     *
+     * @param diary 마이그레이션 할 일기
+     * @return 이모지 파일의 이름
+     */
+    public static String migrationMoodToEmojiName(Diary diary) {
+        if (TextUtils.isEmpty(diary.getIconName())) {
+            switch (diary.getMood()) {
+                case 1:
+                    return "happy";
+                case 2:
+                    return "shy";
+                case 3:
+                default:
+                    return "dd";
+                case 4:
+                    return "sad";
+                case 5:
+                    return "nervous";
+            }
+        } else {
+            return diary.getIconName();
+        }
     }
 }

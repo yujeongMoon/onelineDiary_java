@@ -17,6 +17,7 @@ public class Diary implements Parcelable {
     private ArrayList<String> photoList = null; // 사진이 여러장인경우
     private String contents = ""; // 일기 내용
     private int mood; // 오늘의 기분
+    private String iconName; // 선택한 기분 아이콘 명
     private String day; // 일기를 작성한 날짜(일)
     private String location = ""; // 일기를 작성한 위치
     /**
@@ -43,6 +44,7 @@ public class Diary implements Parcelable {
         day = in.readString();
         location = in.readString();
         weather = in.readString();
+        iconName = in.readString();
     }
 
     public static final Creator<Diary> CREATOR = new Creator<Diary>() {
@@ -97,6 +99,14 @@ public class Diary implements Parcelable {
         this.mood = mood;
     }
 
+    public String getIconName() {
+        return iconName;
+    }
+
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
+    }
+
     public String getDay() {
         return day;
     }
@@ -131,6 +141,7 @@ public class Diary implements Parcelable {
         result.put("day", day);
         result.put("location", location);
         result.put("weather", weather);
+        result.put("iconName", iconName);
 
         return result;
     }
@@ -150,5 +161,6 @@ public class Diary implements Parcelable {
         dest.writeString(day);
         dest.writeString(location);
         dest.writeString(weather);
+        dest.writeString(iconName);
     }
 }

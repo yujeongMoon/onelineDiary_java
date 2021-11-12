@@ -12,15 +12,19 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.ImagePagerAdapter;
+import com.example.onelinediary.adapter.SelectMoodAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityNewDiaryBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dialog.SelectDialog;
 import com.example.onelinediary.dto.Diary;
+import com.example.onelinediary.dto.Emoji;
 import com.example.onelinediary.dto.PhotoInfo;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.LocationUtility;
@@ -36,7 +40,7 @@ public class NewDiaryActivity extends AppCompatActivity{
 
     private final int PICKER_IMAGE_REQUEST = 100;
 
-    private int currentMood = Const.Mood.NONE.value;
+    private String currentMood = "";
 
     Uri photoUri;
 
@@ -49,6 +53,10 @@ public class NewDiaryActivity extends AppCompatActivity{
     int currentIndex = 0;
 
     boolean isChanged = false;
+
+    SelectMoodAdapter selectMoodAdapter;
+
+    private Emoji emoji;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +81,6 @@ public class NewDiaryActivity extends AppCompatActivity{
         } else {
             newDiaryBinding.currentWeather.setVisibility(View.GONE);
         }
-
-        newDiaryBinding.emojiHappyLayout.setOnClickListener(onClickListener);
-        newDiaryBinding.emojiSmileLayout.setOnClickListener(onClickListener);
-        newDiaryBinding.emojiBlankLayout.setOnClickListener(onClickListener);
-        newDiaryBinding.emojiSadLayout.setOnClickListener(onClickListener);
-        newDiaryBinding.emojiNervousLayout.setOnClickListener(onClickListener);
 
         newDiaryBinding.photo.setOnClickListener(v -> photoUri = Utility.selectPhoto(NewDiaryActivity.this, PICKER_IMAGE_REQUEST));
 
@@ -110,6 +112,40 @@ public class NewDiaryActivity extends AppCompatActivity{
                 currentIndex = position;
             }
         });
+
+        newDiaryBinding.emojiSelectRecyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        selectMoodAdapter = new SelectMoodAdapter();
+
+        /*
+            arrays.xml에 만들어 둔 string-array를 가져와서 이모지 리스트를 만든다.
+            새로 이모지가 추가 될 경우, string-array에 아이템 추가를 해주면 된다.
+         */
+        String[] arr = getResources().getStringArray(R.array.emoticon_arrays);
+        ArrayList<Emoji> emojiList = new ArrayList<>();
+
+        // 이모지 파일의 이름과 체크 여부를 저장한 객체로 이모지 리스트를 만든다.
+        for (String emojiName : arr) {
+            Emoji eData = new Emoji(emojiName, false);
+            emojiList.add(eData);
+        }
+
+        // 이모지 레이아웃을 클릭했을 때 선택한 이모지의 이름과 체크 여부가 넘어온다.
+        selectMoodAdapter.setList(emojiList, selEmoji -> {
+            selectMoodAdapter.setSelectedEmoji(selEmoji);
+
+            isChanged = selEmoji.checked;
+
+
+            if(isChanged) {
+                emoji = selEmoji;
+                diary.setIconName(selEmoji.res);
+            } else {
+                emoji = null;
+                diary.setIconName("");
+            }
+        });
+
+        newDiaryBinding.emojiSelectRecyclerview.setAdapter(selectMoodAdapter);
     }
 
     private final TextWatcher watcher = new TextWatcher() {
@@ -150,89 +186,6 @@ public class NewDiaryActivity extends AppCompatActivity{
             newDiaryBinding.currentLocation.setVisibility(View.GONE);
             newDiaryBinding.currentLocation.setText("");
         }
-    }
-
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (v.getId() == R.id.emoji_happy_layout) {
-                if (currentMood != Const.Mood.HAPPY.value) {
-                    resetSelectedState();
-                }
-
-                if (newDiaryBinding.emojiHappyCheck.getVisibility() == View.INVISIBLE) {
-                    newDiaryBinding.emojiHappyCheck.setVisibility(View.VISIBLE);
-                    currentMood = Const.Mood.HAPPY.value;
-                } else {
-                    newDiaryBinding.emojiHappyCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Const.Mood.NONE.value;
-                }
-            } if (v.getId() == R.id.emoji_smile_layout) {
-                if (currentMood != Const.Mood.SMILE.value) {
-                    resetSelectedState();
-                }
-                if (newDiaryBinding.emojiSmileCheck.getVisibility() == View.INVISIBLE) {
-                    newDiaryBinding.emojiSmileCheck.setVisibility(View.VISIBLE);
-                    currentMood = Const.Mood.SMILE.value;
-                } else {
-                    newDiaryBinding.emojiSmileCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Const.Mood.NONE.value;
-                }
-            } if (v.getId() == R.id.emoji_blank_layout) {
-                if (currentMood != Const.Mood.BLANK.value) {
-                    resetSelectedState();
-                }
-                if (newDiaryBinding.emojiBlankCheck.getVisibility() == View.INVISIBLE) {
-                    newDiaryBinding.emojiBlankCheck.setVisibility(View.VISIBLE);
-                    currentMood = Const.Mood.BLANK.value;
-                } else {
-                    newDiaryBinding.emojiBlankCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Const.Mood.NONE.value;
-                }
-            } if (v.getId() == R.id.emoji_sad_layout) {
-                if (currentMood != Const.Mood.SAD.value) {
-                    resetSelectedState();
-                }
-                if (newDiaryBinding.emojiSadCheck.getVisibility() == View.INVISIBLE) {
-                    newDiaryBinding.emojiSadCheck.setVisibility(View.VISIBLE);
-                    currentMood = Const.Mood.SAD.value;
-                } else {
-                    newDiaryBinding.emojiSadCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Const.Mood.NONE.value;
-                }
-            } if (v.getId() == R.id.emoji_nervous_layout) {
-                if (currentMood != Const.Mood.NERVOUS.value) {
-                    resetSelectedState();
-                }
-                if (newDiaryBinding.emojiNervousCheck.getVisibility() == View.INVISIBLE) {
-                    newDiaryBinding.emojiNervousCheck.setVisibility(View.VISIBLE);
-                    currentMood = Const.Mood.NERVOUS.value;
-                } else {
-                    newDiaryBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
-                    currentMood = Const.Mood.NONE.value;
-                }
-            }
-
-            if (currentMood == Const.Mood.NONE.value) {
-                isChanged = false;
-            } else {
-                isChanged = true;
-            }
-            diary.setMood(currentMood);
-        }
-    };
-
-    private void resetSelectedState() {
-        newDiaryBinding.emojiHappyCheck.setVisibility(View.INVISIBLE);
-        newDiaryBinding.emojiSmileCheck.setVisibility(View.INVISIBLE);
-        newDiaryBinding.emojiBlankCheck.setVisibility(View.INVISIBLE);
-        newDiaryBinding.emojiSadCheck.setVisibility(View.INVISIBLE);
-        newDiaryBinding.emojiNervousCheck.setVisibility(View.INVISIBLE);
-
-        currentMood = Const.Mood.NONE.value;
-        diary.setMood(currentMood);
-
-        isChanged = false;
     }
 
     @Override
@@ -346,7 +299,7 @@ public class NewDiaryActivity extends AppCompatActivity{
         }
 
         // 오늘의 기분 선택
-        if (currentMood == Const.Mood.NONE.value) {
+        if (emoji == null) {
             new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(getSupportFragmentManager(), "mood");
         } else {
             DatabaseUtility.writeNewDiary(this, diary, isSuccess -> {

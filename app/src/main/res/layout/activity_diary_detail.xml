@@ -120,7 +120,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/indicator"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/detail_emoji_layout"
+                app:layout_constraintBottom_toTopOf="@+id/detail_emoji_select_recyclerview"
                 android:layout_marginTop="30dp"
                 android:layout_marginStart="@dimen/diary_margin_start"
                 android:layout_marginEnd="@dimen/diary_margin_end"
@@ -132,7 +132,7 @@
                     android:layout_height="@dimen/detail_emoji_height"
                     android:layout_marginEnd="10dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/emoji_blank_icon"
+                    android:src="@drawable/circle_gray"
                     android:visibility="visible"/>
 
                 <EditText
@@ -204,11 +204,10 @@
 
             </LinearLayout>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/detail_emoji_layout"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/detail_emoji_select_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/detail_contents_layout"
@@ -216,134 +215,8 @@
                 android:layout_marginStart="@dimen/diary_margin_start"
                 android:layout_marginEnd="@dimen/diary_margin_end"
                 android:layout_marginBottom="30dp"
-                android:visibility="gone">
+                android:visibility="gone"/>
 
-                <LinearLayout
-                    android:id="@+id/emoji_happy_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_gravity="center_vertical">
-
-                    <ImageView
-                        android:id="@+id/emoji_happy_check"
-                        android:layout_width="@dimen/diary_select_check_width"
-                        android:layout_height="@dimen/diary_select_check_height"
-                        android:layout_marginBottom="@dimen/diary_select_interval"
-                        android:src="@drawable/check_icon"
-                        android:visibility="invisible"/>
-
-                    <ImageView
-                        android:id="@+id/emoji_happy"
-                        android:layout_width="@dimen/diary_select_emoji_width"
-                        android:layout_height="@dimen/diary_select_emoji_height"
-                        android:src="@drawable/emoji_happy_icon"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/emoji_smile_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_gravity="center_vertical">
-
-                    <ImageView
-                        android:id="@+id/emoji_smile_check"
-                        android:layout_width="@dimen/diary_select_check_width"
-                        android:layout_height="@dimen/diary_select_check_height"
-                        android:layout_marginBottom="@dimen/diary_select_interval"
-                        android:src="@drawable/check_icon"
-                        android:visibility="invisible"/>
-
-                    <ImageView
-                        android:id="@+id/emoji_smile"
-                        android:layout_width="@dimen/diary_select_emoji_width"
-                        android:layout_height="@dimen/diary_select_emoji_height"
-                        android:src="@drawable/emoji_blushing_icon"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/emoji_blank_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_gravity="center_vertical">
-
-                    <ImageView
-                        android:id="@+id/emoji_blank_check"
-                        android:layout_width="@dimen/diary_select_check_width"
-                        android:layout_height="@dimen/diary_select_check_height"
-                        android:layout_marginBottom="@dimen/diary_select_interval"
-                        android:src="@drawable/check_icon"
-                        android:visibility="invisible"/>
-
-                    <ImageView
-                        android:id="@+id/emoji_blank"
-                        android:layout_width="@dimen/diary_select_emoji_width"
-                        android:layout_height="@dimen/diary_select_emoji_height"
-                        android:src="@drawable/emoji_blank_icon"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/emoji_sad_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_gravity="center_vertical">
-
-                    <ImageView
-                        android:id="@+id/emoji_sad_check"
-                        android:layout_width="@dimen/diary_select_check_width"
-                        android:layout_height="@dimen/diary_select_check_height"
-                        android:layout_marginBottom="@dimen/diary_select_interval"
-                        android:src="@drawable/check_icon"
-                        android:visibility="invisible"/>
-
-                    <ImageView
-                        android:id="@+id/emoji_sad"
-                        android:layout_width="@dimen/diary_select_emoji_width"
-                        android:layout_height="@dimen/diary_select_emoji_height"
-                        android:src="@drawable/emoji_consoling_icon"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/emoji_nervous_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_gravity="center_vertical">
-
-                    <ImageView
-                        android:id="@+id/emoji_nervous_check"
-                        android:layout_width="@dimen/diary_select_check_width"
-                        android:layout_height="@dimen/diary_select_check_height"
-                        android:layout_marginBottom="@dimen/diary_select_interval"
-                        android:src="@drawable/check_icon"
-                        android:visibility="invisible"/>
-
-                    <ImageView
-                        android:id="@+id/emoji_nervous"
-                        android:layout_width="@dimen/diary_select_emoji_width"
-                        android:layout_height="@dimen/diary_select_emoji_height"
-                        android:src="@drawable/emoji_nervous_icon"/>
-
-                </LinearLayout>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
