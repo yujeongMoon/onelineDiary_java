@@ -18,12 +18,17 @@ public class Const {
     public static String DATABASE_CHILD_FEEDBACK = "feedback";
     public static String DATABASE_CHILD_ADMIN = "admin";
     public static String DATABASE_CHILD_FEEDBACK_LIST = "feedbackList";
+    public static String DATABASE_CHILD_SECURITY = "security";
+    public static String DATABASE_CHILD_PIN = "pin";
+    public static String DATABASE_CHILD_PROFILE = "profile";
+    public static String DATABASE_CHILD_PROFILE_IMAGE = "pImage";
 
     public static String SP_KEY_NICKNAME = "com.example.onelinediary.nickname";
     public static String SP_KEY_INSTALLED = "com.example.onelinediary.isInstalled";
     public static String SP_KEY_ANDROID_ID = "com.example.onelinediary.androidId";
     public static String SP_KEY_SET_PIN_NUMBER = "com.example.onelinediary.setPinNumber";
     public static String SP_KEY_PIN_NUMBER = "com.example.onelinediary.pinNumber";
+    public static String SP_KEY_PROFILE = "com.example.onelinediary.profile";
 
     public static String INTENT_KEY_MONTH = "month";
     public static String INTENT_KEY_DIARY = "diary";
@@ -34,7 +39,7 @@ public class Const {
 
     public static int PICKER_IMAGE_REQUEST = 100;
 
-    public static String ADMIN_ANDROID_ID = "f9670e4b6e4d9a4f";
+    public static String ADMIN_ANDROID_ID = "5915737b8962ff5d";
 
     // 기분 정의
     public enum Mood {
@@ -54,9 +59,6 @@ public class Const {
     // 현재 연도
     public static String currentYear = Utility.getYear();
 
-    // 새로운 다이어리 추가 여부에 관한 플래그
-    public static boolean addNewDiary = false;
-
     // 기존의 다이어리 삭제 여부에 관한 플래그
     public static boolean deleteDiary = false;
 
@@ -70,9 +72,6 @@ public class Const {
 
     // 카메라로 찍었을 때, 이미지의 uri를 저장한다.
     public static Uri photoUri = null;
-
-    // 오늘 일기를 썼다면 선택한 기분을 + 대신 보여주기 위해서 저장한다.
-    public static int currentMoodResId = 0;
 
     // 오늘 일기를 썼다면 오늘의 일기를 저장할 객체
     public static Diary todayDiary = null;

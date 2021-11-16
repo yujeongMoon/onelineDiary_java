@@ -234,11 +234,11 @@ public class DatabaseUtility {
      * 설정한 닉네임이 있다면 닉네임 값을 가져오고 없을 경우에는 빈 문자열을 결과로 넘겨준다.
      * 닉네임의 경우, 빈 문자열은 닉네임이 없음을 의미한다.
      *
-     * @param context 컨텍스트
+     * @param androidId 닉네임을 가져올 안드로이드 아이디
      * @param callback 콜백 메소드
      */
-    public static void getNickname(Context context, onCompleteResultCallback<String> callback) {
-        Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_MYINFO).child(Const.DATABASE_CHILD_NICKNAME);
+    public static void getNickname(String androidId, onCompleteResultCallback<String> callback) {
+        Query query = getReference().child(androidId).child(Const.DATABASE_CHILD_MYINFO).child(Const.DATABASE_CHILD_NICKNAME);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -290,6 +290,13 @@ public class DatabaseUtility {
                 });
     }
 
+    /**
+     * 사용자가 문의한 피드백 내용과 관리자의 답변을 불러오는 메소드
+     * 사용자와 관리자의 1:1 대화 방식으로 사용자의 feedback에 내용이 저장된다.
+     *
+     * @param androidId 사용자의 안드로이드 아이디
+     * @param callback 콜백 메소드
+     */
     public static void readFeedback(String androidId, onCompleteCallback callback) {
         Const.feedbackList = new ArrayList<>();
         Query query = getReference().child(androidId).child(Const.DATABASE_CHILD_FEEDBACK);
@@ -314,6 +321,14 @@ public class DatabaseUtility {
         });
     }
 
+    /**
+     * 해당 채팅창에서 마지막으로 남긴 피드백을 admin/feedbackList에 저장한다.
+     * 마지막으로 피드백 객체를 저장해둔다.
+     *
+     * @param androidId 피드백한 사용자의 안드로이드 아이디
+     * @param feedback 사용자의 피드백
+     * @param callback 콜백 메소드
+     */
     public static void addFeedbackListWithUser(String androidId, Feedback feedback, onCompleteCallback callback) {
         getReference()
                 .child(Const.DATABASE_CHILD_ADMIN)
@@ -332,6 +347,12 @@ public class DatabaseUtility {
                 });
     }
 
+    /**
+     * admin/feedbackList에 저장된 마지막 피드백 전체를 불러온다.
+     * 관리자 화면을 구성하기위한 메소드로 불러온 리스트로 채팅방 입장 전 사용자 목록을 만든다.
+     *
+     * @param callback 콜백 메소드
+     */
     public static void readFeedbackListWithUser(onCompleteCallback callback) {
         Const.userList = new ArrayList<>();
         Const.userLastFeedbackList = new ArrayList<>();
@@ -360,12 +381,20 @@ public class DatabaseUtility {
         });
     }
 
+    /**
+     * 암호 설정 중 핀 번호를 저장하는 메소드
+     * 핀 번호 설정을 on 시키고 번호를 설정할 때 사용된다.
+     *
+     * @param context 컨텍스트
+     * @param pinInfo 핀 번호의 정보
+     * @param callback 콜백 메소드
+     */
     public static void setPinNumber(Context context, PinInfo pinInfo, onCompleteCallback callback) {
         getReference()
                 .child(Utility.getAndroidId(context))
                 .child(Const.DATABASE_CHILD_MYINFO)
-                .child("security")
-                .child("pin")
+                .child(Const.DATABASE_CHILD_SECURITY)
+                .child(Const.DATABASE_CHILD_PIN)
                 .setValue(pinInfo)
                 .addOnSuccessListener(unused -> {
                     if (callback != null) {
@@ -377,5 +406,65 @@ public class DatabaseUtility {
                         callback.onComplete(false);
                     }
                 });
+    }
+
+    /**
+     * DB에 프로필 이미지를 저장하는 메소드
+     * 이미지 리소스의 이름을 저장한다.
+     *
+     * @param context 컨텍스트
+     * @param profileImageName 프로필 이미지 리소스의 이름
+     * @param callback 콜백 메소드
+     */
+    public static void setProfileImage(Context context, String profileImageName, onCompleteCallback callback) {
+        getReference()
+                .child(Utility.getAndroidId(context))
+                .child(Const.DATABASE_CHILD_MYINFO)
+                .child(Const.DATABASE_CHILD_PROFILE)
+                .child(Const.DATABASE_CHILD_PROFILE_IMAGE)
+                .setValue(profileImageName)
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
+    }
+
+    /**
+     * 설정한 프로필 이미지를 DB에서 가져오는 메소드
+     * 저장된 프로필 이미지가 있을 경우, 리소스 이름을 콜백 메소드로 넘겨주고
+     * 저장된 프로필 이미지가 없을 경우, 빈 문자열을 콜백 메소드로 넘겨준다.
+     *
+     * @param androidId 사용자의 안드로이드 아이디
+     * @param callback 콜백 메소드
+     */
+    public static void getProfileImage(String androidId, onCompleteResultCallback<String> callback) {
+        Query query = getReference().child(androidId).child(Const.DATABASE_CHILD_MYINFO).child(Const.DATABASE_CHILD_PROFILE).child(Const.DATABASE_CHILD_PROFILE_IMAGE);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    if (TextUtils.isEmpty(snapshot.getValue().toString())) {
+                        callback.onComplete(false, "");
+                    } else {
+                        callback.onComplete(true, snapshot.getValue().toString());
+                    }
+                } else {
+                    callback.onComplete(false, "");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("DB__getProfileImage", "code : " + error.getCode() + ", message : " + error.getMessage());
+            }
+        });
     }
 }

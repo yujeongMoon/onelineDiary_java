@@ -133,20 +133,6 @@ public class MainMoodAdapter extends BaseAdapter {
                         new SelectDialog(message, v1 -> DatabaseUtility.deleteDiary(context, Utility.getYear(), month, diaryList.get((int)finalConvertView.getTag()).getDay(), isSuccess -> {
                             if (isSuccess) {
                                 Toast.makeText(context, context.getString(R.string.message_delete_diary), Toast.LENGTH_LONG).show();
-//                    View view = ((Activity)context).findViewById(R.id.main_layout);
-//                    Snackbar snackbar = Snackbar.make(v, R.string.message_delete_diary, Snackbar.LENGTH_LONG);
-//                    Snackbar.SnackbarLayout snackbarView = (Snackbar.SnackbarLayout) snackbar.getView();
-//                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(30, 30);
-//                    snackbarView.setLayoutParams(params);
-//                    snackbarView.setPadding(0,0,0,0);
-//                    TextView snackbarText = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
-//                    snackbarText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//                    snackbar.getView().setBackground(ContextCompat.getDrawable(context, R.drawable.snackbar));
-//                    snackbar.show();
-
-                                // 일기가 삭제되었다는 것을 알려준다?
-                                // 연결된 그리드 뷰에게 알려준다?
-//                    notifyDataSetChanged();
 
                                 // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
                                 Const.todayDiary = null;

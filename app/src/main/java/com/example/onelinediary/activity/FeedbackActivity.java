@@ -36,6 +36,14 @@ public class FeedbackActivity extends AppCompatActivity {
         // 피드백을 읽어올 안드로이드 아이디를 전달 받는다.
         androidId = getIntent().getStringExtra(Const.INTENT_KEY_ANDROID_ID);
 
+        DatabaseUtility.getProfileImage(androidId, (isSuccess, result) -> {
+            if (isSuccess) {
+                adapter.setLeftProfileImage(result);
+            } else {
+                adapter.setLeftProfileImage("");
+            }
+        });
+
         feedbackBinding.feedbackRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new FeedbackAdapter(this);
@@ -52,15 +60,12 @@ public class FeedbackActivity extends AppCompatActivity {
 
         // 리사이클러뷰의 layout이나 visivility가 바뀔때마다 호출된다.
         // 리사이클러뷰의 높이가 바뀔때마다 높이를 저장해두고 저장해둔 높이와 지금 높이가 같지 않고 작을 경우, 리사이클러뷰의 포지션을 제일 마지막으로 이동시킨다.
-        feedbackBinding.feedbackRecyclerview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (feedbackBinding.feedbackRecyclerview.getHeight() != recyclerviewHeight) {
-                    if (recyclerviewHeight > feedbackBinding.feedbackRecyclerview.getHeight()) {
-                        feedbackBinding.feedbackRecyclerview.scrollToPosition(adapter.getItemCount() - 1);
-                    }
-                    recyclerviewHeight = feedbackBinding.feedbackRecyclerview.getHeight();
+        feedbackBinding.feedbackRecyclerview.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (feedbackBinding.feedbackRecyclerview.getHeight() != recyclerviewHeight) {
+                if (recyclerviewHeight > feedbackBinding.feedbackRecyclerview.getHeight()) {
+                    feedbackBinding.feedbackRecyclerview.scrollToPosition(adapter.getItemCount() - 1);
                 }
+                recyclerviewHeight = feedbackBinding.feedbackRecyclerview.getHeight();
             }
         });
     }
@@ -82,17 +87,15 @@ public class FeedbackActivity extends AppCompatActivity {
 
                 // 전송 버튼을 클릭하면 DB에 저장한다.
                 // androidId/feedback/currentTime.. 해당 경로에 저장된다.
-                DatabaseUtility.writeFeedback(androidId, feedback, new DatabaseUtility.onCompleteCallback() {
-                    @Override
-                    public void onComplete(boolean isSuccess) {
-                        if (isSuccess) {
-                            // 관리자 화면에서 보여주기 위한 마지막 피드백 리스트에 추가
-                            if (!feedback.getContents().equals("") && !androidId.equals(Const.ADMIN_ANDROID_ID)) {
-                                DatabaseUtility.addFeedbackListWithUser(androidId, feedback, null);
-                            }
-                        } else { // 피드백 작성이 실패했을 경우
-
+                DatabaseUtility.writeFeedback(androidId, feedback, isSuccess -> {
+                    if (isSuccess) {
+                        // 관리자 화면에서 보여주기 위한 마지막 피드백 리스트에 추가
+                        // 마지막에 작성한 사람이 관리자일 경우에 관리자의 메세지 저장
+                        if (!feedback.getContents().equals("") && !androidId.equals(Const.ADMIN_ANDROID_ID)) {
+                            DatabaseUtility.addFeedbackListWithUser(androidId, feedback, null);
                         }
+                    } else { // 피드백 작성이 실패했을 경우
+
                     }
                 });
             }

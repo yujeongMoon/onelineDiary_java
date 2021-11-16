@@ -2,24 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.onelinediary">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" /> <!-- 사용자의 현재 위치 정보를 가져오기위해 필요한 권한이다. -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- geocoder를 이용하기 위해서 필요한 권한이다. -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!--
-        기기의 유니크한 값인 안드로이드 아이디를 가져오기 위해서 필요한 권한
-        안드로이드 아이디는 로그인 대신 사용자를 구분할 때 사용한다.
-        기기를 완전히 초기화 시키는 경우에는 값이 바꿘다.
-    -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_favorite"
@@ -29,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnelineDiary"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".activity.ProfileActivity"
+            android:exported="true" />
         <activity
             android:name=".activity.PinActivity"
             android:exported="true" />
@@ -72,6 +57,21 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-    </application> <!-- 앱이 사진 위치 정보에 엑세스해야 하는 경우에 필요한 권한이다. -->
+    </application>
+
+    <!-- 사용자의 현재 위치 정보를 가져오기위해 필요한 권한이다. -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- geocoder를 이용하기 위해서 필요한 권한이다. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

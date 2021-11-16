@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -16,14 +17,17 @@ import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dialog.InputDialog;
 import com.example.onelinediary.dto.BasicItemBtn;
 import com.example.onelinediary.dto.BasicItemSwitch;
-import com.example.onelinediary.dto.TextItem;
+import com.example.onelinediary.dto.ImageTextItem;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
 
 public class SettingActivity extends AppCompatActivity {
     private ActivitySettingBinding settingBinding;
 
+    private final int REQUEST_SET_PROFILE_IMAGE = 100;
+
     private ListAdapter adapter;
+    String profileResName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +38,22 @@ public class SettingActivity extends AppCompatActivity {
         settingBinding.settingRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new ListAdapter();
-        adapter.addItem(new TextItem("최신 버전입니다."));
+
+        profileResName = Utility.getString(getApplicationContext(), Const.SP_KEY_PROFILE);
+        if (profileResName.equals("")) {
+            profileResName = getString(R.string.profile_default_resource_name);
+        }
+
+        adapter.addItem(new ImageTextItem(Utility.getResourceImage(this, profileResName), Const.nickname, setProfileImage, setNickname));
 
         // 닉네임을 설정했다면 "변경", 닉네임을 설정하지 않았다면 "설정"
         String buttonText = getString(R.string.setting);
         if (!Const.nickname.equals("")) {
             buttonText = getString(R.string.change);
         }
-        adapter.addItem(new BasicItemBtn(R.drawable.star_24, getString(R.string.title_setting_nickname), buttonText, setNicknameListener));
+        adapter.addItem(new BasicItemBtn(R.drawable.star_24, getString(R.string.title_setting_nickname), buttonText, setNickname));
 
+        adapter.addItem(new BasicItemBtn(R.drawable.profile_circle_24, getString(R.string.title_setting_profile_image), getString(R.string.setting), setProfileImage));
         adapter.addItem(new BasicItemBtn(R.drawable.lock_black_24, getString(R.string.title_setting_security), getString(R.string.setting), setSecurity));
         adapter.addItem(new BasicItemSwitch(R.drawable.push_notification_black_24, getString(R.string.title_setting_push), false, null));
         adapter.addItem(new BasicItemBtn(R.drawable.face_black_24, getString(R.string.title_setting_feedback), getString(R.string.send), moveFeedbackActivityListener));
@@ -50,7 +61,7 @@ public class SettingActivity extends AppCompatActivity {
         settingBinding.settingRecyclerview.setAdapter(adapter);
     }
 
-    View.OnClickListener setNicknameListener = new View.OnClickListener() {
+    View.OnClickListener setNickname = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             new InputDialog(getString(R.string.dialog_message_input_nickname), v1 -> {
@@ -73,8 +84,11 @@ public class SettingActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), getString(R.string.message_reset_nickname), Toast.LENGTH_SHORT).show();
                             itemBtn.setButtonText(getString(R.string.setting));
                         }
-
                         adapter.updateItem(1, itemBtn);
+
+                        ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
+                        itemImageText.setNickname(Const.nickname);
+                        adapter.updateItem(0, itemImageText);
                     } else {
                         Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, "");
                         Toast.makeText(getApplicationContext(), "오류가 발생하였습니다. 잠시 후에 다시 시도해주세요!", Toast.LENGTH_SHORT).show();
@@ -121,11 +135,26 @@ public class SettingActivity extends AppCompatActivity {
         }
     };
 
-    View.OnClickListener setSecurity = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent securityIntent = new Intent(SettingActivity.this, SecurityActivity.class);
-            startActivity(securityIntent);
-        }
+    View.OnClickListener setSecurity = v -> {
+        Intent securityIntent = new Intent(SettingActivity.this, SecurityActivity.class);
+        startActivity(securityIntent);
     };
+
+    View.OnClickListener setProfileImage = v -> {
+        Intent profileIntent = new Intent(SettingActivity.this, ProfileActivity.class);
+        startActivityForResult(profileIntent, REQUEST_SET_PROFILE_IMAGE);
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_SET_PROFILE_IMAGE && resultCode == RESULT_OK) {
+            profileResName = Utility.getString(getApplicationContext(), Const.SP_KEY_PROFILE);
+
+            ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
+            itemImageText.setProfileImage(Utility.getResourceImage(this, profileResName));
+            adapter.updateItem(0, itemImageText);
+        }
+    }
 }

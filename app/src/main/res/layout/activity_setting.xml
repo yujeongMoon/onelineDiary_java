@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="setting"
+            android:text="@string/title_setting"
             android:textStyle="bold"
             android:textSize="18dp"/>
 

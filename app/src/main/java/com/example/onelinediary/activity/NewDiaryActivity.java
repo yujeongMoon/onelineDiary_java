@@ -40,11 +40,10 @@ public class NewDiaryActivity extends AppCompatActivity{
 
     private final int PICKER_IMAGE_REQUEST = 100;
 
-    private String currentMood = "";
-
     Uri photoUri;
 
-    ImagePagerAdapter imagePagerAdapter = null;
+    ImagePagerAdapter imagePagerAdapter;
+    SelectMoodAdapter selectMoodAdapter;
 
     Diary diary = new Diary();
 
@@ -53,8 +52,6 @@ public class NewDiaryActivity extends AppCompatActivity{
     int currentIndex = 0;
 
     boolean isChanged = false;
-
-    SelectMoodAdapter selectMoodAdapter;
 
     private Emoji emoji;
 
@@ -306,9 +303,9 @@ public class NewDiaryActivity extends AppCompatActivity{
                 if (isSuccess) {
                     new ConfirmDialog(getString(R.string.message_save_diary),
                             v -> {
-                                Const.addNewDiary = true;
+                                setResult(RESULT_OK);
                                 newPhotoList.clear();
-                                NewDiaryActivity.this.finish();
+                                finish();
                             }).show(getSupportFragmentManager(), "newDiarySuccess");
                 } else {
                     new ConfirmDialog(getString(R.string.error_message_save_diary), null).show(getSupportFragmentManager(), "newDiaryFailure");

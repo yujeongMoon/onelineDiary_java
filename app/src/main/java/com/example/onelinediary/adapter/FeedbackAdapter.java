@@ -30,6 +30,8 @@ public class FeedbackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     Context context;
     ArrayList<Feedback> feedbackList = new ArrayList<>();
 
+    String leftProfileImage = "";
+
     public FeedbackAdapter() {}
 
     public FeedbackAdapter(Context context) {
@@ -61,7 +63,7 @@ public class FeedbackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (feedbackList.get(position).getAndroidId().equals(Utility.getAndroidId(this.context))) {
             ((MessageItemRightViewHolder)holder).onBind(isSameDate, feedbackList.get(position));
         } else {
-            ((MessageItemLeftViewHolder)holder).onBind(isSameDate, feedbackList.get(position));
+            ((MessageItemLeftViewHolder)holder).onBind(isSameDate, this.leftProfileImage, feedbackList.get(position));
         }
     }
 
@@ -95,5 +97,11 @@ public class FeedbackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void resetFeedbackList() {
         this.feedbackList.clear();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setLeftProfileImage(String profileImage) {
+        this.leftProfileImage = profileImage;
+        notifyDataSetChanged();
     }
 }

@@ -31,13 +31,15 @@ public class SplashActivity extends AppCompatActivity {
         // preference에 안드로이드 아이디를 저장한다.
         Utility.putString(getApplicationContext(), Const.SP_KEY_ANDROID_ID, Utility.getAndroidId(this));
 
+        Const.todayDiary = null;
+
         // 앱을 처음 설치하거나 재설치 했을 경우, DB에 닉네임이 있는 지 확인한 후 닉네임 값을 가져온다.
         // 기기에 닉네임이 저장되어있다면 닉네임을 사용하고 없다면 보여주지 않는다.
         Boolean isInstalled = Utility.getBoolean(getApplicationContext(), Const.SP_KEY_INSTALLED);
         String nickname = Utility.getString(getApplicationContext(), Const.SP_KEY_NICKNAME);
 
         if (!isInstalled) {
-            DatabaseUtility.getNickname(this, (isSuccess, result) -> {
+            DatabaseUtility.getNickname(Utility.getAndroidId(this), (isSuccess, result) -> {
                 Const.nickname = result;
                 Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, result);
                 Utility.putBoolean(getApplicationContext(), Const.SP_KEY_INSTALLED, true);

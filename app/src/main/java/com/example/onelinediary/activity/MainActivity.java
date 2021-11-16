@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -46,6 +47,7 @@ public class MainActivity extends FragmentActivity {
     };
 
     private final int PERMISSION_REQUEST = 100;
+    private final int REQUEST_ADD_NEW_DIARY = 200;
 
     private MainPagerAdapter pagerAdapter;
     private CustomProgressDialog progressDialog = null;
@@ -102,6 +104,18 @@ public class MainActivity extends FragmentActivity {
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
         mainBinding.btnSetting.setOnClickListener(v -> gotoSettingActivity());
         mainBinding.btnNotice.setOnClickListener(v -> Toast.makeText(getApplicationContext(), getString(R.string.message_prepare_service), Toast.LENGTH_SHORT).show());
+
+        if (Utility.getString(getApplicationContext(), Const.SP_KEY_PROFILE).equals("")) {
+            DatabaseUtility.getProfileImage(Utility.getAndroidId(this), (isSuccess, result) -> {
+                if (isSuccess) {
+                    if (result != null && !result.equals("")) {
+                        Utility.putString(getApplicationContext(), Const.SP_KEY_PROFILE, result);
+                    } else { // 저장된 프로필 이미지가 없을 때
+                        Utility.putString(getApplicationContext(), Const.SP_KEY_PROFILE, "");
+                    }
+                }
+            });
+        }
     }
 
     private void checkExistDiary() {
@@ -165,13 +179,6 @@ public class MainActivity extends FragmentActivity {
     public void notifyToPager() {
         if (pagerAdapter != null) {
             pagerAdapter.notifyDataSetChanged();
-
-            // 새로 일기를 쓴 경우에는 어느 페이지에 있어도 현재 날짜가 포함된 제일 마지막 페이지로 이동하게 한다.
-            if (Const.addNewDiary) {
-                Const.addNewDiary = false;
-                // 시간차를 주면서 페이저의 포지션 바꾸기
-                mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
-            }
 
             // 일기를 삭제하면 현재 날짜가 포함된 제일 마지막 페이지로 이동하게 하거나 바로 전 달의 페이지로 이동한다.
             if (Const.deleteDiary) {
@@ -259,7 +266,7 @@ public class MainActivity extends FragmentActivity {
             startActivity(detailIntent);
         } else {
             Intent newDiaryIntent = new Intent(this, NewDiaryActivity.class);
-            startActivity(newDiaryIntent);
+            startActivityForResult(newDiaryIntent, REQUEST_ADD_NEW_DIARY);
         }
     }
 
@@ -292,6 +299,17 @@ public class MainActivity extends FragmentActivity {
                 Toast.makeText(getApplicationContext(), getString(R.string.message_permission_check), Toast.LENGTH_LONG).show();
                 finish();
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_ADD_NEW_DIARY && resultCode == RESULT_OK) {
+            // 새로 일기를 쓴 경우에는 어느 페이지에 있어도 현재 날짜가 포함된 제일 마지막 페이지로 이동하게 한다.
+            // 시간차를 주면서 페이저의 포지션 바꾸기
+            mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
         }
     }
 }
