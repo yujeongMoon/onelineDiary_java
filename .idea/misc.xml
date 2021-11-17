@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/drawable/bg_outline_circle.xml" value="0.33" />
         <entry key="app/src/main/res/drawable/bg_rectangle_red.xml" value="0.49722222222222223" />
         <entry key="app/src/main/res/drawable/circle_gray.xml" value="0.5838541666666667" />
+        <entry key="app/src/main/res/drawable/close_24.xml" value="0.5748717948717949" />
         <entry key="app/src/main/res/drawable/emoticon_excited_outline.xml" value="0.31574074074074077" />
         <entry key="app/src/main/res/drawable/face_black_24.xml" value="0.5748717948717949" />
         <entry key="app/src/main/res/drawable/lock_black_24.xml" value="0.5748717948717949" />
@@ -31,6 +32,7 @@
         <entry key="app/src/main/res/layout/activity_feedback.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37592592592592594" />
         <entry key="app/src/main/res/layout/activity_new_diary.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_notice_list.xml" value="0.5677083333333334" />
         <entry key="app/src/main/res/layout/activity_pin.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_security.xml" value="0.558974358974359" />

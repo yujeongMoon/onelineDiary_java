@@ -18,6 +18,8 @@ public class DoubleCancelImageView extends ImageView {
     private static long tempTime = 0;
 
     private boolean isGuard = false;
+    // 연속적인 클릭이 가능하도록 하고싶다면 true로 설정한다.
+    private boolean isClickable = false;
     private GestureDetector detector;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -56,21 +58,23 @@ public class DoubleCancelImageView extends ImageView {
                 * 같은 자리를 두번 연속 클릭하는 경우는 해결했지만 다른 위치를 연속적으로 터치하는 경우를 위해
                 * 터치를 한번 하고 다음 터치까지의 시간이 2초 안쪽이면 두번째 터치는 무시한다.
                 */
-                tempTime = System.currentTimeMillis(); // 현재 시간 구하기
-                // 이전에 저정한 시간과 현재 시간의 차이를 구한다.(초)
-                long interval = tempTime - preTime;
+                if(!isClickable) {
+                    tempTime = System.currentTimeMillis(); // 현재 시간 구하기
+                    // 이전에 저정한 시간과 현재 시간의 차이를 구한다.(초)
+                    long interval = tempTime - preTime;
 
-                if (preTime <= 0) { // 1번째 클릭
-                    preTime = tempTime;
-                    return false;
-                } else { // n번째 클릭(n>1)
-                    // 첫번째 클릭과 3초이상 차이가 날 경우
-                    // 현재 클릭 시간을 첫번째 클릭 시간으로 지정한다.
-                    if(interval >= 3000) {
+                    if (preTime <= 0) { // 1번째 클릭
                         preTime = tempTime;
                         return false;
+                    } else { // n번째 클릭(n>1)
+                        // 첫번째 클릭과 3초이상 차이가 날 경우
+                        // 현재 클릭 시간을 첫번째 클릭 시간으로 지정한다.
+                        if(interval >= 3000) {
+                            preTime = tempTime;
+                            return false;
+                        }
+                        return true;
                     }
-                    return true;
                 }
             }
 
@@ -106,4 +110,8 @@ public class DoubleCancelImageView extends ImageView {
             return super.onDoubleTap(e);
         }
     }*/
+
+    public void setDoubleClickable(boolean clickable) {
+        this.isClickable = clickable;
+    }
 }

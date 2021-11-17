@@ -144,6 +144,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
                 // editmode on
                 // 이미지뷰에 클릭 이벤트를 추가하기 위해 알린다.
                 imagePagerAdapter.setEditable(true);
+                detailBinding.imageViewer.setVisibility(View.GONE);
 
                 // 어뎁터의 리스트에 빈자리가 있다면 null로 채워주며 초기화한다.
                 if (imagePagerAdapter.photoList.size() < 3) {
@@ -228,11 +229,23 @@ public class DiaryDetailActivity extends AppCompatActivity {
         CustomProgressDialog pDialog = new CustomProgressDialog(this);
         pDialog.show();
 
-        new Handler().postDelayed(() -> {
-            imagePagerAdapter = new ImagePagerAdapter();
+        imagePagerAdapter = new ImagePagerAdapter();
+        imagePagerAdapter.setImageViewer(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                detailBinding.imageViewer.setVisibility(View.VISIBLE);
+                detailBinding.bigImage.setImageBitmap(oldPhotoList.get(currentIndex).getBitmapImage());
+                detailBinding.imageViewer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        detailBinding.imageViewer.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
+        detailBinding.detailPhoto.setAdapter(imagePagerAdapter);
 
-            detailBinding.detailPhoto.setAdapter(imagePagerAdapter);
-
+//        new Handler().postDelayed(() -> {
             if (diary.getPhotoList() != null) { // 사진 여러장
                 newPhotoList = Utility.createPhotoInfoList(diary.getPhotoList());
                 imagePagerAdapter.addPhotoList(newPhotoList);
@@ -273,7 +286,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
                     currentIndex = position;
                 }
             });
-        }, 500);
+//        }, 500);
 
         detailBinding.detailEmojiSelectRecyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
         selectMoodAdapter = new SelectMoodAdapter();

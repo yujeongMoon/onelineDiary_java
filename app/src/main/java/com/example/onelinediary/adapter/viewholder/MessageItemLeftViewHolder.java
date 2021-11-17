@@ -41,7 +41,12 @@ public class MessageItemLeftViewHolder extends RecyclerView.ViewHolder {
             messageLeftBinding.date.setVisibility(View.GONE);
         }
 
-        messageLeftBinding.nickname.setText(feedback.getNickname());
+        if (feedback.getAndroidId().equals(Const.ADMIN_ANDROID_ID)) {
+            messageLeftBinding.nickname.setText(R.string.admin_nickname);
+        } else {
+            messageLeftBinding.nickname.setText(feedback.getNickname());
+        }
+
         messageLeftBinding.message.setText(feedback.getContents());
         messageLeftBinding.time.setText(feedback.getReportingTime());
     }

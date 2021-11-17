@@ -44,7 +44,12 @@ public class SettingActivity extends AppCompatActivity {
             profileResName = getString(R.string.profile_default_resource_name);
         }
 
-        adapter.addItem(new ImageTextItem(Utility.getResourceImage(this, profileResName), Const.nickname, setProfileImage, setNickname));
+        String nickname = Const.nickname;
+        if (nickname.equals("")) {
+            nickname = getString(R.string.message_set_nickname);
+        }
+
+        adapter.addItem(new ImageTextItem(Utility.getResourceImage(this, profileResName), nickname, setProfileImage, setNickname));
 
         // 닉네임을 설정했다면 "변경", 닉네임을 설정하지 않았다면 "설정"
         String buttonText = getString(R.string.setting);
@@ -55,7 +60,7 @@ public class SettingActivity extends AppCompatActivity {
 
         adapter.addItem(new BasicItemBtn(R.drawable.profile_circle_24, getString(R.string.title_setting_profile_image), getString(R.string.setting), setProfileImage));
         adapter.addItem(new BasicItemBtn(R.drawable.lock_black_24, getString(R.string.title_setting_security), getString(R.string.setting), setSecurity));
-        adapter.addItem(new BasicItemSwitch(R.drawable.push_notification_black_24, getString(R.string.title_setting_push), false, null));
+//        adapter.addItem(new BasicItemSwitch(R.drawable.push_notification_black_24, getString(R.string.title_setting_push), false, null));
         adapter.addItem(new BasicItemBtn(R.drawable.face_black_24, getString(R.string.title_setting_feedback), getString(R.string.send), moveFeedbackActivityListener));
 
         settingBinding.settingRecyclerview.setAdapter(adapter);
@@ -77,17 +82,18 @@ public class SettingActivity extends AppCompatActivity {
                         Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, Const.nickname);
 
                         BasicItemBtn itemBtn = (BasicItemBtn) adapter.items.get(1);
+                        ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
                         if (!Const.nickname.equals("")) {
                             Toast.makeText(getApplicationContext(), getString(R.string.message_save_nickname), Toast.LENGTH_SHORT).show();
                             itemBtn.setButtonText(getString(R.string.change));
+                            itemImageText.setNickname(Const.nickname);
                         } else {
                             Toast.makeText(getApplicationContext(), getString(R.string.message_reset_nickname), Toast.LENGTH_SHORT).show();
                             itemBtn.setButtonText(getString(R.string.setting));
+                            itemImageText.setNickname(getString(R.string.message_set_nickname));
                         }
-                        adapter.updateItem(1, itemBtn);
 
-                        ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
-                        itemImageText.setNickname(Const.nickname);
+                        adapter.updateItem(1, itemBtn);
                         adapter.updateItem(0, itemImageText);
                     } else {
                         Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, "");

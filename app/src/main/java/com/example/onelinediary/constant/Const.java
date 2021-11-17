@@ -39,7 +39,8 @@ public class Const {
 
     public static int PICKER_IMAGE_REQUEST = 100;
 
-    public static String ADMIN_ANDROID_ID = "5915737b8962ff5d";
+    public final static String ADMIN_ANDROID_ID = "5915737b8962ff5d";
+    public final static String VVIP_ANDROID_ID = "4d9546db1392bca5";
 
     // 기분 정의
     public enum Mood {

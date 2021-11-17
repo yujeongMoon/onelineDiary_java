@@ -22,6 +22,8 @@
     <string name="title_security_pin">pin 번호</string>
     <string name="title_setting_profile_image">프로필 이미지 설정</string>
 
+    <string name="admin_nickname">관리자</string>
+
     <string name="edit_mode_title">editMode</string>
     <string name="splash_text">Diary</string>
 
@@ -39,7 +41,7 @@
     <string name="dialog_message_notify_exit">작성한 일기가 저장되지 않았습니다. 해당 화면을 나가시겠습니까??</string>
     <string name="dialog_message_close_app">앱을 종료하시겠습니까?</string>
     <string name="dialog_message_stop_setting_pin">Pin 설정을 종료하시겠습니까?</string>
-    <string name="dialog_message_input_profile_image">프로필 이미지를 입력해주세요!</string>
+    <string name="dialog_message_input_profile_image">프로필 이미지를 선택해주세요!</string>
     <string name="dialog_message_set_profile_image">프로필 이미지가 설정되었습니다.</string>
     <string name="dialog_message_exit_profile">선택한 프로필 이미지가 저장되지 않았습니다. 이 화면을 나가시겠습니까?</string>
 
@@ -55,7 +57,7 @@
 
     <string name="message_login_pin">pin 번호를 입력하세요!</string>
 
-    <string name="message_set_nickname">닉네임을 설정해주세요.</string>
+    <string name="message_set_nickname">닉네임을 설정해주세요 :)</string>
 
     <string name="message_update_diary">일기가 수정되었습니다.</string>
     <string name="message_save_diary">일기가 저장되었습니다.</string>

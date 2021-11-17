@@ -28,7 +28,19 @@ public class ProfileActivity extends AppCompatActivity {
         profileBinding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(profileBinding.getRoot());
 
-        String[] arr = getResources().getStringArray(R.array.profile_arrays);
+        int arrayId = R.array.profile_arrays;
+        switch (Utility.getAndroidId(this)) {
+            case Const.ADMIN_ANDROID_ID:
+                arrayId = R.array.admin_profile_arrays;
+                break;
+
+            case Const.VVIP_ANDROID_ID:
+                arrayId = R.array.vvip_profile_arrays;
+                break;
+        }
+
+        String[] arr = getResources().getStringArray(arrayId);
+
         ArrayList<Profile> profileList = new ArrayList<>();
         for (String profile : arr) {
             profileList.add(new Profile(profile, false, null));

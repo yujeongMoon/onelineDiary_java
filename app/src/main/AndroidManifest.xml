@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.onelinediary">
-
+    <!-- 사용자의 현재 위치 정보를 가져오기위해 필요한 권한이다. -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_favorite"
@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnelineDiary"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".activity.NoticeListActivity"
+            android:exported="true" />
         <activity
             android:name=".activity.ProfileActivity"
             android:exported="true" />
@@ -59,11 +62,10 @@
         </provider>
     </application>
 
-    <!-- 사용자의 현재 위치 정보를 가져오기위해 필요한 권한이다. -->
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- geocoder를 이용하기 위해서 필요한 권한이다. -->
+        android:required="true" /> <!-- geocoder를 이용하기 위해서 필요한 권한이다. -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />

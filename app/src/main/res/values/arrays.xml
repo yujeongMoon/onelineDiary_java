@@ -14,8 +14,48 @@
         <item>dd</item>
     </string-array>
 
-    <string-array name="profile_arrays">
+    <string-array name="admin_profile_arrays">
+        <item>profile_admin</item>
+        <item>profile_chef</item>
+        <item>profile_clown</item>
+        <item>profile_dentist</item>
+        <item>profile_diver</item>
+        <item>profile_hotdog</item>
+        <item>profile_magician</item>
+        <item>profile_policeman</item>
+        <item>profile_astronaut</item>
+        <item>profile_florist</item>
+        <item>profile_librarian</item>
+        <item>profile_lumberjack</item>
+        <item>profile_painter</item>
+        <item>profile_pensioner</item>
+        <item>profile_programmer</item>
+        <item>profile_teacher</item>
+        <item>profile_football_player</item>
+    </string-array>
+
+    <string-array name="vvip_profile_arrays">
         <item>profile_actor</item>
+        <item>profile_chef</item>
+        <item>profile_clown</item>
+        <item>profile_dentist</item>
+        <item>profile_diver</item>
+        <item>profile_hotdog</item>
+        <item>profile_magician</item>
+        <item>profile_policeman</item>
+        <item>profile_astronaut</item>
+        <item>profile_florist</item>
+        <item>profile_librarian</item>
+        <item>profile_lumberjack</item>
+        <item>profile_painter</item>
+        <item>profile_pensioner</item>
+        <item>profile_programmer</item>
+        <item>profile_teacher</item>
+        <item>profile_football_player</item>
+    </string-array>
+
+    <string-array name="profile_arrays">
+        <item>profile_football_player</item>
         <item>profile_chef</item>
         <item>profile_clown</item>
         <item>profile_dentist</item>
