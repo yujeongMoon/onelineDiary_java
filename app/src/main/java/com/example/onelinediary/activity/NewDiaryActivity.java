@@ -22,7 +22,7 @@ import com.example.onelinediary.adapter.SelectMoodAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityNewDiaryBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
-import com.example.onelinediary.dialog.SelectDialog;
+import com.example.onelinediary.dialog.YesNoDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.dto.Emoji;
 import com.example.onelinediary.dto.PhotoInfo;
@@ -189,7 +189,7 @@ public class NewDiaryActivity extends AppCompatActivity{
     public void onBackPressed() {
 //        overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
         if (isChanged) {
-            new SelectDialog(getString(R.string.dialog_message_notify_exit), v -> finish()).show(getSupportFragmentManager(), "finishAddDiary");
+            new YesNoDialog(getString(R.string.dialog_message_notify_exit), v -> finish()).show(this);
         } else {
             finish();
         }
@@ -297,7 +297,7 @@ public class NewDiaryActivity extends AppCompatActivity{
 
         // 오늘의 기분 선택
         if (emoji == null) {
-            new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(getSupportFragmentManager(), "mood");
+            new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(this);
         } else {
             DatabaseUtility.writeNewDiary(this, diary, isSuccess -> {
                 if (isSuccess) {
@@ -306,9 +306,9 @@ public class NewDiaryActivity extends AppCompatActivity{
                                 setResult(RESULT_OK);
                                 newPhotoList.clear();
                                 finish();
-                            }).show(getSupportFragmentManager(), "newDiarySuccess");
+                            }).show(this);
                 } else {
-                    new ConfirmDialog(getString(R.string.error_message_save_diary), null).show(getSupportFragmentManager(), "newDiaryFailure");
+                    new ConfirmDialog(getString(R.string.error_message_save_diary), null).show(this);
                 }
             });
         }

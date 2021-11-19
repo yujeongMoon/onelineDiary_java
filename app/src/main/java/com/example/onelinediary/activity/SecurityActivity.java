@@ -54,11 +54,11 @@ public class SecurityActivity extends AppCompatActivity {
                 if (Utility.getString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER).equals("Y")) {
                     DatabaseUtility.setPinNumber(SecurityActivity.this, new PinInfo("N", ""),
                             isSuccess -> new ConfirmDialog(getString(R.string.dialog_message_unlock_pin), v -> {
-                        adapter.updateItem(0, new BasicItemSwitch(R.drawable.pin_number_black_24, getString(R.string.title_security_pin), false, setPinNumber));
+                        adapter.updateItemWithNotify(0, new BasicItemSwitch(R.drawable.pin_number_black_24, getString(R.string.title_security_pin), false, setPinNumber));
 
                         Utility.putString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER, "N");
                         Utility.putString(getApplicationContext(), Const.SP_KEY_PIN_NUMBER, "");
-                    }).show(getSupportFragmentManager(), "resetSecurityPin"));
+                    }).show(SecurityActivity.this));
                 }
             }
         }
@@ -71,7 +71,7 @@ public class SecurityActivity extends AppCompatActivity {
         // 암호 설정을 하는 중에 취소를 하는 경우
         // RESULT_CANCELED을 넘겨 알린다.
         if(resultCode == RESULT_CANCELED) {
-            adapter.updateItem(0, new BasicItemSwitch(R.drawable.pin_number_black_24, getString(R.string.title_security_pin), false, setPinNumber));
+            adapter.updateItemWithNotify(0, new BasicItemSwitch(R.drawable.pin_number_black_24, getString(R.string.title_security_pin), false, setPinNumber));
         }
     }
 }

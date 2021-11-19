@@ -10,7 +10,7 @@ import com.example.onelinediary.adapter.GridViewImageItemAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityProfileBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
-import com.example.onelinediary.dialog.SelectDialog;
+import com.example.onelinediary.dialog.YesNoDialog;
 import com.example.onelinediary.dto.Profile;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
@@ -52,7 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void setProfile(View view) {
         if (imageItemAdapter.getSelectedProfile() == null) {
-            new ConfirmDialog(getString(R.string.dialog_message_input_profile_image), null).show(getSupportFragmentManager(), "noProfileImage");
+            new ConfirmDialog(getString(R.string.dialog_message_input_profile_image), null).show(this);
         } else {
             if (Utility.getString(getApplicationContext(), Const.SP_KEY_PROFILE).equals(imageItemAdapter.getSelectedProfile().getImageResName())) {
                 setResult(RESULT_CANCELED);
@@ -64,7 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
                             Utility.putString(getApplicationContext(), Const.SP_KEY_PROFILE, imageItemAdapter.getSelectedProfile().getImageResName());
                             setResult(RESULT_OK);
                             finish();
-                        }).show(getSupportFragmentManager(), "addProfileImage");
+                        }).show(this);
                     }
                 });
             }
@@ -76,7 +76,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (imageItemAdapter.getSelectedProfile() == null) {
             super.onBackPressed();
         } else {
-            new SelectDialog(getString(R.string.dialog_message_exit_profile), v -> finish()).show(getSupportFragmentManager(), "finishAddProfileImage");
+            new YesNoDialog(getString(R.string.dialog_message_exit_profile), v -> finish()).show(this);
         }
     }
 }

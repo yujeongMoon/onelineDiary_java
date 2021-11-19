@@ -12,13 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.FragmentActivity;
-
 import com.example.onelinediary.R;
 import com.example.onelinediary.activity.DiaryDetailActivity;
 import com.example.onelinediary.activity.MainActivity;
 import com.example.onelinediary.constant.Const;
-import com.example.onelinediary.dialog.SelectDialog;
+import com.example.onelinediary.dialog.YesNoDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
@@ -130,7 +128,7 @@ public class MainMoodAdapter extends BaseAdapter {
                     String message = context.getString(R.string.dialog_message_delete_diary, month, diaryList.get(index).getDay());
                     View finalConvertView = convertView;
                     convertView.setOnLongClickListener(v -> {
-                        new SelectDialog(message, v1 -> DatabaseUtility.deleteDiary(context, Utility.getYear(), month, diaryList.get((int)finalConvertView.getTag()).getDay(), isSuccess -> {
+                        new YesNoDialog(message, v1 -> DatabaseUtility.deleteDiary(context, Utility.getYear(), month, diaryList.get((int)finalConvertView.getTag()).getDay(), isSuccess -> {
                             if (isSuccess) {
                                 Toast.makeText(context, context.getString(R.string.message_delete_diary), Toast.LENGTH_LONG).show();
 
@@ -142,7 +140,7 @@ public class MainMoodAdapter extends BaseAdapter {
                             } else {
                                 Toast.makeText(context, context.getString(R.string.error_message_delete_diary), Toast.LENGTH_LONG).show();
                             }
-                        })).show(((FragmentActivity)context).getSupportFragmentManager(), "deleteDiarySuccess");
+                        })).show(context);
 
                         return true;
                     });

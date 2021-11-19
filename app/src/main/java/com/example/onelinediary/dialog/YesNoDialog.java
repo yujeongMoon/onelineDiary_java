@@ -14,13 +14,13 @@ import androidx.appcompat.app.AlertDialog;
 import com.example.onelinediary.R;
 import com.example.onelinediary.utiliy.Utility;
 
-public class ConfirmDialog extends BaseDialog {
+public class YesNoDialog extends BaseDialog {
     String message;
-    View.OnClickListener listener = null;
+    View.OnClickListener listener;
 
-    public ConfirmDialog() {}
+    public YesNoDialog() {}
 
-    public ConfirmDialog(String message, View.OnClickListener listener) {
+    public YesNoDialog(String message, View.OnClickListener listener) {
         this.message = message;
         this.listener = listener;
     }
@@ -49,19 +49,21 @@ public class ConfirmDialog extends BaseDialog {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
 
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_confirm, null);
+        View view = inflater.inflate(R.layout.dialog_yes_no, null);
 
         TextView message = view.findViewById(R.id.confirm_message);
         message.setText(this.message);
 
-        View ok = view.findViewById(R.id.ok_layout);
+        View ok = view.findViewById(R.id.click1);
+        View cancel = view.findViewById(R.id.click2);
 
         ok.setOnClickListener(v -> {
-            if (listener != null) {
+            if (listener != null)
                 listener.onClick(ok);
-            }
             dismiss();
         });
+
+        cancel.setOnClickListener(v -> dismiss());
 
         builder.setView(view);
 

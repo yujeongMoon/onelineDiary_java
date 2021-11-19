@@ -16,7 +16,6 @@ import com.example.onelinediary.databinding.ActivitySettingBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
 import com.example.onelinediary.dialog.InputDialog;
 import com.example.onelinediary.dto.BasicItemBtn;
-import com.example.onelinediary.dto.BasicItemSwitch;
 import com.example.onelinediary.dto.ImageTextItem;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
@@ -93,14 +92,14 @@ public class SettingActivity extends AppCompatActivity {
                             itemImageText.setNickname(getString(R.string.message_set_nickname));
                         }
 
-                        adapter.updateItem(1, itemBtn);
-                        adapter.updateItem(0, itemImageText);
+                        adapter.updateItemWithNotify(1, itemBtn);
+                        adapter.updateItemWithNotify(0, itemImageText);
                     } else {
                         Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, "");
                         Toast.makeText(getApplicationContext(), "오류가 발생하였습니다. 잠시 후에 다시 시도해주세요!", Toast.LENGTH_SHORT).show();
                     }
                 });
-            }).show(getSupportFragmentManager(), "setNickname");
+            }).show(SettingActivity.this);
         }
     };
 
@@ -127,7 +126,7 @@ public class SettingActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
         if (Utility.getString(getApplicationContext(), Const.SP_KEY_NICKNAME).equals("")) { // 닉네임이 없을 때
-            new ConfirmDialog(getString(R.string.dialog_message_notify_set_nickname), null).show(getSupportFragmentManager(), "setNicknameBeforeFeedback");
+            new ConfirmDialog(getString(R.string.dialog_message_notify_set_nickname), null).show(this);
         } else {
             // 저장된 안드로이드 아이디와 관리자의 아이디가 같을 경우, 관리자 화면으로 이동한다.
             if (Utility.getString(getApplicationContext(), Const.SP_KEY_ANDROID_ID).equals(Const.ADMIN_ANDROID_ID)) {
@@ -160,7 +159,7 @@ public class SettingActivity extends AppCompatActivity {
 
             ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
             itemImageText.setProfileImage(Utility.getResourceImage(this, profileResName));
-            adapter.updateItem(0, itemImageText);
+            adapter.updateItemWithNotify(0, itemImageText);
         }
     }
 }

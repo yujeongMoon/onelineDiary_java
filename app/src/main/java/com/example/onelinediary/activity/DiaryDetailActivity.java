@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -24,7 +23,7 @@ import com.example.onelinediary.adapter.SelectMoodAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityDiaryDetailBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
-import com.example.onelinediary.dialog.SelectDialog;
+import com.example.onelinediary.dialog.YesNoDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.dto.Emoji;
 import com.example.onelinediary.dto.PhotoInfo;
@@ -230,18 +229,10 @@ public class DiaryDetailActivity extends AppCompatActivity {
         pDialog.show();
 
         imagePagerAdapter = new ImagePagerAdapter();
-        imagePagerAdapter.setImageViewer(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                detailBinding.imageViewer.setVisibility(View.VISIBLE);
-                detailBinding.bigImage.setImageBitmap(oldPhotoList.get(currentIndex).getBitmapImage());
-                detailBinding.imageViewer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        detailBinding.imageViewer.setVisibility(View.GONE);
-                    }
-                });
-            }
+        imagePagerAdapter.setClickListener(() -> {
+            detailBinding.imageViewer.setVisibility(View.VISIBLE);
+            detailBinding.bigImage.setImageBitmap(oldPhotoList.get(currentIndex).getBitmapImage());
+            detailBinding.imageViewer.setOnClickListener(v -> detailBinding.imageViewer.setVisibility(View.GONE));
         });
         detailBinding.detailPhoto.setAdapter(imagePagerAdapter);
 
@@ -344,10 +335,10 @@ public class DiaryDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (isEnabled) {
             if (isChanged) {
-                new SelectDialog(getString(R.string.dialog_message_exit_editmode), v -> {
+                new YesNoDialog(getString(R.string.dialog_message_exit_editmode), v -> {
                     detailBinding.switchEditMode.setChecked(false);
                     isChanged = false;
-                }).show(getSupportFragmentManager(), "finishUpdateDiary");
+                }).show(this);
             } else {
                 detailBinding.switchEditMode.setChecked(false);
             }
@@ -470,7 +461,7 @@ public class DiaryDetailActivity extends AppCompatActivity {
 
         // 오늘의 기분 선택
         if (emoji == null) {
-            new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(getSupportFragmentManager(), "mood");
+            new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(this);
         } else {
             diary.setIconName(emoji.res);
 

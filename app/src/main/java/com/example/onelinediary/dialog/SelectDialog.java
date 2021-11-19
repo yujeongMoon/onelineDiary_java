@@ -1,73 +1,59 @@
 package com.example.onelinediary.dialog;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 
-import com.example.onelinediary.R;
-import com.example.onelinediary.utiliy.Utility;
+import com.example.onelinediary.databinding.DialogSelectBinding;
 
-public class SelectDialog extends DialogFragment {
+public class SelectDialog extends BaseDialog {
+    private DialogSelectBinding selectBinding;
+
     String message;
-    View.OnClickListener listener;
+    String buttonText1;
+    String buttonText2;
+    View.OnClickListener listener1;
+    View.OnClickListener listener2;
 
     public SelectDialog() {}
 
-    public SelectDialog(String message, View.OnClickListener listener) {
+    public SelectDialog(String message, String buttonText1, View.OnClickListener listener1, String buttonText2, View.OnClickListener listener2) {
         this.message = message;
-        this.listener = listener;
+        this.listener1 = listener1;
+        this.listener2 = listener2;
+        this.buttonText1 = buttonText1;
+        this.buttonText2 = buttonText2;
     }
 
+    @Nullable
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        selectBinding = DialogSelectBinding.inflate(inflater, container, false);
 
-        setCancelable(false);
-    }
+        selectBinding.message.setText(this.message);
 
-    @Override
-    public void onResume() {
-        super.onResume();
+        selectBinding.click1.setText(buttonText1);
+        selectBinding.click1.setOnClickListener(v -> {
+            if (listener1 != null) {
+                listener1.onClick(selectBinding.click1);
+            }
 
-        int width = Utility.dpToPx(requireContext(), 300);
-        int height = Utility.dpToPx(requireContext(), 220);
-
-        requireDialog().getWindow().setLayout(width, height);
-    }
-
-    @SuppressLint("InflateParams")
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_select, null);
-
-        TextView message = view.findViewById(R.id.confirm_message);
-        message.setText(this.message);
-
-        View ok = view.findViewById(R.id.ok);
-        View cancel = view.findViewById(R.id.cancel);
-
-        ok.setOnClickListener(v -> {
-            if (listener != null)
-                listener.onClick(ok);
             dismiss();
         });
 
-        cancel.setOnClickListener(v -> dismiss());
+        selectBinding.click2.setText(buttonText2);
+        selectBinding.click2.setOnClickListener(v -> {
+            if (listener2 != null) {
+                listener2.onClick(selectBinding.click2);
+            }
 
-        builder.setView(view);
+            dismiss();
+        });
 
-        return builder.create();
+        return selectBinding.getRoot();
     }
 }

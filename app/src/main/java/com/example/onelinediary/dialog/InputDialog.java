@@ -7,12 +7,11 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.DialogInputBinding;
 
-public class InputDialog extends DialogFragment {
+public class InputDialog extends BaseDialog {
     private DialogInputBinding inputBinding;
 
     String message;
@@ -39,16 +38,16 @@ public class InputDialog extends DialogFragment {
 
         inputBinding.input.setHint(this.message);
 
-        inputBinding.ok.setOnClickListener(v -> {
+        inputBinding.click1.setOnClickListener(v -> {
             if (listener != null) {
                 Const.nickname = inputBinding.input.getText().toString();
-                listener.onClick(inputBinding.ok);
+                listener.onClick(inputBinding.click1);
             }
 
             dismiss();
         });
 
-        inputBinding.cancel.setOnClickListener(v -> dismiss());
+        inputBinding.click2.setOnClickListener(v -> dismiss());
 
         return inputBinding.getRoot();
     }

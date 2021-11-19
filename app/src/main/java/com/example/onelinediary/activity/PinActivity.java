@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -18,7 +17,7 @@ import com.example.onelinediary.adapter.PinAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivityPinBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
-import com.example.onelinediary.dialog.SelectDialog;
+import com.example.onelinediary.dialog.YesNoDialog;
 import com.example.onelinediary.dto.PinInfo;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
@@ -94,7 +93,7 @@ public class PinActivity extends AppCompatActivity {
                                     public void onClick(View v) {
                                         resetPinNumber();
                                     }
-                                }).show(getSupportFragmentManager(), "resetPinNumber");
+                                }).show(PinActivity.this);
                             }
                         } else {
                             // 암호 설정일 경우, 2번의 입력을 받아 설정한다.
@@ -123,7 +122,7 @@ public class PinActivity extends AppCompatActivity {
                                                     setResult(RESULT_OK);
                                                     finish();
                                                 }
-                                            }).show(getSupportFragmentManager(), "setPinNumber");
+                                            }).show(PinActivity.this);
                                         }
                                     });
                                 } else {
@@ -133,7 +132,7 @@ public class PinActivity extends AppCompatActivity {
                                         public void onClick(View v) {
                                             resetPinNumber();
                                         }
-                                    }).show(getSupportFragmentManager(), "resetPinNumber");
+                                    }).show(PinActivity.this);
                                 }
                             }
                         }
@@ -155,7 +154,7 @@ public class PinActivity extends AppCompatActivity {
 
         setResult(RESULT_CANCELED);
 
-        new SelectDialog(message, v -> finish()).show(getSupportFragmentManager(), "cancelSetPin");
+        new YesNoDialog(message, v -> finish()).show(this);
     }
 
     // 입력한 핀 번호를 초기화하고 이미지도 회색으로 초기화한다.
