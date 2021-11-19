@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.dto.Feedback;
+import com.example.onelinediary.dto.ItemNotice;
+import com.example.onelinediary.dto.Notice;
 import com.example.onelinediary.dto.PinInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +29,9 @@ import java.util.Map;
 public class DatabaseUtility {
 
     private static final HashMap<String, ArrayList<Diary>> yearDiaryList = new HashMap<>(); // 해당 연도의 일기를 담을 해시맵
+
+    private static final HashMap<String, ArrayList<ItemNotice>> allNoticeList = new HashMap<>();
+    private static final ArrayList<ItemNotice> yearNoticeList = new ArrayList<>();
 
     public interface onCompleteCallback {
         void onComplete(boolean isSuccess);
@@ -89,12 +94,14 @@ public class DatabaseUtility {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Const.monthKeyList.add(dataSnapshot.getKey());
 
-                    readMonthDiaryList(context, year, dataSnapshot.getKey());
+                    readMonthDiaryList(context, year, dataSnapshot.getKey(), snapshot.getChildrenCount(), isSuccess -> {
+                        if (isSuccess) {
+                            Const.diaryList = yearDiaryList;
+                            if (callback != null)
+                                callback.onComplete(true);
+                        }
+                    });
                 }
-                Const.diaryList = yearDiaryList;
-
-                if (callback != null)
-                    callback.onComplete(true);
             }
 
             @Override
@@ -114,7 +121,7 @@ public class DatabaseUtility {
      * @param year 연도
      * @param month 월
      */
-    public static void readMonthDiaryList(Context context, String year, String month) {
+    public static void readMonthDiaryList(Context context, String year, String month, long keyCount, onCompleteCallback callback) {
         Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_DIARY).child(year).child(month);
 
         ArrayList<Diary> dList = new ArrayList<>(); // 월 별 일기를 담을 리스트
@@ -133,6 +140,10 @@ public class DatabaseUtility {
                     dList.add(diary);
                 }
                 yearDiaryList.put(month, dList); // 해당 월을 key로, 일기 리스트를 value로 저장한다.
+
+                if (yearDiaryList.size() == keyCount) {
+                    callback.onComplete(true);
+                }
             }
 
             @Override
@@ -466,5 +477,121 @@ public class DatabaseUtility {
                 Log.d("DB__getProfileImage", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
+    }
+
+    /**
+     * 새로운 공지사항을 작성하거나 수정할 때 사용되는 메소드
+     *
+     * @param notice 공지사항
+     * @param callback 콜백 메소드
+     */
+    public static void writeNotice(Notice notice, onCompleteCallback callback) {
+        String reportingDate = String.valueOf(System.currentTimeMillis());
+
+        getReference() // 데이터 베이스 참조(default)
+                .child(Const.DATABASE_CHILD_ADMIN)
+                .child(Const.DATABASE_CHILD_NOTICE)
+                .child(Utility.getYear())
+                .child(reportingDate)
+                .setValue(notice)
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
+    }
+
+    /**
+     * admin/notice.. 경로에 저장된 공지사항 리스트를 가져오는 메소드
+     * notice/연도/작성일자(currentMilis) 경로에 저장되어 있기 때문에 getNoticeListYear() 메소드에 키(연도)와 키 개수(연도의 개수)를 넘기면
+     * 연도 아래의 작성일자 별 공지사항을 가져오고 키의 개수만큼 리스트가 채워지면 콜백 메소드로 결과를 반환한다.
+     *
+     * @param callback 콜백 메소드
+     */
+    public static void getNoticeListAll(onCompleteResultCallback<HashMap<String, ArrayList<ItemNotice>>> callback) {
+        Query query = getReference().child(Const.DATABASE_CHILD_ADMIN).child(Const.DATABASE_CHILD_NOTICE);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    getNoticeListYear(snapshot.getChildrenCount(), dataSnapshot.getKey(), isSuccess -> callback.onComplete(true, allNoticeList));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("DB__getNoticeList", "code : " + error.getCode() + ", message : " + error.getMessage());
+            }
+        });
+    }
+
+    /**
+     * admin/notice/연도.. 경로에 저장된 공지사항 리스트를 가져오는 메소드
+     * 키(연도)와 키의 개수가 넘어오면 연도 아래 작성 일자별 공지사항을 가져와 리스트를 만들고 연도를 key, 리스트를 value로 하는 해시뱁을 만들어준다.
+     *
+     * @param keyCount 키(연도)의 개수
+     * @param year 키
+     * @param callback 콜백 메소드
+     */
+    public static void getNoticeListYear(long keyCount, String year, onCompleteCallback callback) {
+        Query query = getReference().child(Const.DATABASE_CHILD_ADMIN).child(Const.DATABASE_CHILD_NOTICE).child(year);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                yearNoticeList.clear();
+
+                ItemNotice itemNotice;
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Notice notice = dataSnapshot.getValue(Notice.class);
+                    itemNotice = new ItemNotice(dataSnapshot.getKey(), notice ,false);
+                    yearNoticeList.add(itemNotice);
+                }
+
+                allNoticeList.put(year, yearNoticeList);
+
+                if (allNoticeList.size() == keyCount) {
+                    callback.onComplete(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("DB__getNoticeList", "code : " + error.getCode() + ", message : " + error.getMessage());
+            }
+        });
+    }
+
+    /**
+     * admin/notice/연도/작성일자..
+     * 선택한 공지사항의 키를 넘겨받아 해당 위치의 공지사항을 삭제하는 메소드
+     *
+     * @param year 연도
+     * @param reportingDate 작성 일자
+     * @param callback 콜백 메소드
+     */
+    public static void deleteNotice(String year, String reportingDate, onCompleteCallback callback) {
+        getReference()
+                .child(Const.DATABASE_CHILD_ADMIN)
+                .child(Const.DATABASE_CHILD_NOTICE)
+                .child(year)
+                .child(reportingDate)
+                .removeValue()
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
     }
 }

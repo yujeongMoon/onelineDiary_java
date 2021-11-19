@@ -4,14 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.ImagePagerAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ViewholderImageBinding;
-import com.example.onelinediary.dialog.SelectDialog;
+import com.example.onelinediary.dialog.YesNoDialog;
 import com.example.onelinediary.utiliy.Utility;
 
 import static com.example.onelinediary.constant.Const.PICKER_IMAGE_REQUEST;
@@ -38,10 +37,10 @@ public class ImagePagerViewHolder extends RecyclerView.ViewHolder {
                 imageBinding.photo.setImageBitmap(bitmapImage);
 
                 imageBinding.photo.setOnLongClickListener(v -> {
-                    new SelectDialog("선택한 사진을 삭제하시겠습니까?", v1 -> {
+                    new YesNoDialog(context.getString(R.string.dialog_message_delete_photo), v1 -> {
                         adapter.deletePhotoList(position);
                         imageBinding.photo.setImageResource(R.drawable.default_placeholder_image);
-                    }).show(((FragmentActivity)context).getSupportFragmentManager(), "deletePhoto");
+                    }).show(context);
 
                     return true;
                 });
@@ -54,7 +53,11 @@ public class ImagePagerViewHolder extends RecyclerView.ViewHolder {
             imageBinding.photo.setOnLongClickListener(null);
             if (bitmapImage != null) {
                 imageBinding.photo.setImageBitmap(bitmapImage);
-                imageBinding.photo.setOnClickListener(adapter.getImageViewer());
+                imageBinding.photo.setOnClickListener(v -> {
+                    if (adapter.loadImageViewer != null) {
+                        adapter.loadImageViewer.onViewHolderItemClick();
+                    }
+                });
             } else {
                 imageBinding.photo.setImageResource(R.drawable.default_placeholder_image);
                 imageBinding.photo.setOnClickListener(null);

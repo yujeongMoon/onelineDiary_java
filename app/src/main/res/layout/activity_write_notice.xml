@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.WriteNoticeActivity"
+    android:background="#99ffe4e1">
+
+    <LinearLayout
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/notice_black_24"
+            android:layout_marginEnd="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_notice"
+            android:textStyle="bold"
+            android:textSize="18dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/border"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintTop_toBottomOf="@+id/title_bar"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/border">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/input_title_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="제목"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <com.example.onelinediary.custom.CharacterWrapEditText
+                    android:id="@+id/input_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="제목을 입력해주세요!"
+                    android:inputType="text|textMultiLine|textNoSuggestions"
+                    android:background="@drawable/bg_message_box"
+                    android:backgroundTint="@color/white"
+                    android:padding="10dp"
+                    android:lineSpacingExtra="2dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/input_title_layout"
+                android:layout_margin="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="내용"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <com.example.onelinediary.custom.CharacterWrapEditText
+                    android:id="@+id/input_contents"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="내용을 입력해주세요!"
+                    android:minLines="10"
+                    android:inputType="text|textMultiLine|textNoSuggestions"
+                    android:background="@drawable/bg_message_box"
+                    android:backgroundTint="@color/white"
+                    android:padding="10dp"
+                    android:gravity="top"
+                    android:lineSpacingExtra="2dp"/>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <com.example.onelinediary.custom.DoubleCancelLinearLayout
+        android:id="@+id/write_notice_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/write_notice_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/save"
+            android:textSize="@dimen/button_text"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingTop="@dimen/button_padding"
+            android:paddingBottom="@dimen/button_padding"
+            android:background="#ffb6c1"/>
+
+    </com.example.onelinediary.custom.DoubleCancelLinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

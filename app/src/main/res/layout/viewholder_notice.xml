@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="3dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="10dp"
+    android:background="@color/white"
+    android:id="@+id/container">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/notice_reporting_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="2021년 11월 18일"
+            android:layout_gravity="end"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/notice_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="공지사항의 제목입니다. 미리내 도담도담 소록소록 미쁘다 비나리"
+            android:textStyle="bold"
+            android:textSize="16dp"/>
+
+        <com.example.onelinediary.custom.CharacterWrapTextView
+            android:id="@+id/notice_contents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="감또개 산들림 아름드리 도서관 감또개 산들림 아름드리 도서관 감또개 산들림 아름드리 도서관 감또개 산들림 아름드리 도서관 감또개 산들림 아름드리 도서관 감또개 산들림 아름드리 도서관 감또개 산들림 아름드리 도서관 감또개 산들림 아름드리 도서관."
+            android:textSize="15dp"
+            android:maxLines="4"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp"/>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

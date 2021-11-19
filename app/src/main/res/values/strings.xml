@@ -14,6 +14,7 @@
     <string name="setting">설정</string>
     <string name="change">변경</string>
     <string name="send">보내기</string>
+    <string name="delete">삭제</string>
 
     <string name="title_setting_nickname">닉네임 설정 및 변경</string>
     <string name="title_setting_security">암호 설정</string>
@@ -29,6 +30,7 @@
 
     <string name="title_setting">setting</string>
     <string name="title_profile">profile</string>
+    <string name="title_notice">notice</string>
 
     <string name="dialog_message_delete_diary">%1$s월 %2$s일의 일기를 삭제하시겠습니까?</string>
     <string name="dialog_message_exit_editmode">수정한 일기가 저장되지 않았습니다. editmode를 해제하시겠습니까?</string>
@@ -44,6 +46,12 @@
     <string name="dialog_message_input_profile_image">프로필 이미지를 선택해주세요!</string>
     <string name="dialog_message_set_profile_image">프로필 이미지가 설정되었습니다.</string>
     <string name="dialog_message_exit_profile">선택한 프로필 이미지가 저장되지 않았습니다. 이 화면을 나가시겠습니까?</string>
+    <string name="dialog_message_exit_add_notice">작성한 공지사항이 있습니다. 이 화면을 나가시겠습니까? 작성한 공지사항은 저장되지 않습니다.</string>
+    <string name="dialog_message_exit_update_notice">수정한 공지사항이 있습니다. 이 화면을 나가시겠습니까? 수정한 공지사항은 저장되지 않습니다.</string>
+    <string name="dialog_message_input_title">제목을 입력해주세요!</string>
+    <string name="dialog_message_input_contents">내용을 입력해주세요!</string>
+    <string name="dialog_message_confirm_action_notice">공지사항을 %1$s하였습니다.</string>
+    <string name="dialog_message_delete_notice">공지사항이 삭제되었습니다.</string>
 
     <string name="message_prepare_service">서비스 준비중 입니다.</string>
     <string name="message_close_app">앱을 종료하려면 한번 더 눌러주세요</string>
@@ -69,6 +77,11 @@
     <string name="error_message_save_diary">일기를 저장하는데 문제가 발생하였습니다. 다시 시도해주세요!</string>
     <string name="error_message_delete_diary">일기를 삭제하는데 문제가 발생하였습니다. 다시 시도해주세요!</string>
     <string name="error_message_get_photo">사진을 불러오는데 오류가 발생하였습니다.</string>
+    <string name="error_message_action_notice">공지사항을 %1$s하는 과정에서 오류가 발생하였습니다. 잠시 후에 시도해주세요</string>
 
     <string name="profile_default_resource_name">circle_gray</string>
+    <string name="dialog_message_select_action">실행할 작업을 선택해주세요!</string>
+    <string name="dialog_message_delete_photo">선택한 사진을 삭제하시겠습니까?</string>
+    <string name="write">글쓰기</string>
+
 </resources>

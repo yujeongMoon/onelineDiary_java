@@ -66,6 +66,7 @@
         <entry key="app/src/main/res/layout/viewholder_message_left.xml" value="0.5" />
         <entry key="app/src/main/res/layout/viewholder_message_right.xml" value="0.5" />
         <entry key="app/src/main/res/layout/viewholder_mood_item.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/viewholder_notice.xml" value="0.34010416666666665" />
         <entry key="app/src/main/res/layout/viewholder_pin_item.xml" value="0.5" />
         <entry key="app/src/main/res/layout/viewholder_pin_item_image.xml" value="0.558974358974359" />
         <entry key="app/src/main/res/layout/viewholder_select_mood_item.xml" value="0.558974358974359" />

@@ -22,6 +22,7 @@ public class Const {
     public static String DATABASE_CHILD_PIN = "pin";
     public static String DATABASE_CHILD_PROFILE = "profile";
     public static String DATABASE_CHILD_PROFILE_IMAGE = "pImage";
+    public static String DATABASE_CHILD_NOTICE = "notice";
 
     public static String SP_KEY_NICKNAME = "com.example.onelinediary.nickname";
     public static String SP_KEY_INSTALLED = "com.example.onelinediary.isInstalled";
@@ -34,6 +35,8 @@ public class Const {
     public static String INTENT_KEY_DIARY = "diary";
     public static String INTENT_KEY_ANDROID_ID = "androidId";
     public static String INTENT_KEY_IS_LOGIN = "isLogin";
+    public static String INTENT_KEY_ADD_NEW_NOTICE = "addNewNotice";
+    public static String INTENT_KEY_SELECTED_ITEM_NOTICE = "SelectedItemNotice";
 
     public static String REPORTING_DATE_FORMAT = "yyyy년 MM월 dd일";
 

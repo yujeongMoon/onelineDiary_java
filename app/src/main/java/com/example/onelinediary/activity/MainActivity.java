@@ -103,7 +103,7 @@ public class MainActivity extends FragmentActivity {
 
         mainBinding.btnAddNewDiary.setOnClickListener(v -> addNewDiary());
         mainBinding.btnSetting.setOnClickListener(v -> gotoSettingActivity());
-        mainBinding.btnNotice.setOnClickListener(v -> Toast.makeText(getApplicationContext(), getString(R.string.message_prepare_service), Toast.LENGTH_SHORT).show());
+        mainBinding.btnNotice.setOnClickListener(v -> gotoNoticeActivity());
 
         if (Utility.getString(getApplicationContext(), Const.SP_KEY_PROFILE).equals("")) {
             DatabaseUtility.getProfileImage(Utility.getAndroidId(this), (isSuccess, result) -> {
@@ -143,7 +143,7 @@ public class MainActivity extends FragmentActivity {
         // 일기가 삭제되었거나 화면 이동 후 어뎁터에게 알린다.
         notifyToPager();
 
-//        getCurrentWeather(Const.currentLocation);
+        getCurrentWeather(Const.currentLocation);
     }
 
     @Override
@@ -242,20 +242,6 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    //    @Override
-//    public void onComplete(boolean isSuccess, HashMap<String, ArrayList<Diary>> result) {
-//        if (isSuccess) {
-//            Iterator<String> iterator = result.keySet().iterator();
-//            while (iterator.hasNext()) {
-//                String key = iterator.next();
-//                Log.d(MainActivity.class.getSimpleName(),"month : " + key);
-//                for(Diary diary : result.get(key)) {
-//                    Log.d(MainActivity.class.getSimpleName(),"modd : " + diary.getMood());
-//                }
-//            }
-//        }
-//    }
-
     public void addNewDiary() {
 //        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
 
@@ -273,6 +259,11 @@ public class MainActivity extends FragmentActivity {
     public void gotoSettingActivity() {
         Intent settingIntent = new Intent(this, SettingActivity.class);
         startActivity(settingIntent);
+    }
+
+    public void gotoNoticeActivity() {
+        Intent noticeIntent = new Intent(this, NoticeListActivity.class);
+        startActivity(noticeIntent);
     }
 
     private void checkPermission(String[] permissions, int permissionRequest) {

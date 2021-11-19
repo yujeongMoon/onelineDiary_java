@@ -2,7 +2,6 @@ package com.example.onelinediary.adapter;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -24,7 +23,11 @@ public class ImagePagerAdapter extends RecyclerView.Adapter<ImagePagerViewHolder
 
     public ImagePagerViewHolder holder;
 
-    public View.OnClickListener loadImageViewer;
+    public onViewHolderItemClickListener loadImageViewer;
+
+    public interface onViewHolderItemClickListener {
+        void onViewHolderItemClick();
+    }
 
     @NonNull
     @Override
@@ -79,11 +82,7 @@ public class ImagePagerAdapter extends RecyclerView.Adapter<ImagePagerViewHolder
         holder.initPreTime();
     }
 
-    public void setImageViewer(View.OnClickListener loadImageViewer) {
+    public void setClickListener(onViewHolderItemClickListener loadImageViewer) {
         this.loadImageViewer = loadImageViewer;
-    }
-
-    public View.OnClickListener getImageViewer() {
-        return loadImageViewer;
     }
 }

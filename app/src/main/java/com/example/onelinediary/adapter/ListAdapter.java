@@ -1,6 +1,7 @@
 package com.example.onelinediary.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -34,9 +35,23 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public ArrayList<Item> items = new ArrayList<>();
 
+    Context context;
+
+    public onItemClickListenerWithPosition<Integer> listener;
+
+    public interface onItemClickListener {
+        void onItemClick();
+    }
+
+    public interface onItemClickListenerWithPosition<T> {
+        void onItemClick(T position);
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        this.context = parent.getContext();
+
         if (viewType == itemType.TEXT.value) {
             ViewholderItemTextBinding binding = ViewholderItemTextBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new ItemTextViewHolder(binding);
@@ -46,8 +61,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (viewType == itemType.BASIC_SWITCH.value) {
             ViewholderItemBasicSwitchBinding binding = ViewholderItemBasicSwitchBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new BasicItemSwitchViewHolder(binding);
-        }
-        else if (viewType == itemType.IMAGE_TEXT.value) {
+        } else if (viewType == itemType.IMAGE_TEXT.value) {
             ViewholderItemImageTextBinding binding = ViewholderItemImageTextBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new ItemImageTextViewHolder(binding);
         } else {
@@ -102,9 +116,17 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.notifyDataSetChanged();
     }
 
-    public void updateItem(int position, Item item) {
+    public void updateItemWithNotify(int position, Item item) {
         items.set(position, item);
         // 포지션과 객체를 같이 넘기는 notifyItemChanged()를 사용하면 애니메이션 없이 해당 위치의 아이템을 변경할 수 있다.
         this.notifyItemChanged(position, item);
+    }
+
+    public void updateItem(int position, Item item) {
+        items.set(position, item);
+    }
+
+    public void setListenerWithPosition(onItemClickListenerWithPosition<Integer> listener) {
+        this.listener = listener;
     }
 }
