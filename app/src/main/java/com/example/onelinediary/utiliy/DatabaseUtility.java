@@ -66,6 +66,26 @@ public class DatabaseUtility {
                 });
     }
 
+    public static void writeNewDiaryWithDate(Context context, String year, String month, String day, Diary newDiary, onCompleteCallback callback) {
+        getReference() // 데이터 베이스 참조(default)
+                .child(Utility.getAndroidId(context))
+                .child(Const.DATABASE_CHILD_DIARY)
+                .child(year)
+                .child(month)
+                .child(day)
+                .setValue(newDiary)
+                .addOnSuccessListener(unused -> {
+                    if (callback != null) {
+                        callback.onComplete(true);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (callback != null) {
+                        callback.onComplete(false);
+                    }
+                });
+    }
+
     /**
      * <addValueEventListener의 onDataChange() 안에서 값 가져오는 방법>
      * snapshot.getChildrenCount() : query(year) 아래의 children(month) 개수

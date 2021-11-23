@@ -86,7 +86,27 @@ public class MainActivity extends FragmentActivity {
 
             if (pagerAdapter == null) {
                 pagerAdapter = new MainPagerAdapter();
-                pagerAdapter.setDiaryInterface(this::checkExistDiary);
+                pagerAdapter.setDiaryInterface(new MainPagerAdapter.onDiaryInterface() {
+                    @Override
+                    public void initDiaryCompleted() {
+                        // 오늘의 일기가 있는지 확인하고 메인의 아이콘을 추가버튼 또는 오늘의 기분으로 변경해준다.
+                        checkExistDiary();
+                    }
+
+                    @Override
+                    public void onPagerScroll(boolean prev) {
+                        // 페이저의 현재 위치
+                        int position = mainBinding.pager.getCurrentItem();
+
+                        if (prev) { // true이면 이전화면, false이면 다음화면
+                            if (position > 0) // 0일 경우, 첫 화면이기 때문에 이동 못함.
+                                mainBinding.pager.setCurrentItem(position - 1);
+                        } else {
+                            if (position < pagerAdapter.getItemCount() - 1) // 마지막 위치일 경우, 마지막 화면이기 때문에 이동 못함.
+                                mainBinding.pager.setCurrentItem(position + 1);
+                        }
+                    }
+                });
                 mainBinding.pager.setAdapter(pagerAdapter);
 
                 // 현재 달의 페이지를 보여준다.

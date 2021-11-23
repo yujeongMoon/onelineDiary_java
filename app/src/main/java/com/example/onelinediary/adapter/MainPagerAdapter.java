@@ -22,6 +22,7 @@ public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
 
     public interface onDiaryInterface {
         void initDiaryCompleted();
+        void onPagerScroll(boolean prev);
     }
 
     @NonNull
@@ -50,7 +51,7 @@ public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
             diaryInterface.initDiaryCompleted();
         }
         if (diaryListByMonth != null && !diaryListByMonth.isEmpty()) {
-            holder.onBind(month, diaryListByMonth);
+            holder.onBind(month, diaryListByMonth, diaryInterface);
         }
     }
 
