@@ -18,6 +18,7 @@ public class Diary implements Parcelable {
     private String contents = ""; // 일기 내용
     private int mood; // 오늘의 기분
     private String iconName; // 선택한 기분 아이콘 명
+    private String year;
     private String day; // 일기를 작성한 날짜(일)
     private String location = ""; // 일기를 작성한 위치
     /**
@@ -35,16 +36,18 @@ public class Diary implements Parcelable {
 
     public Diary() { }
 
+
     protected Diary(Parcel in) {
         reportingDate = in.readString();
         photo = in.readString();
         photoList = in.createStringArrayList();
         contents = in.readString();
         mood = in.readInt();
+        iconName = in.readString();
+        year = in.readString();
         day = in.readString();
         location = in.readString();
         weather = in.readString();
-        iconName = in.readString();
     }
 
     public static final Creator<Diary> CREATOR = new Creator<Diary>() {
@@ -131,6 +134,14 @@ public class Diary implements Parcelable {
         this.weather = weather;
     }
 
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
         result.put("contents", contents);
@@ -142,6 +153,7 @@ public class Diary implements Parcelable {
         result.put("location", location);
         result.put("weather", weather);
         result.put("iconName", iconName);
+        result.put("year", year);
 
         return result;
     }
@@ -158,9 +170,10 @@ public class Diary implements Parcelable {
         dest.writeStringList(photoList);
         dest.writeString(contents);
         dest.writeInt(mood);
+        dest.writeString(iconName);
+        dest.writeString(year);
         dest.writeString(day);
         dest.writeString(location);
         dest.writeString(weather);
-        dest.writeString(iconName);
     }
 }

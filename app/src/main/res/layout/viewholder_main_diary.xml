@@ -46,19 +46,37 @@
         android:visibility="gone"
         android:background="@drawable/bg_winter"/>
 
-    <TextView
-        android:id="@+id/year"
+    <LinearLayout
+        android:id="@+id/year_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        tools:text="2021"
-        android:textSize="@dimen/main_year_text"
-        android:textStyle="bold|italic"
-        android:textColor="@color/black"
+        android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/year"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            tools:text="2021"
+            android:textSize="@dimen/main_year_text"
+            android:textStyle="bold|italic"
+            android:textColor="@color/black"/>
+
+        <com.example.onelinediary.custom.CustomSpinner
+            android:id="@+id/year_spinner"
+            style="@style/SpinnerStyle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:spinnerMode="dialog"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/nickname"
@@ -67,7 +85,7 @@
         tools:text="곰돌이"
         android:textSize="15dp"
         android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/year"
+        app:layout_constraintTop_toBottomOf="@+id/year_layout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/month"

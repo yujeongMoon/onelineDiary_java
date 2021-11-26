@@ -10,4 +10,96 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black_alpha">#33000000</color>
+    <color name="light_blue_50">#FFE1F5FE</color>
+    <color name="light_blue_200">#FF81D4FA</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+
+    <color name="search_press">#A3A3A3</color>
+    <!-- 공통 색상 -->
+
+    <color name="common_black">#000</color>
+    <color name="common_white">#FFFFFF</color>
+    <color name="blue">#0055FF</color>
+    <color name="common_invisible">#00000000</color>
+    <color name="common_red">#F00</color>
+    <color name="common_dim">#80000000</color>
+    <color name="setting_switch">#00aeff</color>
+
+
+    <color name="KB_SBarMain">#E59A27</color>
+    <color name="KB_SBarGray">#D8D8D8</color>
+
+    <color name="KB_BgColor">#FFDA46</color>
+    <color name="KB_BgField">#F0F0F0</color>
+
+    <color name="KB_CommonTxt">#303030</color>
+    <color name="KB_HintTxt">#C8C8C8</color>
+    <color name="KB_YesBtn">#FFC600</color>
+    <color name="KB_NoBtn">#A0A0A0</color>
+    <color name="KB_NoBtn_dark">#777777</color>
+    <color name="KB_WhiteBtn">#FFFFFF</color>
+    <color name="KB_PageYesBtnTxt">#303030</color>
+    <color name="KB_PageNoBtnTxt">#FFF</color>
+    <color name="KB_disBtnTxt">#D5D5D5</color>
+    <color name="KB_disableTxt">#707070</color>
+    <color name="KB_btnTxt">#FFF</color>
+    <color name="KB_Submit">#505050</color>
+    <color name="KB_commentTxt">#FF7E00</color>
+    <color name="KB_accentTxt">#fa9c74</color>
+    <color name="KB_gray">#75879F</color>
+    <color name="KB_grayTxt">#969696</color>
+    <color name="KB_vline">#E2E2E2</color>
+    <color name="KB_timeline">#D2D7DE</color>
+    <color name="KB_dateTxt">#828282</color>
+    <color name="KB_intr">#ff7e00</color>
+    <color name="product_color">#0072FF</color>
+
+    <!-- 일부 부분 적용색상 -->
+    <color name="header_line">#DCDCDC</color>
+    <color name="popup_ok">#FDBB09</color>
+    <color name="popup_cancel">#DFE0E0</color>
+
+    <!-- 패턴 색상 -->
+    <color name="pattern_dot_dim">#E3A92C</color>
+    <color name="pattern_dot_enb">#3E3E3E</color>
+    <color name="pattern_line_enb">#505050</color>
+    <color name="pattern_line_error">#e91910</color>
+
+    <!-- FIDO -->
+    <color name="finger_fail_color">#e91010</color>
+    <color name="finger_success_color">#707070</color>
+    <color name="hint_color">#707070</color>
+    <color name="success_color">#707070</color>
+    <color name="warning_color">#e91010</color>
+
+    <!-- Main Tab -->
+    <color name="main_tab_dim">#b4b4b4</color>
+    <color name="main_tab1">#303030</color>
+    <color name="main_tab2">#fa9c74</color>
+    <color name="main_tab3">#5ab4fa</color>
+    <color name="main_tab4">#ffc539</color>
+    <color name="main_tab5">#555555</color>
+    <color name="main_tab6">#ededed</color>
+    <color name="main_tab7">#aaaaaa</color>
+
+    <color name="invr_fnnc_cicle_2">#ff9600</color>
+    <color name="invr_fnnc_cicle_1">#5478f4</color>
+    <color name="invr_fnnc_cicle_3">#f15f4c</color>
+
+    <color name="invr_status_3c99ce">#3c99ce</color>
+    <color name="invr_status_5a71e9">#5a71e9</color>
+    <color name="invr_status_7f5cc6">#7f5cc6</color>
+    <color name="invr_status_29ad83">#28ad83</color>
+    <color name="invr_status_527280">#527280</color>
+    <color name="invr_status_f6860e">#f6860e</color>
+    <color name="invr_status_fe6767">#fe6767</color>
+
+    <color name="e_service_menu_222222">#222222</color>
+    <color name="e_service_menu_333333">#333333</color>
+
+    <!--HSCHOI 20.07.31-->
+    <color name="deloitte_common_orange">#ff7e00</color>
+
+    <color name="feedback_widget_back">#99ffe4e1</color>
 </resources>

@@ -16,24 +16,19 @@ import java.util.ArrayList;
 public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
     private ViewholderMainDiaryBinding binding;
 
-    int weather = -1;
-
     onDiaryInterface diaryInterface;
 
     public interface onDiaryInterface {
         void initDiaryCompleted();
         void onPagerScroll(boolean prev);
+        void onYearSelected(String year);
     }
 
     @NonNull
     @Override
     public MainPageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-//        View itemView = inflater.inflate(R.layout.viewholder_main_diary, parent, false);
-//        return new MainPageViewHolder(itemView);
-
         binding = ViewholderMainDiaryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        return new MainPageViewHolder(binding);
+        return new MainPageViewHolder(binding, diaryInterface);
     }
 
     public void setDiaryInterface(onDiaryInterface diaryInterface) {
@@ -51,7 +46,7 @@ public class MainPagerAdapter extends RecyclerView.Adapter<MainPageViewHolder> {
             diaryInterface.initDiaryCompleted();
         }
         if (diaryListByMonth != null && !diaryListByMonth.isEmpty()) {
-            holder.onBind(month, diaryListByMonth, diaryInterface);
+            holder.onBind(month, diaryListByMonth);
         }
     }
 

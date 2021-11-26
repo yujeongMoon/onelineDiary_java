@@ -95,4 +95,6 @@ public class Const {
 
     // 관리자 페이지에서 피드백을 보낸 사용자의 마지막 피드백 내용
     public static ArrayList<Feedback> userLastFeedbackList;
+
+    public static ArrayList<String> yearList;
 }

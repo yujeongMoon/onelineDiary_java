@@ -163,6 +163,17 @@ public class Utility {
     }
 
     /**
+     * 입력받은 달과 일이 오늘 날짜와 같은 지 비교해주는 메소드
+     *
+     * @param month 달
+     * @param day 일
+     * @return 오늘 날짜와 같으면 true, 다르면 false
+     */
+    public static boolean isSameDateWithToday(String month, String day) {
+        return Utility.getMonth().equals(month) && (Utility.getDayToInt() == Integer.parseInt(day));
+    }
+
+    /**
      * @return 현재 연도
      */
     @SuppressLint("SimpleDateFormat")

@@ -15,7 +15,9 @@ import android.widget.Toast;
 import com.example.onelinediary.R;
 import com.example.onelinediary.activity.DiaryDetailActivity;
 import com.example.onelinediary.activity.MainActivity;
+import com.example.onelinediary.activity.NewDiaryActivity;
 import com.example.onelinediary.constant.Const;
+import com.example.onelinediary.databinding.ViewholderMoodItemBinding;
 import com.example.onelinediary.dialog.YesNoDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 public class MainMoodAdapter extends BaseAdapter {
     private Context context;
     String month;
+    String year;
     ArrayList<Diary> diaryList = new ArrayList<>();
 
     // 해당 날짜에 일기가 있는지 구분해주는 플래그
@@ -45,7 +48,8 @@ public class MainMoodAdapter extends BaseAdapter {
         this.context = context;
     }
 
-    public void addDiaryList(String month, ArrayList<Diary> diaryList) {
+    public void addDiaryList(String year, String month, ArrayList<Diary> diaryList) {
+        this.year = year;
         this.month = month;
         this.diaryList = diaryList;
     }
@@ -76,84 +80,120 @@ public class MainMoodAdapter extends BaseAdapter {
     @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewholder;
+        LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.viewholder_mood_item, parent, false);
-            TextView day = convertView.findViewById(R.id.day);
-            ImageView emoji = convertView.findViewById(R.id.emoji);
-            View line = convertView.findViewById(R.id.day_line);
 
-            if (position < startDayInMonth) {
-                day.setVisibility(View.GONE);
-                emoji.setVisibility(View.GONE);
-                convertView.setOnClickListener(null);
+            viewholder = new ViewHolder(convertView);
+            convertView.setTag(viewholder);
+        } else {
+            viewholder = (ViewHolder) convertView.getTag();
+        }
+
+        if (position < startDayInMonth) {
+            viewholder.tvDay.setVisibility(View.GONE);
+            viewholder.emoji.setVisibility(View.GONE);
+            viewholder.convertView.setOnClickListener(null);
+        } else {
+            viewholder.tvDay.setVisibility(View.VISIBLE);
+            viewholder.emoji.setVisibility(View.VISIBLE);
+
+            viewholder.day = (position - startDayInMonth) + 1 + "";
+            viewholder.tvDay.setText(viewholder.day);
+
+            if (Utility.getMonth().equals(month) && Utility.getDayToInt() == Integer.parseInt(viewholder.tvDay.getText().toString())) {
+                viewholder.line.setVisibility(View.VISIBLE);
             } else {
-                day.setVisibility(View.VISIBLE);
-                emoji.setVisibility(View.VISIBLE);
+                viewholder.line.setVisibility(View.INVISIBLE);
+            }
 
-                day.setText((position - startDayInMonth) + 1 + "");
-
-                if (Utility.getMonth().equals(month) && Utility.getDayToInt() == Integer.parseInt(day.getText().toString())) {
-                    line.setVisibility(View.VISIBLE);
-                } else {
-                    line.setVisibility(View.INVISIBLE);
-                }
-
-                for(int i = 0; i < diaryList.size(); i++) {
-                    if (!isExist && Integer.parseInt(diaryList.get(i).getDay()) == ((position - startDayInMonth) + 1)) {
-                        index = i;
-                        isExist = true;
-                    }
-                }
-
-                if (isExist) {
-                    emoji.setImageResource(Utility.migrationMoodToEmoji(context, diaryList.get(index)));
-                    convertView.setTag(index);
-                    convertView.setOnClickListener(v -> {
-                        Intent detailIntent = new Intent(context, DiaryDetailActivity.class);
-                        detailIntent.putExtra(Const.INTENT_KEY_MONTH, month);
-                        detailIntent.putExtra(Const.INTENT_KEY_DIARY, diaryList.get((int)v.getTag()));
-                        context.startActivity(detailIntent);
-                    });
-
-                    /*
-                     * onClick과 onLongClick이 동시에 실행되면 문제가 발생할 수 있다.
-                     * onLongClick은 onClick과 다르게 반환값이 있다.
-                     * 기본값은 false, 다음 이벤트가 진행되어 롱클릭 이 후 클릭 이벤트가 진행된다.
-                     * true를 반환하면 동시에 실행되지않고 이벤트가 종료된다.
-                     *
-                     * 이모지를 롱클릭하면 일기 삭제를 진행한다.
-                     * 사용자에게 다이얼로그를 띄워 삭제 여부를 물어본다.
-                     */
-                    String message = context.getString(R.string.dialog_message_delete_diary, month, diaryList.get(index).getDay());
-                    View finalConvertView = convertView;
-                    convertView.setOnLongClickListener(v -> {
-                        new YesNoDialog(message, v1 -> DatabaseUtility.deleteDiary(context, Utility.getYear(), month, diaryList.get((int)finalConvertView.getTag()).getDay(), isSuccess -> {
-                            if (isSuccess) {
-                                Toast.makeText(context, context.getString(R.string.message_delete_diary), Toast.LENGTH_LONG).show();
-
-                                // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
-                                Const.todayDiary = null;
-                                Const.deleteDiary = true;
-
-                                ((Activity)context).runOnUiThread(() -> ((MainActivity)context).notifyToPager());
-                            } else {
-                                Toast.makeText(context, context.getString(R.string.error_message_delete_diary), Toast.LENGTH_LONG).show();
-                            }
-                        })).show(context);
-
-                        return true;
-                    });
-                    isExist = false;
-                } else {
-                    convertView.setOnClickListener(null);
+            for(int i = 0; i < diaryList.size(); i++) {
+                if (!isExist && Integer.parseInt(diaryList.get(i).getDay()) == ((position - startDayInMonth) + 1)) {
+                    index = i;
+                    isExist = true;
                 }
             }
-        } else {
-            View view = new View(parent.getContext());
-            view = (View) convertView;
+
+            if (isExist) {
+                viewholder.emoji.setImageResource(Utility.migrationMoodToEmoji(context, diaryList.get(index)));
+                viewholder.index = index;
+                viewholder.convertView.setOnClickListener(v -> {
+                    Intent detailIntent = new Intent(context, DiaryDetailActivity.class);
+                    detailIntent.putExtra(Const.INTENT_KEY_MONTH, month);
+                    detailIntent.putExtra(Const.INTENT_KEY_DIARY, diaryList.get(viewholder.index));
+                    context.startActivity(detailIntent);
+                });
+
+                /*
+                 * onClick과 onLongClick이 동시에 실행되면 문제가 발생할 수 있다.
+                 * onLongClick은 onClick과 다르게 반환값이 있다.
+                 * 기본값은 false, 다음 이벤트가 진행되어 롱클릭 이 후 클릭 이벤트가 진행된다.
+                 * true를 반환하면 동시에 실행되지않고 이벤트가 종료된다.
+                 *
+                 * 이모지를 롱클릭하면 일기 삭제를 진행한다.
+                 * 사용자에게 다이얼로그를 띄워 삭제 여부를 물어본다.
+                 */
+                String message = context.getString(R.string.dialog_message_delete_diary, month, diaryList.get(index).getDay());
+                viewholder.convertView.setOnLongClickListener(v -> {
+                    new YesNoDialog(message, v1 -> DatabaseUtility.deleteDiary(context, Utility.getYear(), month, diaryList.get(viewholder.index).getDay(), isSuccess -> {
+                        if (isSuccess) {
+                            Toast.makeText(context, context.getString(R.string.message_delete_diary), Toast.LENGTH_LONG).show();
+
+                            // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
+                            Const.todayDiary = null;
+                            Const.deleteDiary = true;
+
+                            ((Activity)context).runOnUiThread(() -> ((MainActivity)context).notifyToPager());
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.error_message_delete_diary), Toast.LENGTH_LONG).show();
+                        }
+                    })).show(context);
+
+                    return true;
+                });
+                isExist = false;
+            } else {
+                Intent addBeforeDiaryIntent = new Intent(context, NewDiaryActivity.class);
+                addBeforeDiaryIntent.putExtra("year", year);
+                addBeforeDiaryIntent.putExtra("month", month);
+                addBeforeDiaryIntent.putExtra("day", viewholder.day);
+
+                if (Utility.getMonth().equals(month)) { // 현재 달
+                    if (Utility.getDayToInt() >= Integer.parseInt(viewholder.tvDay.getText().toString())) {
+                        viewholder.convertView.setOnClickListener(v -> {
+                            addBeforeDiaryIntent.putExtra("beforeDay", !Utility.isSameDateWithToday(month, viewholder.day));
+                            context.startActivity(addBeforeDiaryIntent);
+                        });
+                    } else { // 오늘 날짜 이후
+                        viewholder.convertView.setOnClickListener(null);
+                    }
+                } else { // 이전 달
+                    viewholder.convertView.setOnClickListener(v -> {
+                        addBeforeDiaryIntent.putExtra("beforeDay", true);
+                        context.startActivity(addBeforeDiaryIntent);
+                    });
+                }
+            }
         }
 
         return convertView;
+    }
+
+    public static class ViewHolder {
+        View convertView;
+        TextView tvDay;
+        ImageView emoji;
+        View line;
+
+        int index;
+        String day;
+
+        public ViewHolder(View convertView) {
+            this.convertView = convertView;
+            this.tvDay = convertView.findViewById(R.id.day);
+            this.emoji = convertView.findViewById(R.id.emoji);
+            this.line = convertView.findViewById(R.id.day_line);
+        }
     }
 }

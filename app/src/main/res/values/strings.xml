@@ -84,4 +84,9 @@
     <string name="dialog_message_delete_photo">선택한 사진을 삭제하시겠습니까?</string>
     <string name="write">글쓰기</string>
 
+
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+
 </resources>

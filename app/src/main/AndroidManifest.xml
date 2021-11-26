@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.onelinediary">
 
+    <!-- geocoder를 이용하기 위해서 필요한 권한이다. -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_favorite"
@@ -11,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnelineDiary"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.InputActivity"
+            android:exported="true"
+            android:theme="@style/PopupDialog"/>
         <activity
             android:name=".activity.WriteNoticeActivity"
             android:exported="true" />
@@ -31,13 +35,13 @@
             android:exported="true" />
         <activity
             android:name=".activity.FeedbackActivity"
-            android:exported="true" />
+            android:exported="true"/>
         <activity
             android:name=".activity.SettingActivity"
             android:exported="true" />
         <activity
             android:name=".activity.DiaryDetailActivity"
-            android:exported="true" />
+            android:exported="true"/>
         <activity
             android:name=".activity.SplashActivity"
             android:exported="true">
@@ -63,10 +67,28 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-    </application> <!-- geocoder를 이용하기 위해서 필요한 권한이다. -->
+
+        <receiver
+            android:name=".custom.AppWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".service.MyRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+    </application>
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

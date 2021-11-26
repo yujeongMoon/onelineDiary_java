@@ -55,6 +55,12 @@ public class NewDiaryActivity extends AppCompatActivity{
 
     private Emoji emoji;
 
+    boolean beforeDay;
+    String year;
+    String month;
+    String day;
+    String reportingDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,21 +68,33 @@ public class NewDiaryActivity extends AppCompatActivity{
         newDiaryBinding = ActivityNewDiaryBinding.inflate(getLayoutInflater());
         setContentView(newDiaryBinding.getRoot());
 
-        newDiaryBinding.todayDate.setText(Utility.getDate(Const.REPORTING_DATE_FORMAT));
+        beforeDay = getIntent().getBooleanExtra("beforeDay", false);
+        year = getIntent().getStringExtra("year");
+        month = getIntent().getStringExtra("month");
+        day = getIntent().getStringExtra("day");
 
-        getCurrentLocation(Const.currentLocation);
-
-        if (Const.weatherResId > 0) {
-            newDiaryBinding.currentWeather.setVisibility(View.VISIBLE);
-            newDiaryBinding.currentWeather.setImageResource(Const.weatherResId);
-
-            if (Const.weather != null && !Const.weather.equals("")) {
-                diary.setWeather(Const.weather);
-            } else {
-                diary.setWeather("");
-            }
-        } else {
+        if (beforeDay) { // 이전 일기
+            reportingDate = year + "년 " + month + "월 " + day + "일";
+            newDiaryBinding.todayDate.setText(reportingDate);
             newDiaryBinding.currentWeather.setVisibility(View.GONE);
+            newDiaryBinding.currentLocation.setVisibility(View.GONE);
+        } else { // 오늘 일기
+            newDiaryBinding.todayDate.setText(Utility.getDate(Const.REPORTING_DATE_FORMAT));
+
+            getCurrentLocation(Const.currentLocation);
+
+            if (Const.weatherResId > 0) {
+                newDiaryBinding.currentWeather.setVisibility(View.VISIBLE);
+                newDiaryBinding.currentWeather.setImageResource(Const.weatherResId);
+
+                if (Const.weather != null && !Const.weather.equals("")) {
+                    diary.setWeather(Const.weather);
+                } else {
+                    diary.setWeather("");
+                }
+            } else {
+                newDiaryBinding.currentWeather.setVisibility(View.GONE);
+            }
         }
 
         newDiaryBinding.photo.setOnClickListener(v -> photoUri = Utility.selectPhoto(NewDiaryActivity.this, PICKER_IMAGE_REQUEST));
@@ -257,7 +275,13 @@ public class NewDiaryActivity extends AppCompatActivity{
     @SuppressLint("SimpleDateFormat")
     public void saveNewDiary(View view) {
         // 일기 작성한 시간 저장
-        diary.setReportingDate(new SimpleDateFormat(Const.REPORTING_DATE_FORMAT).format(new Date()));
+        if (beforeDay) {
+            diary.setYear(year);
+            diary.setReportingDate(reportingDate);
+        } else {
+            diary.setYear(Utility.getYear());
+            diary.setReportingDate(new SimpleDateFormat(Const.REPORTING_DATE_FORMAT).format(new Date()));
+        }
 
         // 작성한 일기 컨텐츠 저장
         String contents = newDiaryBinding.diaryContents.getText().toString().trim();
@@ -299,18 +323,32 @@ public class NewDiaryActivity extends AppCompatActivity{
         if (emoji == null) {
             new ConfirmDialog(getString(R.string.dialog_message_confirm_mood), null).show(this);
         } else {
-            DatabaseUtility.writeNewDiary(this, diary, isSuccess -> {
-                if (isSuccess) {
-                    new ConfirmDialog(getString(R.string.message_save_diary),
-                            v -> {
-                                setResult(RESULT_OK);
-                                newPhotoList.clear();
-                                finish();
-                            }).show(this);
-                } else {
-                    new ConfirmDialog(getString(R.string.error_message_save_diary), null).show(this);
-                }
-            });
+            if (beforeDay) {
+                DatabaseUtility.writeNewDiaryWithDate(this, year, month, day, diary, isSuccess -> {
+                    if (isSuccess) {
+                        new ConfirmDialog(getString(R.string.message_save_diary),
+                                v -> {
+                                    newPhotoList.clear();
+                                    finish();
+                                }).show(this);
+                    } else {
+                        new ConfirmDialog(getString(R.string.error_message_save_diary), null).show(this);
+                    }
+                });
+            } else {
+                DatabaseUtility.writeNewDiary(this, diary, isSuccess -> {
+                    if (isSuccess) {
+                        new ConfirmDialog(getString(R.string.message_save_diary),
+                                v -> {
+                                    setResult(RESULT_OK);
+                                    newPhotoList.clear();
+                                    finish();
+                                }).show(this);
+                    } else {
+                        new ConfirmDialog(getString(R.string.error_message_save_diary), null).show(this);
+                    }
+                });
+            }
         }
     }
 }

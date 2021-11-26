@@ -86,6 +86,31 @@ public class DatabaseUtility {
                 });
     }
 
+    public static void readDiaryList(Context context, onCompleteResultCallback<ArrayList<String>> callback) {
+        ArrayList<String> yearList = new ArrayList<>();
+        Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_DIARY);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                yearList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                   yearList.add(dataSnapshot.getKey());
+                }
+
+                if (yearList.size() > 0)
+                    callback.onComplete(true, yearList);
+                else
+                    callback.onComplete(false, null);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("DB__readYearDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
+            }
+        });
+    }
+
     /**
      * <addValueEventListener의 onDataChange() 안에서 값 가져오는 방법>
      * snapshot.getChildrenCount() : query(year) 아래의 children(month) 개수
@@ -104,6 +129,7 @@ public class DatabaseUtility {
     public static void readYearDiaryList(Context context, String year, onCompleteCallback callback) {
         Const.monthKeyList = new ArrayList<>();
         Query query = getReference().child(Utility.getAndroidId(context)).child(Const.DATABASE_CHILD_DIARY).child(year);
+        yearDiaryList.clear();
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -155,8 +181,10 @@ public class DatabaseUtility {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Diary diary = dataSnapshot.getValue(Diary.class); // 하루 일기를 객체로 생성한다.
 
-                    if (diary != null)
+                    if (diary != null) {
+                        diary.setYear(year);
                         diary.setDay(dataSnapshot.getKey());
+                    }
                     dList.add(diary);
                 }
                 yearDiaryList.put(month, dList); // 해당 월을 key로, 일기 리스트를 value로 저장한다.

@@ -1,0 +1,29 @@
+<resources>
+
+    <style name="Widget.OnelineDiary.AppWidget.Container" parent="android:Widget">
+        <item name="android:padding">?attr/appWidgetPadding</item>
+        <item name="android:background">@drawable/app_widget_background</item>
+    </style>
+
+    <style name="Widget.OnelineDiary.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:padding">?attr/appWidgetPadding</item>
+        <item name="android:background">@drawable/app_widget_inner_view_background</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="@style/Widget.AppCompat.Spinner">
+        <item name="android:spinnerMode">dialog</item>
+        <item name="overlapAnchor">false</item>
+    </style>
+
+    <style name="PopupDialog" parent="Theme.OnelineDiary">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowBackground">#00000000</item>
+        <item name="android:screenOrientation">portrait</item>
+        <item name="colorPrimaryDark">#00000000</item>
+        <item name="android:navigationBarColor">#00000000</item>
+    </style>
+</resources>

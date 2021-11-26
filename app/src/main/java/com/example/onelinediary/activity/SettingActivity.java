@@ -14,7 +14,6 @@ import com.example.onelinediary.adapter.ListAdapter;
 import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.databinding.ActivitySettingBinding;
 import com.example.onelinediary.dialog.ConfirmDialog;
-import com.example.onelinediary.dialog.InputDialog;
 import com.example.onelinediary.dto.BasicItemBtn;
 import com.example.onelinediary.dto.ImageTextItem;
 import com.example.onelinediary.utiliy.DatabaseUtility;
@@ -24,6 +23,7 @@ public class SettingActivity extends AppCompatActivity {
     private ActivitySettingBinding settingBinding;
 
     private final int REQUEST_SET_PROFILE_IMAGE = 100;
+    private final int REQUEST_SET_NICKNAME = 200;
 
     private ListAdapter adapter;
     String profileResName = "";
@@ -65,42 +65,9 @@ public class SettingActivity extends AppCompatActivity {
         settingBinding.settingRecyclerview.setAdapter(adapter);
     }
 
-    View.OnClickListener setNickname = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            new InputDialog(getString(R.string.dialog_message_input_nickname), v1 -> {
-                if (Utility.isStringNullOrEmpty(Const.nickname)) {
-                    Const.nickname = "";
-                }
-
-                // 닉네임을 DB에 저장한다.
-                DatabaseUtility.setNickname(SettingActivity.this, Const.nickname, isSuccess -> {
-                    if (isSuccess) {
-                        // 변경된 닉네임을 기기에 저장한다.
-                        // 닉네임을 불러올 때 DB에서 가져오는 시간을 줄이기 위해서 저장한다.
-                        Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, Const.nickname);
-
-                        BasicItemBtn itemBtn = (BasicItemBtn) adapter.items.get(1);
-                        ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
-                        if (!Const.nickname.equals("")) {
-                            Toast.makeText(getApplicationContext(), getString(R.string.message_save_nickname), Toast.LENGTH_SHORT).show();
-                            itemBtn.setButtonText(getString(R.string.change));
-                            itemImageText.setNickname(Const.nickname);
-                        } else {
-                            Toast.makeText(getApplicationContext(), getString(R.string.message_reset_nickname), Toast.LENGTH_SHORT).show();
-                            itemBtn.setButtonText(getString(R.string.setting));
-                            itemImageText.setNickname(getString(R.string.message_set_nickname));
-                        }
-
-                        adapter.updateItemWithNotify(1, itemBtn);
-                        adapter.updateItemWithNotify(0, itemImageText);
-                    } else {
-                        Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, "");
-                        Toast.makeText(getApplicationContext(), "오류가 발생하였습니다. 잠시 후에 다시 시도해주세요!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }).show(SettingActivity.this);
-        }
+    View.OnClickListener setNickname = v -> {
+        Intent inputIntent = new Intent(SettingActivity.this, InputActivity.class);
+        startActivityForResult(inputIntent, REQUEST_SET_NICKNAME);
     };
 
     View.OnClickListener moveFeedbackActivityListener = v -> {
@@ -154,12 +121,45 @@ public class SettingActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_SET_PROFILE_IMAGE && resultCode == RESULT_OK) {
-            profileResName = Utility.getString(getApplicationContext(), Const.SP_KEY_PROFILE);
+        if (requestCode == REQUEST_SET_PROFILE_IMAGE) {
+            if (resultCode == RESULT_OK) {
+                profileResName = Utility.getString(getApplicationContext(), Const.SP_KEY_PROFILE);
 
-            ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
-            itemImageText.setProfileImage(Utility.getResourceImage(this, profileResName));
-            adapter.updateItemWithNotify(0, itemImageText);
+                ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
+                itemImageText.setProfileImage(Utility.getResourceImage(this, profileResName));
+                adapter.updateItemWithNotify(0, itemImageText);
+            }
+        }
+
+        if (requestCode == REQUEST_SET_NICKNAME) {
+            if (resultCode == RESULT_OK) {
+                // 닉네임을 DB에 저장한다.
+                DatabaseUtility.setNickname(SettingActivity.this, Const.nickname, isSuccess -> {
+                    if (isSuccess) {
+                        // 변경된 닉네임을 기기에 저장한다.
+                        // 닉네임을 불러올 때 DB에서 가져오는 시간을 줄이기 위해서 저장한다.
+                        Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, Const.nickname);
+
+                        BasicItemBtn itemBtn = (BasicItemBtn) adapter.items.get(1);
+                        ImageTextItem itemImageText = (ImageTextItem) adapter.items.get(0);
+                        if (!Const.nickname.equals("")) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.message_save_nickname), Toast.LENGTH_SHORT).show();
+                            itemBtn.setButtonText(getString(R.string.change));
+                            itemImageText.setNickname(Const.nickname);
+                        } else {
+                            Toast.makeText(getApplicationContext(), getString(R.string.message_reset_nickname), Toast.LENGTH_SHORT).show();
+                            itemBtn.setButtonText(getString(R.string.setting));
+                            itemImageText.setNickname(getString(R.string.message_set_nickname));
+                        }
+
+                        adapter.updateItemWithNotify(1, itemBtn);
+                        adapter.updateItemWithNotify(0, itemImageText);
+                    } else {
+                        Utility.putString(getApplicationContext(), Const.SP_KEY_NICKNAME, "");
+                        Toast.makeText(getApplicationContext(), "오류가 발생하였습니다. 잠시 후에 다시 시도해주세요!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
 }

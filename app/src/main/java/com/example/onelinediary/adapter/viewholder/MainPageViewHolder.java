@@ -5,6 +5,8 @@ import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,24 +31,57 @@ public class MainPageViewHolder extends RecyclerView.ViewHolder {
 
     MainPagerAdapter.onDiaryInterface onDiaryInterface;
 
-    public MainPageViewHolder(@NonNull ViewholderMainDiaryBinding mainDiaryBinding) {
+    boolean isSelectedYear;
+
+    ArrayAdapter<String> spinnerAdapter;
+
+    public MainPageViewHolder(@NonNull ViewholderMainDiaryBinding mainDiaryBinding, MainPagerAdapter.onDiaryInterface onDiaryInterface) {
         super(mainDiaryBinding.getRoot());
         this.mainDiaryBinding = mainDiaryBinding;
 
         context = mainDiaryBinding.getRoot().getContext();
+        this.onDiaryInterface = onDiaryInterface;
 
         Glide.with(context).load(R.drawable.bg_blossom).into(mainDiaryBinding.spring);
         Glide.with(context).load(R.drawable.bg_summer).into(mainDiaryBinding.summer);
         Glide.with(context).load(R.drawable.bg_autumn).into(mainDiaryBinding.autumn);
 //        Glide.with(context).load(R.drawable.snow).into(mainDiaryBinding.winter);
+
+        isSelectedYear = false;
+        if(spinnerAdapter == null) {
+            spinnerAdapter = new ArrayAdapter<String>(context, R.layout.simple_spinner_dropdown_item, Const.yearList);
+            mainDiaryBinding.yearSpinner.setAdapter(spinnerAdapter);
+            mainDiaryBinding.yearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if(isSelectedYear) {
+                        onDiaryInterface.onYearSelected(Const.yearList.get(position));
+                        isSelectedYear = false;
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
     }
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
-    public void onBind(String month, ArrayList<Diary> diaryList, MainPagerAdapter.onDiaryInterface onDiaryInterface) {
-        this.onDiaryInterface = onDiaryInterface;
+    public void onBind(String month, ArrayList<Diary> diaryList) {
         setSeason(month);
 
-        mainDiaryBinding.year.setText(Const.currentYear);
+        String year = "";
+        if (diaryList.size() > 0) {
+            year = diaryList.get(diaryList.size() - 1).getReportingDate().substring(0, 4);
+        }
+
+        mainDiaryBinding.year.setText(year);
+        mainDiaryBinding.year.setOnClickListener(v -> {
+            isSelectedYear = true;
+            mainDiaryBinding.yearSpinner.performClick();
+        });
         mainDiaryBinding.month.setText(month + context.getString(R.string.month));
 
         if (Utility.isStringNullOrEmpty(Utility.getString(context, Const.SP_KEY_NICKNAME))) {
@@ -58,7 +93,7 @@ public class MainPageViewHolder extends RecyclerView.ViewHolder {
 
         // 그리드 뷰 데이터와 어뎁터 설정
         MainMoodAdapter adapter = new MainMoodAdapter(context);
-        adapter.addDiaryList(month, diaryList);
+        adapter.addDiaryList(year, month, diaryList);
         mainDiaryBinding.moodLayout.setAdapter(adapter);
 
         // 뷰페이저 안에 다른 아이템들로 인해 스크롤이 잘 안되는 문제를 해결하기 위해서 추가한 코드
