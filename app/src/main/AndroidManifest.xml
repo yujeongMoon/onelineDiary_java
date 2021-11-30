@@ -81,7 +81,11 @@
         </receiver>
 
         <service
-            android:name=".service.MyRemoteViewsService"
+            android:name=".service.FeedbackRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
+        <service
+            android:name=".service.UserRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>
     </application>
 

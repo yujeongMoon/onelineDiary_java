@@ -104,4 +104,8 @@ public class FeedbackAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.leftProfileImage = profileImage;
         notifyDataSetChanged();
     }
+
+    public String getLeftProfileImage() {
+        return this.leftProfileImage;
+    }
 }

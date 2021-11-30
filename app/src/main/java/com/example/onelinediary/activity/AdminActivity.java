@@ -28,7 +28,7 @@ public class AdminActivity extends AppCompatActivity {
 
         // admin/feedbackList에 저장된 마지막 피드백 리스트를 가져온다.
         // 해당 위치의 값들이 바뀔때마다 호출된다.
-        DatabaseUtility.readFeedbackListWithUser(isSuccess -> {
+        DatabaseUtility.readFeedbackListWithUser(this, isSuccess -> {
             adminAdapter.addUserList(Const.userList);
             adminAdapter.adduserLastFeedbackList(Const.userLastFeedbackList);
         });

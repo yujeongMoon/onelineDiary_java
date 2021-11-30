@@ -552,12 +552,22 @@ public class Utility {
         editor.apply();
     }
 
+    public static void putInt(Context context, String key, int value) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
+    public static int getInt(Context context, String key) {
+        return getSharedPreference(context).getInt(key, 0);
+    }
+
     public static String getString(Context context, String key) {
         return getSharedPreference(context).getString(key, "");
     }
 
-    public static Boolean getBoolean(Context context, String key) {
-        return getSharedPreference(context).getBoolean(key, false);
+    public static Boolean getBoolean(Context context, String key, boolean defValue) {
+        return getSharedPreference(context).getBoolean(key, defValue);
     }
 
     /***

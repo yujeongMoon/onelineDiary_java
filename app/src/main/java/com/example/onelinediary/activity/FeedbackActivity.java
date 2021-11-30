@@ -22,6 +22,7 @@ public class FeedbackActivity extends AppCompatActivity {
     Feedback feedback = new Feedback();
 
     String androidId;
+    String userNickname;
 
     int recyclerviewHeight = 0;
 
@@ -44,12 +45,18 @@ public class FeedbackActivity extends AppCompatActivity {
             }
         });
 
+        DatabaseUtility.getNickname(androidId, (isSuccess, result) -> {
+            if (isSuccess) {
+                userNickname = result;
+            }
+        });
+
         feedbackBinding.feedbackRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new FeedbackAdapter(this);
         feedbackBinding.feedbackRecyclerview.setAdapter(adapter);
 
-        DatabaseUtility.readFeedback(androidId, isSuccess -> {
+        DatabaseUtility.readFeedback(this, androidId, isSuccess -> {
             if (isSuccess) {
                 adapter.addFeedbackList(Const.feedbackList);
                 feedbackBinding.feedbackRecyclerview.scrollToPosition(adapter.getItemCount() - 1);
@@ -81,6 +88,10 @@ public class FeedbackActivity extends AppCompatActivity {
                 feedback.setReportingDate(Utility.getDateWithDayOfWeek("yyyy년 MM월 d일"));
                 feedback.setReportingTime(Utility.getTime_a_hh_mm());
                 feedback.setContents(contents);
+                feedback.setAdmin(true);
+                feedback.setUserAndroidId(androidId);
+                feedback.setProfileImageName(adapter.getLeftProfileImage());
+                feedback.setUserNickname(userNickname);
 
                 // 입력창 초기화
                 feedbackBinding.feedbackContents.setText("");
@@ -91,7 +102,7 @@ public class FeedbackActivity extends AppCompatActivity {
                     if (isSuccess) {
                         // 관리자 화면에서 보여주기 위한 마지막 피드백 리스트에 추가
                         // 마지막에 작성한 사람이 관리자일 경우에 관리자의 메세지 저장
-                        if (!feedback.getContents().equals("") && !androidId.equals(Const.ADMIN_ANDROID_ID)) {
+                        if (!feedback.getContents().equals("")) {
                             DatabaseUtility.addFeedbackListWithUser(androidId, feedback, null);
                         }
                     } else { // 피드백 작성이 실패했을 경우

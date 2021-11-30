@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="2021년 11월 3일(수)"
+        android:textSize="12dp"
+        android:gravity="center"
+        android:padding="15dp"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:id="@+id/feedback_item_right_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/date">
+
+        <LinearLayout
+            android:id="@+id/message_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentEnd="true"
+            android:padding="10dp"
+            android:backgroundTint="@color/col_main"
+            android:background="@drawable/bg_message_box">
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="안녕하세요!"
+                android:textSize="13dp"
+                android:textColor="@color/black"
+                android:maxWidth="200dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/message_layout"
+            android:layout_marginEnd="3dp"
+            android:layout_toStartOf="@id/message_layout"
+            android:text="오후 14:24"
+            android:textSize="10dp"
+            android:textColor="@color/black"/>
+
+    </RelativeLayout>
+
+</RelativeLayout >

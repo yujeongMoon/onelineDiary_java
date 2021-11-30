@@ -12,12 +12,15 @@ import com.example.onelinediary.dto.Feedback;
 import com.example.onelinediary.dto.ItemNotice;
 import com.example.onelinediary.dto.Notice;
 import com.example.onelinediary.dto.PinInfo;
+import com.example.onelinediary.dto.WidgetFeedList;
+import com.example.onelinediary.dto.WidgetUserList;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,7 +109,7 @@ public class DatabaseUtility {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__readYearDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__readYearDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -152,7 +155,7 @@ public class DatabaseUtility {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__readYearDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__readYearDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -196,7 +199,7 @@ public class DatabaseUtility {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__readMonthDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__readMonthDiaryList", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -316,7 +319,7 @@ public class DatabaseUtility {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__getNickname", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__getNickname", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -356,7 +359,7 @@ public class DatabaseUtility {
      * @param androidId 사용자의 안드로이드 아이디
      * @param callback 콜백 메소드
      */
-    public static void readFeedback(String androidId, onCompleteCallback callback) {
+    public static void readFeedback(Context context, String androidId, onCompleteCallback callback) {
         Const.feedbackList = new ArrayList<>();
         Query query = getReference().child(androidId).child(Const.DATABASE_CHILD_FEEDBACK);
 
@@ -369,13 +372,31 @@ public class DatabaseUtility {
                     Const.feedbackList.add(dataSnapshot.getValue(Feedback.class));
                 }
 
-                if (callback != null)
-                    callback.onComplete(true);
+                if (callback != null) {
+                    if (Const.feedbackList.size() > 0) {
+                        WidgetFeedList widgetFeedList = new WidgetFeedList();
+                        widgetFeedList.feedbackArrayList = new ArrayList<>();
+                        int maxCount = 10;
+                        if(Const.feedbackList.size() < maxCount) {
+                            maxCount = Const.feedbackList.size();
+                        }
+                        for (int i = Const.feedbackList.size() - maxCount; i <= Const.feedbackList.size() - 1; i++) {
+                            widgetFeedList.feedbackArrayList.add(Const.feedbackList.get(i));
+                        }
+                        Gson gson = new Gson();
+                        Utility.putString(context, "WidgetFeedbackList", gson.toJson(widgetFeedList));
+
+                        callback.onComplete(true);
+                    } else {
+                        callback.onComplete(false);
+                    }
+                }
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__readFeedback", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__readFeedback", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -412,7 +433,7 @@ public class DatabaseUtility {
      *
      * @param callback 콜백 메소드
      */
-    public static void readFeedbackListWithUser(onCompleteCallback callback) {
+    public static void readFeedbackListWithUser(Context context, onCompleteCallback callback) {
         Const.userList = new ArrayList<>();
         Const.userLastFeedbackList = new ArrayList<>();
 
@@ -429,13 +450,25 @@ public class DatabaseUtility {
                     Const.userLastFeedbackList.add(dataSnapshot.getValue(Feedback.class));
                 }
 
-                if (callback != null)
-                    callback.onComplete(true);
+                if (callback != null) {
+                    if (Const.userList.size() > 0 && Const.userLastFeedbackList.size() > 0) {
+                        WidgetUserList widgetUserList = new WidgetUserList();
+                        widgetUserList.userList = Const.userList;
+                        widgetUserList.userLastFeedbackList = Const.userLastFeedbackList;
+
+                        Gson gson = new Gson();
+                        Utility.putString(context, "WidgetUserList", gson.toJson(widgetUserList));
+
+                        callback.onComplete(true);
+                    } else {
+                        callback.onComplete(false);
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__readFeedbackListWithUser", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__readFeedbackListWithUser", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -522,7 +555,7 @@ public class DatabaseUtility {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__getProfileImage", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__getProfileImage", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -574,7 +607,7 @@ public class DatabaseUtility {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__getNoticeList", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__getNoticeList", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }
@@ -611,7 +644,7 @@ public class DatabaseUtility {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("DB__getNoticeList", "code : " + error.getCode() + ", message : " + error.getMessage());
+                Log.e("DB__getNoticeList", "code : " + error.getCode() + ", message : " + error.getMessage());
             }
         });
     }

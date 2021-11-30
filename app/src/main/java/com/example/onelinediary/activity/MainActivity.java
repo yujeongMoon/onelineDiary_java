@@ -29,6 +29,7 @@ import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.LocationUtility;
 import com.example.onelinediary.utiliy.Utility;
 import com.example.onelinediary.utiliy.WeatherUtility;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -165,6 +166,9 @@ public class MainActivity extends FragmentActivity {
             if (Const.diaryList != null && Const.diaryList.containsKey(Utility.getMonth())) {
                 if (todayDiary.getDay().equals(Utility.getDay())) {
                     Const.todayDiary = todayDiary;
+
+                    Gson gson = new Gson();
+                    Utility.putString(this, "todayDiary", gson.toJson(todayDiary));
                     mainBinding.btnAddNewDiary.setImageResource(Utility.migrationMoodToEmoji(this, todayDiary));
                 }
             }
@@ -264,6 +268,7 @@ public class MainActivity extends FragmentActivity {
                             w = "";
                     }
 
+                    Utility.putInt(this, "todayWeather", resId);
                     Const.weatherResId = resId;
                     Const.weather = w;
                 } else {
@@ -323,6 +328,7 @@ public class MainActivity extends FragmentActivity {
         for (int result : grantResults) {
             if (result != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(getApplicationContext(), getString(R.string.message_permission_check), Toast.LENGTH_LONG).show();
+                // TODO 설정화면으로 이동하기
                 finish();
             }
         }

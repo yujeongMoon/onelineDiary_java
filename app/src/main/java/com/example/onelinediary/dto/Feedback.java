@@ -10,6 +10,11 @@ public class Feedback {
     private String reportingTime; // 작성한 시간 ex) 오전 10:22
     private String contents = ""; // 작성 내용
 
+    private boolean isAdmin = false;
+    private String profileImageName = "";
+    private String UserNickname = "";
+    private String UserAndroidId = "";
+
     public Feedback() {}
 
     public Feedback(String androidId, String nickname, String reportingDate, String reportingTime, String contents) {
@@ -58,5 +63,37 @@ public class Feedback {
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    public String getProfileImageName() {
+        return profileImageName;
+    }
+
+    public void setProfileImageName(String profileImageName) {
+        this.profileImageName = profileImageName;
+    }
+
+    public String getUserNickname() {
+        return UserNickname;
+    }
+
+    public void setUserNickname(String userNickname) {
+        UserNickname = userNickname;
+    }
+
+    public String getUserAndroidId() {
+        return UserAndroidId;
+    }
+
+    public void setUserAndroidId(String userAndroidId) {
+        UserAndroidId = userAndroidId;
     }
 }

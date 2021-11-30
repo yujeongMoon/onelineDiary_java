@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="10dp"
+    android:background="@android:color/white"
+    android:id="@+id/user_layout">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/circle_gray"
+        android:layout_marginEnd="10dp"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginEnd="10dp">
+
+        <TextView
+            android:id="@+id/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="nickname"
+            android:textSize="13dp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/feedback_last_contents"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:maxWidth="200dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="내용을 입력하세요.sdsdsdsdsdsdsdsdsdsdsddsdsdsdssdsdsds"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="11월 5일"
+        android:textSize="11dp"
+        android:textColor="@color/black"/>
+
+</LinearLayout>
