@@ -73,14 +73,17 @@ public class FeedbackRemoteViewsFactory implements RemoteViewsService.RemoteView
     public RemoteViews getViewAt(int position) {
         RemoteViews listviewWidget;
 
+        int layoutId = 0;
         if (arrayList.get(position).getAndroidId().equals(Utility.getAndroidId(context))) {
             listviewWidget = new RemoteViews(context.getPackageName(), R.layout.widget_message_right);
+            layoutId = R.id.container_right;
         } else {
             listviewWidget = new RemoteViews(context.getPackageName(), R.layout.widget_message_left);
+            layoutId = R.id.container_left;
 
             if (Utility.getAndroidId(context).equals(Const.ADMIN_ANDROID_ID)) { // 관리자
-                listviewWidget.setImageViewResource(R.id.profile_image, Utility.getResourceImage(context, Utility.getString(context, Const.SP_KEY_PROFILE)));
-                listviewWidget.setTextViewText(R.id.nickname, Utility.getString(context, Const.SP_KEY_NICKNAME));
+                listviewWidget.setImageViewResource(R.id.profile_image, Utility.getResourceImage(context, arrayList.get(position).getProfileImageName()));
+                listviewWidget.setTextViewText(R.id.nickname, arrayList.get(position).getUserNickname());
             } else { // 사용자
                 listviewWidget.setImageViewResource(R.id.profile_image, R.drawable.profile_admin);
                 listviewWidget.setTextViewText(R.id.nickname, "관리자");
@@ -93,10 +96,9 @@ public class FeedbackRemoteViewsFactory implements RemoteViewsService.RemoteView
         listviewWidget.setTextViewText(R.id.time, arrayList.get(position).getReportingTime());
 
         // 항목 선택 이벤트 발생 시 인텐트에 담겨야 할 항목 데이터를 추가해주는 코드
-        Intent dataIntent = new Intent();
-//        dataIntent.putExtra("item_id", arrayList.get(position)._id);
-//        dataIntent.putExtra("item_data", arrayList.get(position).content);
-//        listviewWidget.setOnClickFillInIntent(R.id.text1, dataIntent);
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtra("androidId", arrayList.get(arrayList.size() - 1).getUserAndroidId());
+        listviewWidget.setOnClickFillInIntent(layoutId, fillInIntent);
         //setOnClickFillInIntent 브로드캐스트 리시버에서 항목 선택 이벤트가 발생할 때 실행을 의뢰한 인텐트에 각 항목의 데이터를 추가해주는 함수
         //브로드캐스트 리시버의 인텐트와 Extra 데이터가 담긴 인텐트를 함치는 역할을 한다.
 

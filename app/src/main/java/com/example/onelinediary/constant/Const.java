@@ -45,6 +45,12 @@ public class Const {
     public final static String ADMIN_ANDROID_ID = "5915737b8962ff5d";
     public final static String VVIP_ANDROID_ID = "4d9546db1392bca5";
 
+    public static String ACTIVITY_TYPE_MAIN = "MainActivity";
+    public static String ACTIVITY_TYPE_DETAIL = "DiaryDetailActivity";
+    public static String ACTIVITY_TYPE_New = "NewDiaryActivity";
+    public static String ACTIVITY_TYPE_SETTING = "SettingActivity";
+    public static String ACTIVITY_TYPE_FEEDBACK = "FeedbackActivity";
+
     // 기분 정의
     public enum Mood {
         NONE(0), HAPPY(1), SMILE(2), BLANK(3), SAD(4), NERVOUS(5);

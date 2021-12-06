@@ -22,6 +22,8 @@ public class SplashActivity extends AppCompatActivity {
 
     Location location = null;
 
+    Intent nextIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,11 @@ public class SplashActivity extends AppCompatActivity {
         Utility.putString(getApplicationContext(), Const.SP_KEY_ANDROID_ID, Utility.getAndroidId(this));
 
         Const.todayDiary = null;
+
+        nextIntent = new Intent();
+        if(getIntent() != null && getIntent().hasExtra("moveActivity")) {
+            nextIntent = getIntent();
+        }
 
         // 앱을 처음 설치하거나 재설치 했을 경우, DB에 닉네임이 있는 지 확인한 후 닉네임 값을 가져온다.
         // 기기에 닉네임이 저장되어있다면 닉네임을 사용하고 없다면 보여주지 않는다.
@@ -107,14 +114,13 @@ public class SplashActivity extends AppCompatActivity {
 
     private void gotoNextActivity() {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            Intent nextIntent;
             @Override
             public void run() {
                 if (Utility.getString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER).equals("Y")) {
-                    nextIntent = new Intent(SplashActivity.this, PinActivity.class);
+                    nextIntent.setClass(SplashActivity.this, PinActivity.class);
                     nextIntent.putExtra(Const.INTENT_KEY_IS_LOGIN, true);
                 } else {
-                    nextIntent = new Intent(SplashActivity.this, MainActivity.class);
+                    nextIntent.setClass(SplashActivity.this, MainActivity.class);
                 }
 
                 startActivity(nextIntent);

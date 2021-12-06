@@ -27,6 +27,10 @@ import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.dto.PhotoInfo;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -36,6 +40,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Utility {
     public static boolean isStringNullOrEmpty(String text) {
@@ -568,6 +574,54 @@ public class Utility {
 
     public static Boolean getBoolean(Context context, String key, boolean defValue) {
         return getSharedPreference(context).getBoolean(key, defValue);
+    }
+
+    public static void putWidgetStatus(Context context, HashMap<Integer, Boolean> sMap) {
+
+        Iterator<Integer> iterator = sMap.keySet().iterator();
+        JSONArray jsonArray = new JSONArray();
+
+        while (iterator.hasNext()) {
+            int sKey = iterator.next();
+            boolean status = sMap.get(sKey);
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("statusKey", sKey);
+                jsonObject.put("status", status);
+                jsonArray.put(jsonObject);
+                putString(context, "WidgetStatus", jsonArray.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static HashMap<Integer, Boolean> getWidgetStatusMap(Context context) {
+        HashMap<Integer, Boolean> sMap = new HashMap<>();
+
+        String jsonString = getString(context, "WidgetStatus");
+
+        try {
+            JSONArray jsonArray = new JSONArray(jsonString);
+            for(int i = 0; i < jsonArray.length(); i++) {
+
+                JSONObject object = jsonArray.getJSONObject(i);
+                int sKey = object.getInt("statusKey");
+                boolean status = object.getBoolean("status");
+                sMap.put(sKey, status);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return sMap;
+    }
+
+    public static void clearWidgetStatusMap(Context context) {
+        SharedPreferences.Editor editor = getSharedPreference(context).edit();
+        editor.remove("WidgetStatus");
+        editor.commit();
     }
 
     /***

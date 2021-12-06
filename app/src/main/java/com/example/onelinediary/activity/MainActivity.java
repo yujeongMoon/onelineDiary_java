@@ -118,6 +118,7 @@ public class MainActivity extends FragmentActivity {
                 public void initDiaryCompleted() {
                     // 오늘의 일기가 있는지 확인하고 메인의 아이콘을 추가버튼 또는 오늘의 기분으로 변경해준다.
                     checkExistDiary();
+                    moveSelectedActivity();
                 }
 
                 @Override
@@ -150,8 +151,29 @@ public class MainActivity extends FragmentActivity {
                 // smoothScroll = false : 애니메이션 없음
                 mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
             }
+
             loading = false;
         });
+    }
+
+    private void moveSelectedActivity() {
+        if(getIntent() != null) {
+            Intent moveIntent = getIntent();
+            if(getIntent().hasExtra("moveActivity")) {
+                try {
+                    if(getIntent().getStringExtra("moveActivity").equals(Const.ACTIVITY_TYPE_DETAIL)
+                    || getIntent().getStringExtra("moveActivity").equals(Const.ACTIVITY_TYPE_New)) {
+                        addNewDiary();
+                    } else {
+                        moveIntent.setClass(this, Class.forName(getPackageName() + ".activity." + getIntent().getStringExtra("moveActivity")));
+                        startActivity(moveIntent);
+                    }
+                    getIntent().removeExtra("moveActivity");
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void checkExistDiary() {

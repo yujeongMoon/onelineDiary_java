@@ -32,6 +32,7 @@ public class PinActivity extends AppCompatActivity {
     StringBuilder stringBuilder = new StringBuilder();
 
     Vibrator vibrator;
+    Intent mainIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,12 @@ public class PinActivity extends AppCompatActivity {
 
         pinBinding = ActivityPinBinding.inflate(getLayoutInflater());
         setContentView(pinBinding.getRoot());
+
+        mainIntent = new Intent();
+        if(getIntent() != null) {
+            mainIntent = getIntent();
+        }
+        mainIntent.setClass(this, MainActivity.class);
 
         isLogin = getIntent().getBooleanExtra(Const.INTENT_KEY_IS_LOGIN, false);
 
@@ -83,7 +90,6 @@ public class PinActivity extends AppCompatActivity {
                         if (isLogin) {
                             // 로그인의 경우, 설정한 pin 번호와 일치하면 메인 화면으로 이동 시켜준다.
                             if (Utility.getString(getApplicationContext(), Const.SP_KEY_PIN_NUMBER).equals(stringBuilder.toString())) {
-                                Intent mainIntent = new Intent(PinActivity.this, MainActivity.class);
                                 startActivity(mainIntent);
                                 finish();
                             } else {

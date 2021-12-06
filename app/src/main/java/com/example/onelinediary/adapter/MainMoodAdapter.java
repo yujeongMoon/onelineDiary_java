@@ -17,7 +17,6 @@ import com.example.onelinediary.activity.DiaryDetailActivity;
 import com.example.onelinediary.activity.MainActivity;
 import com.example.onelinediary.activity.NewDiaryActivity;
 import com.example.onelinediary.constant.Const;
-import com.example.onelinediary.databinding.ViewholderMoodItemBinding;
 import com.example.onelinediary.dialog.YesNoDialog;
 import com.example.onelinediary.dto.Diary;
 import com.example.onelinediary.utiliy.DatabaseUtility;
@@ -143,6 +142,7 @@ public class MainMoodAdapter extends BaseAdapter {
                             // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
                             Const.todayDiary = null;
                             Const.deleteDiary = true;
+                            Utility.putString(context, "todayDiary", null);
 
                             ((Activity)context).runOnUiThread(() -> ((MainActivity)context).notifyToPager());
                         } else {

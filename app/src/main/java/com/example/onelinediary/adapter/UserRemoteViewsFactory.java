@@ -7,11 +7,8 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.example.onelinediary.R;
-import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.dto.Feedback;
-import com.example.onelinediary.dto.WidgetFeedList;
 import com.example.onelinediary.dto.WidgetUserList;
-import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
 import com.google.gson.Gson;
 
@@ -34,9 +31,6 @@ public class UserRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
     //DB를 대신하여 arrayList에 데이터를 추가하는 함수ㅋㅋ
     public void setData() {
-//        if(Const.feedbackList != null) {
-//            arrayList = Const.feedbackList;
-//        }
         userList.clear();
         userLastFeedbackList.clear();
 
@@ -91,12 +85,9 @@ public class UserRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         listviewWidget.setTextViewText(R.id.date, reportingDate[1] + " " + reportingDate[2]);
 
         // 항목 선택 이벤트 발생 시 인텐트에 담겨야 할 항목 데이터를 추가해주는 코드
-        Intent dataIntent = new Intent();
-//        dataIntent.putExtra("item_id", arrayList.get(position)._id);
-//        dataIntent.putExtra("item_data", arrayList.get(position).content);
-//        listviewWidget.setOnClickFillInIntent(R.id.text1, dataIntent);
-        //setOnClickFillInIntent 브로드캐스트 리시버에서 항목 선택 이벤트가 발생할 때 실행을 의뢰한 인텐트에 각 항목의 데이터를 추가해주는 함수
-        //브로드캐스트 리시버의 인텐트와 Extra 데이터가 담긴 인텐트를 함치는 역할을 한다.
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtra("androidId", userList.get(position));
+        listviewWidget.setOnClickFillInIntent(R.id.user_layout, fillInIntent);
 
         return listviewWidget;
     }

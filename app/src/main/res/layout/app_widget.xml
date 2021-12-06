@@ -14,7 +14,7 @@
         android:gravity="center"
         android:text="2021년 11월 11일"
         android:textColor="@color/pattern_dot_enb"
-        android:textSize="18dp"/>
+        android:textSize="18dp" />
 
     <ImageView
         android:id="@+id/iv_refresh"
@@ -85,8 +85,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="오늘의 기분"
+                    android:textSize="15dp"
                     android:layout_gravity="center"
                     android:textColor="@color/pattern_dot_enb"/>
+
                 <ImageView
                     android:id="@+id/iv_mood"
                     android:layout_width="40dp"
@@ -95,6 +97,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"/>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/layout_weather"
                 android:layout_width="0dp"
@@ -103,12 +106,15 @@
                 android:orientation="vertical"
                 android:background="@drawable/round_11dp"
                 android:padding="10dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="오늘의 날씨"
+                    android:textSize="15dp"
                     android:layout_gravity="center"
                     android:textColor="@color/pattern_dot_enb"/>
+
                 <ImageView
                     android:id="@+id/iv_weather"
                     android:layout_width="40dp"
@@ -117,7 +123,9 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"/>
             </LinearLayout>
+
         </LinearLayout>
+
         <RelativeLayout
             android:id="@+id/layout_feedback_root"
             android:layout_width="match_parent"
@@ -126,24 +134,60 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/round_11dp_feedback">
 
+            <RelativeLayout
+                android:id="@+id/feedback_title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_round_top"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/arrow_left_24"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/face_black_24" />
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="feedback"
+                        android:textColor="@color/pattern_dot_enb"
+                        android:textSize="15dp" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
             <ListView
                 android:id="@+id/user_list_feedback"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_below="@+id/feedback_title_bar" />
 
             <ListView
                 android:id="@+id/list_feedback"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:layout_below="@+id/feedback_title_bar"/>
         </RelativeLayout>
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/layout_manager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_date"
-        android:visibility="gone">
 
     </RelativeLayout>
+
 </RelativeLayout>

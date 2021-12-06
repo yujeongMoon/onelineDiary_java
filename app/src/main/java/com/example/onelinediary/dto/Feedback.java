@@ -9,6 +9,7 @@ public class Feedback {
     private String reportingDate; // 작성한 날짜 ex) 2021년 11월 4일 (목)
     private String reportingTime; // 작성한 시간 ex) 오전 10:22
     private String contents = ""; // 작성 내용
+    private String feedbackKey = ""; // 피드백 키값
 
     private boolean isAdmin = false;
     private String profileImageName = "";
@@ -95,5 +96,13 @@ public class Feedback {
 
     public void setUserAndroidId(String userAndroidId) {
         UserAndroidId = userAndroidId;
+    }
+
+    public String getFeedbackKey() {
+        return feedbackKey;
+    }
+
+    public void setFeedbackKey(String feedbackKey) {
+        this.feedbackKey = feedbackKey;
     }
 }
