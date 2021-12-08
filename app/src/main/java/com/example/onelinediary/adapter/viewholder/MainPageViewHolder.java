@@ -116,7 +116,7 @@ public class MainPageViewHolder extends RecyclerView.ViewHolder {
     public class SingleTapGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if (velocityY > 0) {
+            if (velocityX > 0) {
                 // 이전 달로 이동
                 if (onDiaryInterface != null)
                     onDiaryInterface.onPagerScroll(true);

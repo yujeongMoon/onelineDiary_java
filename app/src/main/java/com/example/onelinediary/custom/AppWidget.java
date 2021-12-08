@@ -34,44 +34,46 @@ import java.util.HashMap;
  * Implementation of App Widget functionality.
  */
 public class AppWidget extends AppWidgetProvider {
+    private final String INTENT_KEY_APP_WIDGET_ID = "appWidgetId";
+
     private final String ACTION_REFRESH_USER_LIST = "userList";
     private final String ACTION_REFRESH_FEEDBACK_LIST = "feedbackList";
 
-    Intent selectedItem;
+    private final String ACTION_MOVE = "action.move";
+    private final String ACTION_BACK = "action.back";
+
+    private final String ACTION_ACTIVITY = "action.activity";
+    private final String ACTION_ACTIVITY_MAIN = "action.activity.main";
+    private final String ACTION_ACTIVITY_SETTING = "action.activity.setting";
+    private final String ACTION_ACTIVITY_FEEDBACK = "action.activity.feedback";
+    private final String ACTION_ACTIVITY_DETAIL_DIARY = "action.activity.detailDiary";
+    private final String ACTION_ACTIVITY_NEW_DIARY = "action.activity.NewDiary";
+    public static final String ACTION_NOTIFICATION_REPLY = "action.notification.reply";
 
     private RemoteViews widget;
 
     // 위젯이 설치될 때마다 호출
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // There may be multiple widgets active, so update all of them
         HashMap<Integer, Boolean> statusMap = Utility.getWidgetStatusMap(context);
         for (int appWidgetId : appWidgetIds) {
-
-            Log.e("++++++++++++++++++++++++++++++++", "+++++++++++++++statusMap.size()+++++++++++++++++" + statusMap.size());
-            Log.e("++++++++++++++++++++++++++++++++", "+++++++++++++++statusMap.containsKey(appWidgetId)+++++++++++++++++" + statusMap.containsKey(appWidgetId));
-            /**
-             * 프리퍼런스에 저장된 위젯 아이디가 존재하는지 체크한다.
-             */
+            // proference에 위젯 아이디가 존재하는지 체크한다.
+            // 위젯을 처음 생성하거나 새로 추가된 위젯을 경우, 초기값을 설정한다.
             if(statusMap.size() == 0 || !statusMap.containsKey(appWidgetId)) {
-
-                Log.e("++++++++++++++++++++++++++++++++", "+++++++++++++++statusMap create!!!+++++++++++++++++" + appWidgetId);
-
-                /**
-                 * 초기값을 프리퍼런스에 저장.
-                 */
+                // statusMap.put(앱 위젯 아이디, 유저 리스트 화면 노출 여부);
+                // 관리자 일 경우, 유저 리스트 화면을 먼저 보여줘야하기 때문에 true로 설정해준다.
                 if (Utility.getAndroidId(context).equals(Const.ADMIN_ANDROID_ID)) {
                     statusMap.put(appWidgetId, true);
                 } else {
                     statusMap.put(appWidgetId, false);
                 }
+                // proference에 위젯 아이디와 화면 노출 여부를 저장한다.
                 Utility.putWidgetStatus(context, statusMap);
             }
 
+            // 위젯을 새로 업데이트한다.
             updateAppWidget(context, appWidgetManager, appWidgetId, statusMap, null);
         }
-
-        Log.e("++++++++++++++++++++++++++++++++", "+++++++++++++++onUpdate+++++++++++++++++");
 
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
@@ -79,22 +81,20 @@ public class AppWidget extends AppWidgetProvider {
     // 위젯의 크기 및 변경될 때마다 호출
     private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                  int appWidgetId, HashMap<Integer, Boolean> statusMap, String androidId) {
-
-        Log.e("++++++++++++++++++++++++++++++++", "+++++++++++++++updateAppWidget+++++++++++++++++" + statusMap.size());
-
         widget = new RemoteViews(context.getPackageName(), R.layout.app_widget);
 
         if (Utility.getAndroidId(context).equals(Const.ADMIN_ANDROID_ID) && statusMap.get(appWidgetId)) { // 관리자
+            // 위의 조건을 통과했다는 것은 관리자이고 유저 리스트 화면이 보이는 상태이기 때문에
+            // 새로 상태 값을 저장한다.
             putWidgetStatus(context, appWidgetId, true, statusMap);
+            // 유저 리스트를 불러온다.
             getUserList(context, appWidgetId, appWidgetManager, statusMap);
         } else { // 사용자
             putWidgetStatus(context, appWidgetId, false, statusMap);
 
             String andId = Utility.getAndroidId(context);
-            Log.e("++++++++++++++4d9546db1392bca5++++++++++++++++++", "+++++++++++++++androidId11+++++++++++++++++" +andId);
             if (!TextUtils.isEmpty(androidId)) {
                 andId = androidId;
-                Log.e("++++++++++++++4d9546db1392bca5++++++++++++++++++", "+++++++++++++++androidId22+++++++++++++++++" +andId);
             }
 
             getFeedback(context, andId, appWidgetId, appWidgetManager, statusMap);
@@ -111,14 +111,13 @@ public class AppWidget extends AppWidgetProvider {
     // 위젯이 처음 생성될때 호출되며, 동일한 위젯의 경우 처음 호출
     @Override
     public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
     }
 
     // 위젯의 마지막 인스턴스가 제거될때 호출
     @Override
     public void onDisabled(Context context) {
+        // 위젯이 전체가 삭제되면 preference에 저장된 상태 값을 삭제한다.
         Utility.clearWidgetStatusMap(context);
-        // Enter relevant functionality for when the last widget is disabled
     }
 
     @Override
@@ -126,10 +125,10 @@ public class AppWidget extends AppWidgetProvider {
         final String action = intent.getAction();
         AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         ComponentName cn = new ComponentName(context, AppWidget.class);
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++onReceive+++++++++++++++++" + action);
 
         HashMap<Integer, Boolean> statusMap = Utility.getWidgetStatusMap(context);
 
+        // 위젯이 업데이트 되었을 때
         if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
             // refresh all your widgets
 //            AppWidgetManager mgr = AppWidgetManager.getInstance(context);
@@ -139,59 +138,53 @@ public class AppWidget extends AppWidgetProvider {
 //            } else {
 //                mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn), R.id.list_feedback);
 //            }
-//            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++notifyAppWidgetViewDataChanged+++++++++++++++++");
+            // 피드백 화면에서 새로고침 버튼을 눌렀을 때
         } else if (action.contains(ACTION_REFRESH_FEEDBACK_LIST)) {
             String[] actionSplit = action.split("\\.");
             String androidId = actionSplit[1];
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++ACTION_REFRESH_FEEDBACK_LIST androidId +++++++++++++++++" + androidId);
             int appWidgetId = Integer.parseInt(actionSplit[2]);
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++ACTION_REFRESH_FEEDBACK_LIST appWidgetId+++++++++++++++++" + appWidgetId);
-            selectedItem = intent;
-//            onUpdate(context, mgr, mgr.getAppWidgetIds(cn));
             updateAppWidget(context, mgr, appWidgetId, statusMap, androidId);
+            // 유저 리스트 화면에서 새로고침 버튼을 눌렀을 때
         } else if (action.contains(ACTION_REFRESH_USER_LIST)) {
             String[] actionSplit = action.split("\\.");
             String androidId = actionSplit[1];
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++ACTION_REFRESH_FEEDBACK_LIST androidId +++++++++++++++++" + androidId);
             int appWidgetId = Integer.parseInt(actionSplit[2]);
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++ACTION_REFRESH_FEEDBACK_LIST appWidgetId+++++++++++++++++" + appWidgetId);
-            selectedItem = null;
-//            onUpdate(context, mgr, mgr.getAppWidgetIds(cn));
             updateAppWidget(context, mgr, appWidgetId, statusMap, androidId);
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++ACTION_REFRESH_USER_LIST+++++++++++++++++");
-        } else if (action.contains("action.move")) {
-            int appWidgetId = Integer.parseInt(action.substring(action.lastIndexOf("_") + 1));
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++getAppWidgetIds+++++++++++++++++" + appWidgetId);
+            // 유저 리스트에서 한 아이템을 클릭했을 때
+        } else if (action.contains(ACTION_MOVE)) {
+            String[] actionSplit = action.split("\\.");
+            int appWidgetId = Integer.parseInt(actionSplit[2]);
             putWidgetStatus(context, appWidgetId, false, statusMap);
-            updateAppWidget(context, mgr, appWidgetId, statusMap, intent.getStringExtra("androidId"));
-        } else if (action.contains("action.back")) {
+            updateAppWidget(context, mgr, appWidgetId, statusMap, intent.getStringExtra(Const.INTENT_KEY_ANDROID_ID));
+            // 피드백 화면에서 뒤로가기 버튼을 눌렀을 때
+        } else if (action.contains(ACTION_BACK)) {
             String[] actionSplit = action.split("\\.");
             int appWidgetId = Integer.parseInt(actionSplit[2]);
             putWidgetStatus(context, appWidgetId, true, statusMap);
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++action.back+++++++++++++++++" + appWidgetId);
-
             new Handler(Looper.getMainLooper()).postDelayed(() -> updateAppWidget(context, mgr, appWidgetId, statusMap, null), 500);
-        } else if (action.contains("action.activity")) {
+            // 앱을 실행시킬 때
+            // 액션에 따라 액티비티의 이름을 넘겨준다.
+        } else if (action.contains(ACTION_ACTIVITY)) {
             Intent intent1 = new Intent(context, SplashActivity.class);
             intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            if (action.equals("action.activity.setting")) {
-                intent1.putExtra("moveActivity", Const.ACTIVITY_TYPE_SETTING);
-            } else if (action.equals("action.activity.feedback")) {
-                intent1.putExtra("moveActivity", Const.ACTIVITY_TYPE_FEEDBACK);
-                intent1.putExtra("androidId", intent.getStringExtra("androidId"));
-            } else if (action.equals("action.activity.detailDiary")) {
-                intent1.putExtra("moveActivity", Const.ACTIVITY_TYPE_DETAIL);
-            } else if (action.equals("action.activity.NewDiary")) {
-                intent1.putExtra("moveActivity", Const.ACTIVITY_TYPE_New);
+            if (action.equals(ACTION_ACTIVITY_SETTING)) {
+                intent1.putExtra(Const.INTENT_KEY_MOVE_ACTIVITY, Const.ACTIVITY_TYPE_SETTING);
+            } else if (action.equals(ACTION_ACTIVITY_FEEDBACK)) {
+                intent1.putExtra(Const.INTENT_KEY_MOVE_ACTIVITY, Const.ACTIVITY_TYPE_FEEDBACK);
+                intent1.putExtra(Const.INTENT_KEY_ANDROID_ID, intent.getStringExtra(Const.INTENT_KEY_ANDROID_ID));
+            } else if (action.equals(ACTION_ACTIVITY_DETAIL_DIARY)) {
+                intent1.putExtra(Const.INTENT_KEY_MOVE_ACTIVITY, Const.ACTIVITY_TYPE_DETAIL);
+            } else if (action.equals(ACTION_ACTIVITY_NEW_DIARY)) {
+                intent1.putExtra(Const.INTENT_KEY_MOVE_ACTIVITY, Const.ACTIVITY_TYPE_New);
             }
 
             context.startActivity(intent1);
-        } else if (action.equals("action.notification.reply")) {
+        } else if (action.equals(ACTION_NOTIFICATION_REPLY)) {
             Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
             String message = "";
             if (remoteInput != null) {
-                message = remoteInput.getCharSequence("key_text_reply").toString();
+                message = remoteInput.getCharSequence(Const.KEY_TEXT_REPLY).toString();
             }
 
             if (!TextUtils.isEmpty(message)) {
@@ -202,26 +195,24 @@ public class AppWidget extends AppWidgetProvider {
                 feedback.setReportingTime(Utility.getTime_a_hh_mm());
                 feedback.setContents(message);
                 feedback.setAdmin(Utility.getAndroidId(context).equals(Const.ADMIN_ANDROID_ID));
-                feedback.setUserAndroidId(intent.getStringExtra("userAndroidId"));
-                feedback.setProfileImageName(intent.getStringExtra("userProfileImageName"));
-                feedback.setUserNickname(intent.getStringExtra("userNickname"));
+                feedback.setUserAndroidId(intent.getStringExtra(Const.INTENT_KEY_USER_ANDROID_ID));
+                feedback.setProfileImageName(intent.getStringExtra(Const.INTENT_KEY_USER_PROFILE_IMAGE_NAME));
+                feedback.setUserNickname(intent.getStringExtra(Const.INTENT_KEY_USER_NICKNAME));
 
-                DatabaseUtility.writeFeedback(intent.getStringExtra("userAndroidId"), feedback, isSuccess -> {
+                DatabaseUtility.writeFeedback(intent.getStringExtra(Const.INTENT_KEY_USER_ANDROID_ID), feedback, isSuccess -> {
                     if (isSuccess) {
                         // 관리자 화면에서 보여주기 위한 마지막 피드백 리스트에 추가
                         // 마지막에 작성한 사람이 관리자일 경우에 관리자의 메세지 저장
                         if (!feedback.getContents().equals("")) {
-                            DatabaseUtility.addFeedbackListWithUser(intent.getStringExtra("userAndroidId"), feedback, null);
+                            DatabaseUtility.addFeedbackListWithUser(intent.getStringExtra(Const.INTENT_KEY_USER_ANDROID_ID), feedback, null);
                         }
-                    } else { // 피드백 작성이 실패했을 경우
-
                     }
                 });
             }
 
+            // 현재 떠있는 알림을 삭제한다.
             NotificationManager manager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(0);
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++action.notification.reply+++++++++++++++++" + message);
         }
 
         super.onReceive(context, intent);
@@ -230,13 +221,8 @@ public class AppWidget extends AppWidgetProvider {
 
     private void getUserList(Context context, int appWidgetId, AppWidgetManager appWidgetManager, HashMap<Integer, Boolean> statusMap) {
         DatabaseUtility.readFeedbackListWithUser(context, isSuccess -> {
-            if(isSuccess) {
-                Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++getUserList++++++++++++++++" +appWidgetManager);
-
-            } else {
-                Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++false getUserList++++++++++++++++");
-            }
-            if(Utility.getWidgetStatusMap(context).get(appWidgetId)) {
+            // 유저 리스트 화면 노출 여부가 true일 때(관리자만 보는 화면)
+            if(isSuccess && Utility.getWidgetStatusMap(context).get(appWidgetId)) {
                 // RemoteViewsService 실행 등록시키는 함수
                 Intent serviceIntent = new Intent(context, UserRemoteViewsService.class);
                 widget.setRemoteAdapter(R.id.user_list_feedback, serviceIntent);
@@ -244,33 +230,27 @@ public class AppWidget extends AppWidgetProvider {
                 widgetViewInit(context, widget, appWidgetId, null, statusMap);
 
                 Intent intent = new Intent(context, getClass());
-                intent.setAction("action.move_" + appWidgetId );
+                intent.setAction(ACTION_MOVE + "." + appWidgetId);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
                 widget.setPendingIntentTemplate(R.id.user_list_feedback, pendingIntent);
 
                 appWidgetManager.updateAppWidget(appWidgetId, widget);
                 appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.user_list_feedback);
             }
-
         });
     }
 
     private void getFeedback(Context context, String androidId, int appWidgetId, AppWidgetManager appWidgetManager, HashMap<Integer, Boolean> statusMap) {
         DatabaseUtility.readFeedback(context, androidId, isSuccess -> {
-            Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++getFeedback androidId++++++++++++++++" + androidId);
-            /*if(isSuccess) {
-
-            } else {
-                Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++false getFeedback++++++++++++++++");
-            }*/
-            if(!Utility.getWidgetStatusMap(context).get(appWidgetId)) {
+            // 유저 리스트 화면 노출 여부가 false일 때
+            if(isSuccess && !Utility.getWidgetStatusMap(context).get(appWidgetId)) {
                 // RemoteViewsService 실행 등록시키는 함수
                 Intent serviceIntent = new Intent(context, FeedbackRemoteViewsService.class);
                 widget.setRemoteAdapter(R.id.list_feedback, serviceIntent);
                 widgetViewInit(context, widget, appWidgetId, androidId, statusMap);
 
                 Intent intent = new Intent(context, getClass());
-                intent.setAction("action.activity.feedback");
+                intent.setAction(ACTION_ACTIVITY_FEEDBACK);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
                 widget.setPendingIntentTemplate(R.id.list_feedback, pendingIntent);
 
@@ -280,7 +260,6 @@ public class AppWidget extends AppWidgetProvider {
                 widget.setScrollPosition(R.id.list_feedback, Const.feedbackList.size() - 1);
                 new Handler(Looper.getMainLooper()).postDelayed(() -> appWidgetManager.updateAppWidget(appWidgetId, widget), 1000);
             }
-
         });
     }
 
@@ -292,31 +271,32 @@ public class AppWidget extends AppWidgetProvider {
         // 닉네임
         view.setTextViewText(R.id.nickname, Utility.getString(context, Const.SP_KEY_NICKNAME));
 
-        setPendingIntent(context, "action.activity.setting", view, R.id.layout_profile, null, 0);
+        // 사용자 정보 레이아웃을 클릭했을 때, 실행되는 인텐트
+        setPendingIntent(context, ACTION_ACTIVITY_SETTING, view, R.id.layout_profile, null, 0);
 
+        // preference에 저장된 오늘의 일기 불러오기
         Gson gson = new Gson();
-        Diary todayDiary = gson.fromJson(Utility.getString(context, "todayDiary"), Diary.class);
+        Diary todayDiary = gson.fromJson(Utility.getString(context, Const.SP_KEY_TODAY_DIARY), Diary.class);
         String action = "";
         // 오늘의 기분
         if (todayDiary != null && todayDiary.getReportingDate().equals(Utility.getDate(Const.REPORTING_DATE_FORMAT))) { // detail
             view.setImageViewResource(R.id.iv_mood, Utility.getResourceImage(context, todayDiary.getIconName()));
-            action = "action.activity.detailDiary";
+            action = ACTION_ACTIVITY_DETAIL_DIARY;
         } else { // add
             view.setImageViewResource(R.id.iv_mood, R.drawable.circle_gray);
-            action = "action.activity.NewDiary";
+            action = ACTION_ACTIVITY_NEW_DIARY;
         }
 
         setPendingIntent(context, action, view, R.id.layout_diary, null, 0);
 
         // 오늘의 날씨
-        if (Utility.getInt(context, "todayWeather") == 0) {
+        if (Utility.getInt(context, Const.SP_KEY_TODAY_WEATHER) == 0) {
             view.setImageViewResource(R.id.iv_weather, R.drawable.circle_gray);
         } else {
-            view.setImageViewResource(R.id.iv_weather, Utility.getInt(context, "todayWeather"));
+            view.setImageViewResource(R.id.iv_weather, Utility.getInt(context, Const.SP_KEY_TODAY_WEATHER));
         }
 
-        setPendingIntent(context, "action.activity.main", view, R.id.layout_weather, null, 0);
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++intent.putExtra+++++++++++++++++" + appWidgetId);
+        setPendingIntent(context, ACTION_ACTIVITY_MAIN, view, R.id.layout_weather, null, 0);
 
         StringBuilder builder = new StringBuilder();
         if (statusMap.get(appWidgetId)) {
@@ -332,8 +312,6 @@ public class AppWidget extends AppWidgetProvider {
         // 새로고침 버튼 동작
         setPendingIntent(context, builder.toString(), view, R.id.iv_refresh, null, 0);
 
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++view change+++++++++++++++++" + statusMap.get(appWidgetId));
-
         if (Utility.getAndroidId(context).equals(Const.ADMIN_ANDROID_ID) && statusMap.get(appWidgetId)) {
             view.setViewVisibility(R.id.iv_back, View.GONE);
             view.setViewVisibility(R.id.user_list_feedback, View.VISIBLE);
@@ -342,7 +320,7 @@ public class AppWidget extends AppWidgetProvider {
             if (Utility.getAndroidId(context).equals(Const.ADMIN_ANDROID_ID)) {
                 view.setViewVisibility(R.id.iv_back, View.VISIBLE);
 
-                setPendingIntent(context, "action.back" + "." + appWidgetId, view, R.id.feedback_title_bar, null, 0);
+                setPendingIntent(context, ACTION_BACK + "." + appWidgetId, view, R.id.feedback_title_bar, null, 0);
             } else {
                 view.setViewVisibility(R.id.iv_back, View.GONE);
                 view.setOnClickPendingIntent(R.id.feedback_title_bar, null);
@@ -357,11 +335,11 @@ public class AppWidget extends AppWidgetProvider {
         intent.setAction(action);
 
         if (!TextUtils.isEmpty(androidId)) {
-            intent.putExtra("androidId", androidId);
+            intent.putExtra(Const.INTENT_KEY_ANDROID_ID, androidId);
         }
 
         if (appWidgetId != 0) {
-            intent.putExtra("appWidgetId", appWidgetId);
+            intent.putExtra(INTENT_KEY_APP_WIDGET_ID, appWidgetId);
         }
 
         view.setOnClickPendingIntent(viewId, PendingIntent.getBroadcast(context, 0, intent, 0));

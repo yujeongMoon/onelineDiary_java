@@ -142,7 +142,7 @@ public class MainMoodAdapter extends BaseAdapter {
                             // 일기가 삭제된 것을 pagerAdapter에게 notify 해준다.
                             Const.todayDiary = null;
                             Const.deleteDiary = true;
-                            Utility.putString(context, "todayDiary", null);
+                            Utility.putString(context, Const.SP_KEY_TODAY_DIARY, null);
 
                             ((Activity)context).runOnUiThread(() -> ((MainActivity)context).notifyToPager());
                         } else {

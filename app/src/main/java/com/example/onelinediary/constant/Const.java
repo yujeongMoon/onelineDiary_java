@@ -30,6 +30,10 @@ public class Const {
     public static String SP_KEY_SET_PIN_NUMBER = "com.example.onelinediary.setPinNumber";
     public static String SP_KEY_PIN_NUMBER = "com.example.onelinediary.pinNumber";
     public static String SP_KEY_PROFILE = "com.example.onelinediary.profile";
+    public static String SP_KEY_NOTIFICATION_IN = "com.example.onelinediary.notification";
+
+    public static String SP_KEY_TODAY_DIARY = "todayDiary";
+    public static String SP_KEY_TODAY_WEATHER = "todayWeather";
 
     public static String INTENT_KEY_MONTH = "month";
     public static String INTENT_KEY_DIARY = "diary";
@@ -37,6 +41,10 @@ public class Const {
     public static String INTENT_KEY_IS_LOGIN = "isLogin";
     public static String INTENT_KEY_ADD_NEW_NOTICE = "addNewNotice";
     public static String INTENT_KEY_SELECTED_ITEM_NOTICE = "SelectedItemNotice";
+    public static String INTENT_KEY_MOVE_ACTIVITY = "moveActivity";
+    public static String INTENT_KEY_USER_NICKNAME = "userNickname";
+    public static String INTENT_KEY_USER_ANDROID_ID = "userAndroidId";
+    public static String INTENT_KEY_USER_PROFILE_IMAGE_NAME = "userProfileImageName";
 
     public static String REPORTING_DATE_FORMAT = "yyyy년 MM월 dd일";
 
@@ -50,6 +58,9 @@ public class Const {
     public static String ACTIVITY_TYPE_New = "NewDiaryActivity";
     public static String ACTIVITY_TYPE_SETTING = "SettingActivity";
     public static String ACTIVITY_TYPE_FEEDBACK = "FeedbackActivity";
+    public static String ACTIVITY_TYPE_NOTICE_LIST = "NoticeListActivity";
+
+    public static String KEY_TEXT_REPLY = "key_text_reply";
 
     // 기분 정의
     public enum Mood {

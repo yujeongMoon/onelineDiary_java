@@ -1,5 +1,6 @@
 package com.example.onelinediary.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import com.example.onelinediary.dto.ItemNotice;
 import com.example.onelinediary.dto.Notice;
 import com.example.onelinediary.utiliy.DatabaseUtility;
 import com.example.onelinediary.utiliy.Utility;
+import com.google.gson.Gson;
 
 public class WriteNoticeActivity extends AppCompatActivity {
     private ActivityWriteNoticeBinding writeNoticeBinding;
@@ -154,6 +156,7 @@ public class WriteNoticeActivity extends AppCompatActivity {
             notice.setTitle(writeNoticeBinding.inputTitle.getText().toString());
             notice.setContents(writeNoticeBinding.inputContents.getText().toString());
 
+            Utility.putBoolean(getApplicationContext(), Const.SP_KEY_NOTIFICATION_IN, true);
             DatabaseUtility.writeNotice(notice, isSuccess -> {
                 if (isSuccess) {
                     new ConfirmDialog(getString(R.string.dialog_message_confirm_action_notice, action), v -> finish()).show(WriteNoticeActivity.this);
@@ -173,5 +176,11 @@ public class WriteNoticeActivity extends AppCompatActivity {
         // 수정한 공지사항을 제일 위로 올라간다.
         deleteNotice();
         addNotice();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Utility.putBoolean(getApplicationContext(), Const.SP_KEY_NOTIFICATION_IN, true);
+        super.onDestroy();
     }
 }

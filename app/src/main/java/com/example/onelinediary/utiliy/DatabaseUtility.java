@@ -1,6 +1,8 @@
 package com.example.onelinediary.utiliy;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -386,31 +388,7 @@ public class DatabaseUtility {
 
                 if (callback != null) {
                     if (Const.feedbackList.size() > 0) {
-                        WidgetFeedList newWidgetFeedList = new WidgetFeedList();
-                        newWidgetFeedList.feedbackArrayList = new ArrayList<>();
-                        int maxCount = 10;
-                        if(Const.feedbackList.size() < maxCount) {
-                            maxCount = Const.feedbackList.size();
-                        }
-                        for (int i = Const.feedbackList.size() - maxCount; i <= Const.feedbackList.size() - 1; i++) {
-                            newWidgetFeedList.feedbackArrayList.add(Const.feedbackList.get(i));
-                        }
-
-                        Gson gson = new Gson();
-                        ArrayList<Feedback> prefFeedbackList = new ArrayList<>();
-                        WidgetFeedList oldWidgetFeedList = gson.fromJson(Utility.getString(context, "WidgetFeedbackList"), WidgetFeedList.class);
-
-                        if(oldWidgetFeedList != null) {
-                            prefFeedbackList.addAll(oldWidgetFeedList.feedbackArrayList);
-                            if (!newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1).getFeedbackKey().equals(oldWidgetFeedList.feedbackArrayList.get(oldWidgetFeedList.feedbackArrayList.size() - 1).getFeedbackKey()) &&
-                                    !newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1).getAndroidId().equals(Utility.getAndroidId(context))) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    noti(context, newWidgetFeedList);
-                                }
-                            }
-                        }
-                        Utility.putString(context, "WidgetFeedbackList", gson.toJson(newWidgetFeedList));
-
+                        setWidgetFeedbackData(context, androidId);
                         callback.onComplete(true);
                     } else {
                         callback.onComplete(false);
@@ -626,7 +604,10 @@ public class DatabaseUtility {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    getNoticeListYear(snapshot.getChildrenCount(), dataSnapshot.getKey(), isSuccess -> callback.onComplete(true, allNoticeList));
+                    getNoticeListYear(snapshot.getChildrenCount(), dataSnapshot.getKey(), isSuccess -> {
+
+                        callback.onComplete(true, allNoticeList);
+                    });
                 }
             }
 
@@ -700,22 +681,20 @@ public class DatabaseUtility {
                     }
                 });
     }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static void noti(Context context, WidgetFeedList newWidgetFeedList) {
-        // Key for the string that's delivered in the action's intent.
-        String KEY_TEXT_REPLY = "key_text_reply";
-
-        String replyLabel = "reply1";
-        RemoteInput remoteInput = new RemoteInput.Builder(KEY_TEXT_REPLY)
+        String replyLabel = "채팅 메세지를 입력하세요!";
+        RemoteInput remoteInput = new RemoteInput.Builder(Const.KEY_TEXT_REPLY)
                 .setLabel(replyLabel)
                 .build();
 
         Feedback feedback = newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1);
         Intent replyIntent = new Intent(context, AppWidget.class);
-        replyIntent.setAction("action.notification.reply");
-        replyIntent.putExtra("userNickname", feedback.getUserNickname());
-        replyIntent.putExtra("userAndroidId", feedback.getUserAndroidId());
-        replyIntent.putExtra("userProfileImageName", feedback.getProfileImageName());
+        replyIntent.setAction(AppWidget.ACTION_NOTIFICATION_REPLY);
+        replyIntent.putExtra(Const.INTENT_KEY_USER_NICKNAME, feedback.getUserNickname());
+        replyIntent.putExtra(Const.INTENT_KEY_USER_ANDROID_ID, feedback.getUserAndroidId());
+        replyIntent.putExtra(Const.INTENT_KEY_USER_PROFILE_IMAGE_NAME, feedback.getProfileImageName());
 
         // Build a PendingIntent for the reply action to trigger.
         PendingIntent replyPendingIntent =
@@ -726,22 +705,65 @@ public class DatabaseUtility {
 
         // Create the reply action and add the remote input.
         NotificationCompat.Action action =
-                new NotificationCompat.Action.Builder(R.drawable.arrow_left_24,
-                        "reply2", replyPendingIntent)
+                new NotificationCompat.Action.Builder(R.drawable.dd,
+                        "입력", replyPendingIntent)
                         .addRemoteInput(remoteInput)
                         .build();
 
         // Build the notification and add the action.
         Notification newMessageNotification = new NotificationCompat.Builder(context, "channelId")
                 .setSmallIcon(R.drawable.face_black_24)
-                .setContentTitle("피드백")
+                .setContentTitle(newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1).getNickname())
                 .setContentText(newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1).getContents())
                 .setPriority(Notification.PRIORITY_HIGH)
                 .addAction(action)
                 .build();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("channelId", "피드백 채널", importance);
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         // Issue the notification.
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(0, newMessageNotification);
+    }
+
+    public static void setWidgetFeedbackData(Context context, String androidId) {
+        WidgetFeedList newWidgetFeedList = new WidgetFeedList();
+        newWidgetFeedList.feedbackArrayList = new ArrayList<>();
+        int maxCount = 10;
+        if(Const.feedbackList.size() < maxCount) {
+            maxCount = Const.feedbackList.size();
+        }
+        for (int i = Const.feedbackList.size() - maxCount; i <= Const.feedbackList.size() - 1; i++) {
+            newWidgetFeedList.feedbackArrayList.add(Const.feedbackList.get(i));
+        }
+
+        Gson gson = new Gson();
+        ArrayList<Feedback> prefFeedbackList = new ArrayList<>();
+        WidgetFeedList oldWidgetFeedList = gson.fromJson(Utility.getString(context, "WidgetFeedbackList"), WidgetFeedList.class);
+
+        String lastChat = Utility.getString(context, "feedbackLastChat_" + androidId);
+        boolean isNeedNotification = true;
+        if(!TextUtils.isEmpty(lastChat) && lastChat.equals(newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1).getFeedbackKey())) {
+            isNeedNotification = false;
+        }
+
+        if(oldWidgetFeedList != null) {
+            prefFeedbackList.addAll(oldWidgetFeedList.feedbackArrayList);
+            if (!newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1).getFeedbackKey().equals(oldWidgetFeedList.feedbackArrayList.get(oldWidgetFeedList.feedbackArrayList.size() - 1).getFeedbackKey()) &&
+                    !newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1).getAndroidId().equals(Utility.getAndroidId(context))) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if(isNeedNotification) {
+                        Utility.putString(context, "feedbackLastChat_" + androidId, newWidgetFeedList.feedbackArrayList.get(newWidgetFeedList.feedbackArrayList.size() - 1).getFeedbackKey());
+                        noti(context, newWidgetFeedList);
+                    }
+                }
+            }
+        }
+        Utility.putString(context, "WidgetFeedbackList", gson.toJson(newWidgetFeedList));
     }
 }

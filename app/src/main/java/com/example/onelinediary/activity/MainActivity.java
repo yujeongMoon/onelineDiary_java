@@ -159,16 +159,16 @@ public class MainActivity extends FragmentActivity {
     private void moveSelectedActivity() {
         if(getIntent() != null) {
             Intent moveIntent = getIntent();
-            if(getIntent().hasExtra("moveActivity")) {
+            if(getIntent().hasExtra(Const.INTENT_KEY_MOVE_ACTIVITY)) {
                 try {
-                    if(getIntent().getStringExtra("moveActivity").equals(Const.ACTIVITY_TYPE_DETAIL)
-                    || getIntent().getStringExtra("moveActivity").equals(Const.ACTIVITY_TYPE_New)) {
+                    if(getIntent().getStringExtra(Const.INTENT_KEY_MOVE_ACTIVITY).equals(Const.ACTIVITY_TYPE_DETAIL)
+                    || getIntent().getStringExtra(Const.INTENT_KEY_MOVE_ACTIVITY).equals(Const.ACTIVITY_TYPE_New)) {
                         addNewDiary();
                     } else {
-                        moveIntent.setClass(this, Class.forName(getPackageName() + ".activity." + getIntent().getStringExtra("moveActivity")));
+                        moveIntent.setClass(this, Class.forName(getPackageName() + ".activity." + getIntent().getStringExtra(Const.INTENT_KEY_MOVE_ACTIVITY)));
                         startActivity(moveIntent);
                     }
-                    getIntent().removeExtra("moveActivity");
+                    getIntent().removeExtra(Const.INTENT_KEY_MOVE_ACTIVITY);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -190,7 +190,7 @@ public class MainActivity extends FragmentActivity {
                     Const.todayDiary = todayDiary;
 
                     Gson gson = new Gson();
-                    Utility.putString(this, "todayDiary", gson.toJson(todayDiary));
+                    Utility.putString(this, Const.SP_KEY_TODAY_DIARY, gson.toJson(todayDiary));
                     mainBinding.btnAddNewDiary.setImageResource(Utility.migrationMoodToEmoji(this, todayDiary));
                 }
             }
@@ -290,7 +290,7 @@ public class MainActivity extends FragmentActivity {
                             w = "";
                     }
 
-                    Utility.putInt(this, "todayWeather", resId);
+                    Utility.putInt(this, Const.SP_KEY_TODAY_WEATHER, resId);
                     Const.weatherResId = resId;
                     Const.weather = w;
                 } else {

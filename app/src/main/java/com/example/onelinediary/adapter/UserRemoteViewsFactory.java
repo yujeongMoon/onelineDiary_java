@@ -7,6 +7,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.example.onelinediary.R;
+import com.example.onelinediary.constant.Const;
 import com.example.onelinediary.dto.Feedback;
 import com.example.onelinediary.dto.WidgetUserList;
 import com.example.onelinediary.utiliy.Utility;
@@ -22,7 +23,6 @@ public class UserRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     public ArrayList<Feedback> userLastFeedbackList;
 
     public UserRemoteViewsFactory(Context context) {
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++MyRemoteViewsFactory++++++++++++++++");
         this.context = context;
         userList = new ArrayList<>();
         userLastFeedbackList = new ArrayList<>();
@@ -38,7 +38,6 @@ public class UserRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         WidgetUserList widgetUserList = gson.fromJson(Utility.getString(context, "WidgetUserList"), WidgetUserList.class);
         userList.addAll(widgetUserList.userList);
         userLastFeedbackList.addAll(widgetUserList.userLastFeedbackList);
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++MyRemoteViewsFactory++++++++++++++++" + userList.size());
     }
 
     //이 모든게 필수 오버라이드 메소드
@@ -74,8 +73,6 @@ public class UserRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     public RemoteViews getViewAt(int position) {
         RemoteViews listviewWidget = new RemoteViews(context.getPackageName(), R.layout.widget_item_user_list);
 
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++getViewAt++++++++++++++++" + userLastFeedbackList.get(position).getContents());
-
         listviewWidget.setTextViewText(R.id.feedback_last_contents, userLastFeedbackList.get(position).getContents());
         listviewWidget.setTextViewText(R.id.date, userLastFeedbackList.get(position).getReportingDate());
         listviewWidget.setTextViewText(R.id.nickname, userLastFeedbackList.get(position).getUserNickname());
@@ -86,7 +83,7 @@ public class UserRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
 
         // 항목 선택 이벤트 발생 시 인텐트에 담겨야 할 항목 데이터를 추가해주는 코드
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtra("androidId", userList.get(position));
+        fillInIntent.putExtra(Const.INTENT_KEY_ANDROID_ID, userList.get(position));
         listviewWidget.setOnClickFillInIntent(R.id.user_layout, fillInIntent);
 
         return listviewWidget;

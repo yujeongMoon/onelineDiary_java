@@ -22,22 +22,16 @@ public class FeedbackRemoteViewsFactory implements RemoteViewsService.RemoteView
     public ArrayList<Feedback> arrayList;
 
     public FeedbackRemoteViewsFactory(Context context) {
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++MyRemoteViewsFactory++++++++++++++++");
         this.context = context;
         arrayList = new ArrayList<>();
         setData();
     }
 
-    //DB를 대신하여 arrayList에 데이터를 추가하는 함수ㅋㅋ
     public void setData() {
-//        if(Const.feedbackList != null) {
-//            arrayList = Const.feedbackList;
-//        }
         arrayList.clear();
         Gson gson = new Gson();
         WidgetFeedList widgetFeedList = gson.fromJson(Utility.getString(context, "WidgetFeedbackList"), WidgetFeedList.class);
         arrayList.addAll(widgetFeedList.feedbackArrayList);
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++MyRemoteViewsFactory++++++++++++++++" + arrayList.size());
     }
 
     //이 모든게 필수 오버라이드 메소드
@@ -57,9 +51,7 @@ public class FeedbackRemoteViewsFactory implements RemoteViewsService.RemoteView
 
     //마지막에 호출되는 함수
     @Override
-    public void onDestroy() {
-
-    }
+    public void onDestroy() { }
 
     // 항목 개수를 반환하는 함수
     @Override
@@ -90,14 +82,12 @@ public class FeedbackRemoteViewsFactory implements RemoteViewsService.RemoteView
             }
         }
 
-        Log.e("++++++++++++++++++++++++++++++++", "++++++++++++++++getViewAt++++++++++++++++" + arrayList.get(position).getContents());
-
         listviewWidget.setTextViewText(R.id.message, arrayList.get(position).getContents());
         listviewWidget.setTextViewText(R.id.time, arrayList.get(position).getReportingTime());
 
         // 항목 선택 이벤트 발생 시 인텐트에 담겨야 할 항목 데이터를 추가해주는 코드
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtra("androidId", arrayList.get(arrayList.size() - 1).getUserAndroidId());
+        fillInIntent.putExtra(Const.INTENT_KEY_ANDROID_ID, arrayList.get(arrayList.size() - 1).getUserAndroidId());
         listviewWidget.setOnClickFillInIntent(layoutId, fillInIntent);
         //setOnClickFillInIntent 브로드캐스트 리시버에서 항목 선택 이벤트가 발생할 때 실행을 의뢰한 인텐트에 각 항목의 데이터를 추가해주는 함수
         //브로드캐스트 리시버의 인텐트와 Extra 데이터가 담긴 인텐트를 함치는 역할을 한다.

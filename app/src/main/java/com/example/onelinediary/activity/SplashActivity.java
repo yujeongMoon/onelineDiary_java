@@ -32,11 +32,12 @@ public class SplashActivity extends AppCompatActivity {
 
         // preference에 안드로이드 아이디를 저장한다.
         Utility.putString(getApplicationContext(), Const.SP_KEY_ANDROID_ID, Utility.getAndroidId(this));
+        Utility.putBoolean(getApplicationContext(), Const.SP_KEY_NOTIFICATION_IN, false);
 
         Const.todayDiary = null;
 
         nextIntent = new Intent();
-        if(getIntent() != null && getIntent().hasExtra("moveActivity")) {
+        if(getIntent() != null && getIntent().hasExtra(Const.INTENT_KEY_MOVE_ACTIVITY)) {
             nextIntent = getIntent();
         }
 
