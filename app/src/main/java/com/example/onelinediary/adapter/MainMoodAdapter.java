@@ -101,6 +101,12 @@ public class MainMoodAdapter extends BaseAdapter {
             viewholder.day = (position - startDayInMonth) + 1 + "";
             viewholder.tvDay.setText(viewholder.day);
 
+            if (Utility.getDayOfWeek(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(viewholder.day)) == 7) {
+                viewholder.tvDay.setTextColor(context.getColor(R.color.blue));
+            } else if (Utility.getDayOfWeek(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(viewholder.day)) == 1) {
+                viewholder.tvDay.setTextColor(context.getColor(R.color.red));
+            }
+
             if (Utility.getMonth().equals(month) && Utility.getDayToInt() == Integer.parseInt(viewholder.tvDay.getText().toString())) {
                 viewholder.line.setVisibility(View.VISIBLE);
             } else {

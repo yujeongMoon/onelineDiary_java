@@ -166,7 +166,7 @@ public class AppWidget extends AppWidgetProvider {
             // 액션에 따라 액티비티의 이름을 넘겨준다.
         } else if (action.contains(ACTION_ACTIVITY)) {
             Intent intent1 = new Intent(context, SplashActivity.class);
-            intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
 
             if (action.equals(ACTION_ACTIVITY_SETTING)) {
                 intent1.putExtra(Const.INTENT_KEY_MOVE_ACTIVITY, Const.ACTIVITY_TYPE_SETTING);

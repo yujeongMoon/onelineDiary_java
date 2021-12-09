@@ -22,7 +22,7 @@
     <color name="common_white">#FFFFFF</color>
     <color name="blue">#0055FF</color>
     <color name="common_invisible">#00000000</color>
-    <color name="common_red">#F00</color>
+    <color name="red">#F00</color>
     <color name="common_dim">#80000000</color>
     <color name="setting_switch">#00aeff</color>
 

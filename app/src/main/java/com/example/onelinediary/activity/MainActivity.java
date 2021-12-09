@@ -227,6 +227,7 @@ public class MainActivity extends FragmentActivity {
     public void onBackPressed() {
         if (pressedBackOnce) {
             super.onBackPressed();
+            return;
         }
 
         pressedBackOnce = true;
