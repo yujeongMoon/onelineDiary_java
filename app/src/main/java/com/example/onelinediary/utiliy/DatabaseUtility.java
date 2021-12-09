@@ -152,14 +152,25 @@ public class DatabaseUtility {
                 // 데이터가 누적되기 때문에 초기화 시켜준다.
                 Const.monthKeyList.clear();
 
+                if (snapshot.getValue() == null || snapshot.getChildrenCount() == 0) {
+                    callback.onComplete(false);
+                }
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Const.monthKeyList.add(dataSnapshot.getKey());
 
                     readMonthDiaryList(context, year, dataSnapshot.getKey(), snapshot.getChildrenCount(), isSuccess -> {
                         if (isSuccess) {
                             Const.diaryList = yearDiaryList;
-                            if (callback != null)
-                                callback.onComplete(true);
+                            if (callback != null) {
+                                if (Const.diaryList.size() == 0) {
+                                    callback.onComplete(false);
+                                } else {
+                                    callback.onComplete(true);
+                                }
+                            }
+                        } else {
+                            callback.onComplete(false);
                         }
                     });
                 }
