@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.example.onelinediary.R;
 import com.example.onelinediary.adapter.GridViewImageItemAdapter;
@@ -43,7 +44,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         ArrayList<Profile> profileList = new ArrayList<>();
         for (String profile : arr) {
-            profileList.add(new Profile(profile, false, null));
+            // 레이아웃의 초기값을 null로 설정하여 앱이 죽는 현상이 발생
+            // 새로운 레이아웃을 초기값으로 설정
+            profileList.add(new Profile(profile, false, new LinearLayout(this)));
         }
 
         imageItemAdapter = new GridViewImageItemAdapter(profileList);

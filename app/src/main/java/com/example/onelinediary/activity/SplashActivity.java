@@ -114,19 +114,16 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void gotoNextActivity() {
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (Utility.getString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER).equals("Y")) {
-                    nextIntent.setClass(SplashActivity.this, PinActivity.class);
-                    nextIntent.putExtra(Const.INTENT_KEY_IS_LOGIN, true);
-                } else {
-                    nextIntent.setClass(SplashActivity.this, MainActivity.class);
-                }
-
-                startActivity(nextIntent);
-                finish();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (Utility.getString(getApplicationContext(), Const.SP_KEY_SET_PIN_NUMBER).equals("Y")) {
+                nextIntent.setClass(SplashActivity.this, PinActivity.class);
+                nextIntent.putExtra(Const.INTENT_KEY_IS_LOGIN, true);
+            } else {
+                nextIntent.setClass(SplashActivity.this, MainActivity.class);
             }
+
+            startActivity(nextIntent);
+            finish();
         }, 3000);
     }
 }

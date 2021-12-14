@@ -50,7 +50,8 @@ public class Const {
 
     public static int PICKER_IMAGE_REQUEST = 100;
 
-    public final static String ADMIN_ANDROID_ID = "5915737b8962ff5d";
+    //    public final static String ADMIN_ANDROID_ID = "5915737b8962ff5d";
+    public final static String ADMIN_ANDROID_ID = "f9670e4b6e4d9a4f"; // 연금 수령자
     public final static String VVIP_ANDROID_ID = "4d9546db1392bca5";
 
     public static String ACTIVITY_TYPE_MAIN = "MainActivity";

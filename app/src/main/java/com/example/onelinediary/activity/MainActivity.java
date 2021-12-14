@@ -107,56 +107,53 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initDiaryList(String year) {
-        DatabaseUtility.readYearDiaryList(this, year, new DatabaseUtility.onCompleteCallback() {
-            @Override
-            public void onComplete(boolean isSuccess) {
-                if (progressDialog != null) {
-                    progressDialog.dismiss();
-                }
+        DatabaseUtility.readYearDiaryList(this, year, isSuccess -> {
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
 
-                if (isSuccess) {
-                    pagerAdapter = new MainPagerAdapter();
-                    pagerAdapter.setDiaryInterface(new MainPagerAdapter.onDiaryInterface() {
-                        @Override
-                        public void initDiaryCompleted() {
-                            // 오늘의 일기가 있는지 확인하고 메인의 아이콘을 추가버튼 또는 오늘의 기분으로 변경해준다.
-                            checkExistDiary();
-                            moveSelectedActivity();
-                        }
-
-                        @Override
-                        public void onPagerScroll(boolean prev) {
-                            // 페이저의 현재 위치
-                            int position = mainBinding.pager.getCurrentItem();
-
-                            if (prev) { // true이면 이전화면, false이면 다음화면
-                                if (position > 0) // 0일 경우, 첫 화면이기 때문에 이동 못함.
-                                    mainBinding.pager.setCurrentItem(position - 1);
-                            } else {
-                                if (position < pagerAdapter.getItemCount() - 1) // 마지막 위치일 경우, 마지막 화면이기 때문에 이동 못함.
-                                    mainBinding.pager.setCurrentItem(position + 1);
-                            }
-                        }
-
-                        @Override
-                        public void onYearSelected(String year) {
-                            if (!TextUtils.isEmpty(year))
-                                initDiaryList(year);
-                        }
-                    });
-                    mainBinding.pager.setAdapter(pagerAdapter);
-
-                    // 현재 달의 페이지를 보여준다.
-                    // 데이터가 순서대로 들어가기 때문에 diaryList의 마지막이 현재 달!
-                    if (!Const.monthKeyList.isEmpty()) {
-                        // onResume() 다음에 setCurrentItem()이 동작하지 않는다는 오류가 있다.
-                        // 그걸 해결하기 위해 post()를 사용해서 현재 아이템의 위치를 설정해준다.
-                        // smoothScroll = false : 애니메이션 없음
-                        mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
+            if (isSuccess) {
+                pagerAdapter = new MainPagerAdapter();
+                pagerAdapter.setDiaryInterface(new MainPagerAdapter.onDiaryInterface() {
+                    @Override
+                    public void initDiaryCompleted() {
+                        // 오늘의 일기가 있는지 확인하고 메인의 아이콘을 추가버튼 또는 오늘의 기분으로 변경해준다.
+                        checkExistDiary();
+                        moveSelectedActivity();
                     }
 
-                    loading = false;
+                    @Override
+                    public void onPagerScroll(boolean prev) {
+                        // 페이저의 현재 위치
+                        int position = mainBinding.pager.getCurrentItem();
+
+                        if (prev) { // true이면 이전화면, false이면 다음화면
+                            if (position > 0) // 0일 경우, 첫 화면이기 때문에 이동 못함.
+                                mainBinding.pager.setCurrentItem(position - 1);
+                        } else {
+                            if (position < pagerAdapter.getItemCount() - 1) // 마지막 위치일 경우, 마지막 화면이기 때문에 이동 못함.
+                                mainBinding.pager.setCurrentItem(position + 1);
+                        }
+                    }
+
+                    @Override
+                    public void onYearSelected(String year1) {
+                        if (!TextUtils.isEmpty(year1))
+                            initDiaryList(year1);
+                    }
+                });
+                mainBinding.pager.setAdapter(pagerAdapter);
+
+                // 현재 달의 페이지를 보여준다.
+                // 데이터가 순서대로 들어가기 때문에 diaryList의 마지막이 현재 달!
+                if (!Const.monthKeyList.isEmpty()) {
+                    // onResume() 다음에 setCurrentItem()이 동작하지 않는다는 오류가 있다.
+                    // 그걸 해결하기 위해 post()를 사용해서 현재 아이템의 위치를 설정해준다.
+                    // smoothScroll = false : 애니메이션 없음
+                    mainBinding.pager.post(() -> mainBinding.pager.setCurrentItem(Const.monthKeyList.size() - 1, false));
                 }
+
+                loading = false;
             }
         });
     }
@@ -199,6 +196,7 @@ public class MainActivity extends FragmentActivity {
                     mainBinding.btnAddNewDiary.setImageResource(Utility.migrationMoodToEmoji(this, todayDiary));
                 }
             } else {
+                Const.todayDiary = null;
                 mainBinding.btnAddNewDiary.setImageResource(R.drawable.add_circle_outline_black);
             }
         }

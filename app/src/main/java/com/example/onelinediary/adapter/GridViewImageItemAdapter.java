@@ -1,6 +1,8 @@
 package com.example.onelinediary.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +56,7 @@ public class GridViewImageItemAdapter extends BaseAdapter {
             if(profileList.get(position).isChecked()) {
                 layout.setBackgroundResource(R.drawable.bg_rectangle_red);
             } else {
-                layout.setBackground(null);
+                layout.setBackgroundResource(0);
             }
 
             convertView.setOnClickListener(v -> {
@@ -90,7 +92,7 @@ public class GridViewImageItemAdapter extends BaseAdapter {
             if(profile.isChecked()) {
                 profile.getProfileLayout().setBackgroundResource(R.drawable.bg_rectangle_red);
             } else {
-                profile.getProfileLayout().setBackground(null);
+                profile.getProfileLayout().setBackgroundResource(0);
             }
         }
         notifyDataSetChanged();
