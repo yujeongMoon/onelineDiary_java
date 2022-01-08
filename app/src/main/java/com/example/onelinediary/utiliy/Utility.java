@@ -155,7 +155,7 @@ public class Utility {
     @SuppressLint("HardwareIds")
     public static String getAndroidId(Context context) {
         return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-//        return "aaaaaaaaaaaa";
+//        return "5915737b8962ff5d";
     }
 
     /**
